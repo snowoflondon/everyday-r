@@ -6,10 +6,10 @@ As GitHub [does not yet](https://github.com/rstudio/rmarkdown/issues/1020) suppo
 
 ![Screen Shot 2023-02-10 at 6 00 34 PM](https://user-images.githubusercontent.com/76887483/218218494-64a3cd7f-70e1-4817-b830-d6073e9e8254.png)
 
-## Table of contents:
+## Table of contents
 #### 1. [Everyday data wrangling](https://github.com/snowoflondon/everyday-r/blob/main/1_DataWrangling.md)
 
-## R version:
+## R version
 platform       - x86_64-apple-darwin17.0     
 arch           - x86_64                      
 os             - darwin17.0                  
@@ -21,6 +21,7 @@ version.string - R version 4.0.5 (2021-03-31)
 * [Advanced R by Hadley Wickham](https://adv-r.hadley.nz/)
 * [Tidyverse](https://www.tidyverse.org/)
 
-## My other projects:
+## My other projects
 * [Visualizing stats from the Premier League using Shiny and web scraping](https://github.com/snowoflondon/PL_Visualizer)
 * [Calculation of drug synergy using linear models and Shiny](https://github.com/snowoflondon/CIComputeR_WEB)
+* [Data science blog covering fundamental concepts with R & Python code](https://brianjmpark.github.io/)
