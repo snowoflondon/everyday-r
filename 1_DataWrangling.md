@@ -1,4 +1,9 @@
-# 1. Data Wrangling
+---
+title: "1. Data Wrangling"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
 
 ## Everyday scenario
 
@@ -34,7 +39,7 @@ mtcars %>% rename_with(function(x) paste0(x, "_1"), .cols = -1)
 
 Alternatively with base R:
 
-```{r}
+```{r, eval=FALSE}
 names(mtcars)[-1] <- paste0(names(mtcars[-1]), '_1')
 ```
 
@@ -87,6 +92,11 @@ Mutate multiple columns and replace old columns:
 mtcars %>% mutate(across(c(mpg, disp), function(x) x*3))
 ```
 
+Iterating across the columns using `purrr::modify` instead:
+
+```{r}
+mtcars %>% modify_if(is.numeric, ~ .x*3)
+```
 
 
 ### Joining and separating character columns
@@ -107,7 +117,7 @@ mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge') %>%
 
 Separation of columns by strings, using base R instead:
 
-```{r}
+```{r, eval=FALSE}
 mtcars$Brand <- unlist(
   lapply(strsplit(mtcars$CAR, split = ' '), function(x) x[1])
 )
@@ -147,7 +157,7 @@ mtcars %>% filter(str_detect(CAR, c('Mazda', 'Merc')))
 
 Alternatively, using base R:
 
-```{r}
+```{r, eval=FALSE}
 mtcars[grepl('Mazda', mtcars$CAR),]
 mtcars[grepl('Mazda|Merc', mtcars$CAR),]
 ```
@@ -407,6 +417,5 @@ Base R:
 merge(df1, df2, by = 'name')
 merge(df1, df2, by = 'name', all.x = TRUE)
 ```
-
 
 
