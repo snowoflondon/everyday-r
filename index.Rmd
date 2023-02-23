@@ -1,0 +1,47 @@
+--- 
+title: "Everyday-R"
+author: "Brian Jungmin Park"
+date: ""
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+# url: your book url like https://bookdown.org/yihui/bookdown
+# cover-image: path to the social sharing image like images/cover.jpg
+description: |
+  This is a minimal example of using the bookdown package to write a book.
+  The HTML output format for this example is bookdown::gitbook,
+  set in the _output.yml file.
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+---
+
+# Introduction
+
+This book serves as a collection of R Markdown files that aims to assist users in learning the practical syntax and usage of R. Mainly, code snippets and workflow aimed at tackling everyday tasks in data science will be covered, including data cleaning, data wrangling, iterations, machine learning with `caret`, data visualization, and web app design using `Shiny`. Each broad topic will be split into chapters, though there will be some overlap.
+
+## R syntax in this book
+
+Code chunks will be presented in a typical Markdown format as such, with the code output below:
+
+```{r}
+runif(n = 20, min = 0, max = 100)
+```
+
+When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:
+
+```{r}
+library(microbenchmark)
+microbenchmark::microbenchmark(runif(n = 20, min = 0, max = 100))
+```
+
+Typically in longer chains of code, I will use `%>%` from `magrittr` as a pipe. This is usually standard practice in code using packages from the `tidyverse` so it's a good habit to start using it.
+
+Finally, here is the R version I am currently using:
+
+```{r}
+version
+```
+
+## Code availability
+
+All code used to compile this book as well as the individual .Rmd files are available on my repository [here](https://github.com/snowoflondon/everyday-r)
