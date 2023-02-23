@@ -8,11 +8,22 @@ The book can be accessed here: https://bookdown.org/brianjmpark/everydayR/
 #### 2. Everyday data wrangling 
 
 ## R version
-platform       - x86_64-apple-darwin17.0     
-arch           - x86_64                      
-os             - darwin17.0                  
-system         - x86_64, darwin17.0   
-version.string - R version 4.0.5 (2021-03-31
+```{R
+platform       x86_64-apple-darwin17.0     
+arch           x86_64                      
+os             darwin17.0                  
+system         x86_64, darwin17.0          
+status                                     
+major          4                           
+minor          0.5                         
+year           2021                        
+month          03                          
+day            31                          
+svn rev        80133                       
+language       R                           
+version.string R version 4.0.5 (2021-03-31)
+nickname       Shake and Throw    
+```
 
 ## Resources
 * [R for data science by Hadley Wickham](https://r4ds.had.co.nz/)
