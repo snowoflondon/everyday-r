@@ -1,6 +1,6 @@
 # Everyday data wrangling
 
-Suppose there exists a test dataset and the user is tasked with proving their proficiency in exploratory data analysis (EDA). However, prior to EDA the user must be able to transform the original data into a desirable format. This includes, but not limited to, missing data imputation, scalar transformation, feature selection, group aggregation, and data filtering. The following notebook outlines the fundamentals of data wrangling, using base R and `tidyverse` solutions interchangeably. 
+Suppose there exists a test dataset and the user is tasked with proving their proficiency in exploratory data analysis (EDA). Alternatively, the user may be handed a piece of data (e.g., maybe an Excel sheet) and is asked to run some preliminary analysis. Prior to jumping straight into EDA and statistical modeling, the user must be able to transform the original data into a desirable format. This includes, but is not limited to, missing data imputation, scalar transformation, feature selection, group aggregation, and data filtering. The following notebook outlines the fundamentals of data wrangling, using practical base R and `tidyverse` solutions interchangeably. 
 
 ```{r, warning=FALSE, echo=FALSE}
 library(tidyverse)
@@ -16,17 +16,19 @@ data(mtcars)
 mtcars <- mtcars %>% as_tibble(rownames = 'CAR')
 ```
 
-Renaming column headers:
+Renaming column headers is straight forward with `dplyr::rename`:
 
 ```{r}
 mtcars %>% rename_with(toupper)
 ```
 
+You can pass any function within `rename_with()` to alter the column headers:
+
 ```{r}
 mtcars %>% rename_with(function(x) paste0(x, "_1"), .cols = -1)
 ```
 
-Alternatively with base R:
+Alternatively with base R, you can call the `names` attribute and alter that directly:
 
 ```{r, eval=FALSE}
 names(mtcars)[-1] <- paste0(names(mtcars[-1]), '_1')
@@ -35,11 +37,13 @@ names(mtcars)[-1] <- paste0(names(mtcars[-1]), '_1')
 
 ## Grouped operations
 
+Grouped operations are most useful when you're working with data where there is a categorical variable. Grouped summaries are powerful tools easily done with `dplyr::summarise`:
+
 ```{r}
 mtcars %>% group_by(cyl) %>% summarise(avg_mpg = mean(mpg))
 ```
 
-Multiple columns:
+Using multiple columns at once and renaming the output columns:
 
 ```{r}
 mtcars %>% group_by(cyl) %>% 
@@ -51,7 +55,7 @@ mtcars %>% group_by(cyl) %>%
   summarise(across(where(is.numeric), mean, .names = "mean_{col}"))
 ```
 
-Alternatively, in base R:
+Alternatively, in base R, you can use `aggregate()` with the `~`; you can read this as *grouping mpg by cyl* where *by* corresponds to the `~`:
 
 ```{r}
 aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
@@ -60,20 +64,20 @@ aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 
 ## Data transformation
 
-Scalar transformation of numeric columns:
+Sometimes it's useful to transform numeric columns:
 
 ```{r}
 mtcars %>% mutate(mpg = mpg*2)
 ```
 
-Conditional transformation and keep the old columns:
+Using `across()` allows for conditional transformation and keep the old columns, while renaming the new columns:
 
 ```{r}
 mtcars %>% 
   mutate(across(where(is.numeric), function(x) x*2, .names = "double_{col}"))
 ```
 
-Mutate multiple columns and replace old columns:
+You can overwrite the existing columns completely; also keep in mind that you can pass any function within `across()` as such:
 
 ```{r}
 mtcars %>% mutate(across(c(mpg, disp), function(x) x*3))
@@ -88,13 +92,13 @@ mtcars %>% modify_if(is.numeric, ~ .x*3)
 
 ## Joining and separating character columns
 
-For the `CAR` column comprised of strings, separate the individual strings into multiple columns:
+For the `CAR` column comprised of strings, you can separate the individual strings into multiple columns; the `extra = 'merge'` argument tells the function to separate the string based on the first instance of " " and merge the rest:
 
 ```{r, warning=FALSE}
 mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge')
 ```
 
-Sumamry based on the car brand using the `%>%` pipe between `tidyverse` verbs:
+Combining multiple `tidyverse` verbs using the pipe `%>%`:
 
 ```{r, warning=FALSE}
 mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge') %>%
@@ -102,7 +106,9 @@ mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge') %>%
   arrange(desc(count))
 ```
 
-Separation of columns by strings, using base R instead:
+Note that the pipe `%>%` is part of the `magrittr` package but there's no need to load it after loading `tidyverse`. The pipe notation is frequently used between `tidyverse` verbs but you can also use it in some base R operations as well.
+
+Separation of columns by strings, using base R instead involves using `strsplit()` which outputs a list and therefore we need to unpack it afterwards:
 
 ```{r, eval=FALSE}
 mtcars$Brand <- unlist(
@@ -113,7 +119,7 @@ mtcars$Model <- unlist(
 )
 ```
 
-Combining columns into a new column:
+The opposite of `separate()` is `unite()` which combines columns into a single column:
 
 ```{r}
 data(iris)
@@ -122,7 +128,7 @@ iris %>% unite('Petal.Dimensions', c(`Petal.Length`, `Petal.Width`),
                sep = " x ", remove = FALSE)
 ```
 
-In base R:
+In base R, we create a new column using the `$` notation:
 
 ```{r, eval=FALSE}
 iris$Petal.Dimensions <- paste(iris$Petal.Length, iris$Petal.Width, sep = " x ")
@@ -131,7 +137,7 @@ iris$Petal.Dimensions <- paste(iris$Petal.Length, iris$Petal.Width, sep = " x ")
 
 ## Filtering rows
 
-Filtering rows based on strings:
+Typically, filtering involves a condition based on a column to select the corresponding rows. Here I am combining `stringr::str_detect` with `dplyr::filter` since the column I am filtering on is a character vector.
 
 ```{r}
 mtcars %>% filter(str_detect(CAR, 'Mazda'))
@@ -141,11 +147,23 @@ mtcars %>% filter(str_detect(CAR, 'Mazda'))
 mtcars %>% filter(str_detect(CAR, c('Mazda', 'Merc')))
 ```
 
-Alternatively, using base R:
+Ignoring upper/lower case distinction using `regex(..., ignore_case = TRUE)`:
+
+```{r}
+mtcars %>% filter(str_detect(CAR, regex('mazda', ignore_case = TRUE)))
+```
+
+Alternatively, using base R using `grepl()`:
 
 ```{r, eval=FALSE}
 mtcars[grepl('Mazda', mtcars$CAR),]
 mtcars[grepl('Mazda|Merc', mtcars$CAR),]
+```
+
+Using `tolower()` to make sure we're on the same page in regards to case:
+
+```{r}
+mtcars[grepl(tolower('Mazda'), tolower(mtcars$CAR)),]
 ```
 
 Filtering rows based on a numeric column:
@@ -158,7 +176,7 @@ mtcars %>% filter(between(mpg, 18, 20))
 mtcars %>% filter(cyl %in% c(6, 8))
 ```
 
-Alternatively, in base R:
+Alternatively, in base R, using `which()`:
 
 ```{r, eval=FALSE}
 mtcars[which(mtcars$mpg > 18 & mtcars$mpg < 20),]
@@ -168,44 +186,56 @@ mtcars[which(mtcars$cyl %in% c(6,8)),]
 
 ## Subsetting columns based on strings
 
-Selecting columns based on column name matching:
+Subsetting columns typically involves using square brackets `[ ]` in base R, but can be done easily with `dplyr::select`; `select()` supports multiple helper functions such as `starts_with()`, `ends_with()`, and `match()`.
 
 ```{r}
 mtcars %>% select(contains('m'))
 ```
 
 ```{r}
-mtcars %>% select(starts_with('m'))
+mtcars %>% select(starts_with('m'), ends_with('c'))
 ```
 
-Or using regex expressions:
+Using regex, with the anchors `^` and `$`:
 
 ```{r}
-mtcars %>% select(matches('^m'))
+mtcars %>% select(matches('^m'), matches('c$'))
 ```
 
-Alternatively, in base R:
+Alternatively, in base R and regex:
 
-```{r, eval=FALSE}
-mtcars[,grepl('m', names(mtcars))]
-mtcars[,grepl('^m', names(mtcars))]
+```{r}
+mtcars[,grepl('^m|c$', names(mtcars))]
 ```
 
 
 ## Long and wide data formats
 
-Transforming datasets into long/wide formats:
+Transforming datasets into long/wide formats is a typical task in EDA, and this can be done using `tidyr`:
 
 ```{r}
 mtcars_long <- mtcars %>% pivot_longer(-1, names_to = 'Metric', values_to = 'Values')
 mtcars_long
 ```
 
+Having the dataset in this long format allows us to create visualizations such as the boxplot much easier. 
+
+Pivoting the long format back to a wide format as also straightforward with `tidyr`:
+
 ```{r}
 mtcars_wide <- mtcars_long %>% 
   pivot_wider(names_from = 'Metric', values_from = 'Values')
 mtcars_wide
 ```
+
+In base R, you can use `reshape()` with the argument `direction = ` but I don't find its syntax very intuitive. Alternatively, using `data.table` gets us the solution much easier:
+
+```{r, warning=FALSE}
+library(data.table)
+melt(setDT(mtcars), id.vars = c('CAR'), variable.name = 'Metric')
+```
+
+Note that using `data.table` returns a `data.table` object (due to the `setDT()` function), which differs from the `tibble` we've been using for packages within `tidyverse`. There are some advantages to using `data.table` instead, especially when working with very large datasets. For the sake of this book I will mostly use base R and `tidyverse`, other than exceptional cases. 
 
 
 ## Trimming strings
@@ -217,16 +247,22 @@ iris %>% mutate(Species = strtrim(Species, 3)) %>%
   mutate(Species = factor(Species, levels = c('set', 'ver', 'vir')))
 ```
 
+Sometimes when you're importing datasets from external and/or untrustworthy sources (e.g., an Excel sheet) it's worth checking for any whitespaces. In that case you can use `stringr::str_trim` to remove all whitespaces prior to data analysis.
+
+```{r}
+iris %>% mutate(Species = str_trim(Species))
+```
+
 
 ## Iterating over list of dataframes
 
-Forming a list of dataframes by column value:
+Analogously to base R's `split`, using `group_split()` allows us to convert the dataset to a list based on a column; the length of this output list would correspond to the unique number of column entries:
 
 ```{r}
 mtcars_lst <- mtcars %>% group_split(cyl)
 ```
 
-Looping over each element of the list and renaming columns:
+Iteration will be covered in more detail in a future chapter, but using base R's `apply` family is straightforward. In this case since we're working with lists, we will use `lapply()` and pass a function (in this case, `rename_with()`):
 
 ```{r}
 mtcars_lst <- lapply(mtcars_lst, function(x) 
@@ -234,7 +270,7 @@ mtcars_lst <- lapply(mtcars_lst, function(x)
 mtcars_lst[[1]]
 ```
 
-Using `purrr::map` instead:
+A `tidyverse` alternative to `apply` is `purrr::map` and its variations:
 
 ```{r, warning=FALSE}
 mtcars_lst <- mtcars %>% group_split(cyl)
@@ -244,7 +280,7 @@ mtcars_lst <- mtcars_lst %>%
 mtcars_lst[[1]]
 ```
 
-Fitting a linear model for each element of the list, iteratively:
+Fitting a linear model is easy using iterations; in this case we fit `lm()` on the variables `mpg` and `gear` to identify their relationship:
 
 ```{r}
 mtcars_lst <- mtcars %>% group_split(cyl)
@@ -253,7 +289,7 @@ mtcars_lst %>%
   map(coef)
 ```
 
-Using `broom` to clean up modelling result:
+Using `broom::tidy` to clean up modelling result and output the model estimates:
 
 ```{r, warning=FALSE}
 library(broom)
@@ -274,8 +310,6 @@ coefs[[1]]
 
 ## Rowwise operations
 
-Rowwise operations with `mutate`
-
 ```{r}
 df <- tibble(name = c('Brian', 'Connor'),
              coffee = sample(1:10, 2),
@@ -284,10 +318,14 @@ df <- tibble(name = c('Brian', 'Connor'),
 df
 ```
 
+Sometimes it's useful to run calculations in a row-wise fashion; for example using `mutate()` with the helper function `c_across()`:
+
 ```{r}
 df %>% rowwise() %>% mutate(total = sum(c_across(coffee:juice)),
                             avg = mean(c_across(coffee:juice)))
 ```
+
+Calculating the proportions using a combination of row-wise and column-wise operations with `c_across()` and `across()`:
 
 ```{r}
 df %>% rowwise() %>% mutate(total = sum(c_across(coffee:juice))) %>%
@@ -299,7 +337,7 @@ df %>% rowwise() %>% mutate(total = sum(c_across(coffee:juice))) %>%
 
 ## Conditional transformation
 
-Conditional `mutate` using `case_when`:
+Conditional transformations are useful when creating categories based on a series of logical statements; this is done using `case_when()` to define the conditions:
 
 ```{r}
 mtcars %>% mutate(mileage_class = 
@@ -308,7 +346,7 @@ mtcars %>% mutate(mileage_class =
   relocate(mileage_class, .after = mpg)
 ```
 
-Conditional mutate using base R:
+Conditional mutate using base R involves using `ifelse()`:
 
 ```{r}
 mtcars$mileage_class <- ifelse(
@@ -320,14 +358,17 @@ subset(mtcars, select = c(CAR, mpg, mileage_class, cyl:carb))
 
 ## Missing values
 
-Handling missing values:
-First, insert NAs randomly for the sake of this exercise:
+Handling missing values is tedious but often required when working with dodgy data.
+
+First, for the sake of our exercise we insert NAs randomly in the `mtcars` dataset:
 
 ```{r}
 mtcars_NA <- map_df(mtcars, function(x) 
   {x[sample(c(TRUE, NA), prob = c(0.95, 0.01), size = length(x), replace = TRUE)]})
 mtcars_NA
 ```
+
+Check the dimensions of this dataset to compare what happens when we remove NAs:
 
 ```{r}
 dim(mtcars_NA)
@@ -339,7 +380,7 @@ Remove rows where any NA occurs:
 mtcars_NA %>% na.omit() %>% dim()
 ```
 
-Identify columns with NAs and the number of ocurrences:
+Identify columns with NAs and the number of occurrences:
 
 ```{r}
 vapply(mtcars_NA, function(x) sum(is.na(x)), double(1))
@@ -357,7 +398,7 @@ Replace missing values with zero using `tidyr::replace_na`:
 mtcars_NA %>% map_dfc(~ replace_na(.x, 0))
 ```
 
-Base R:
+Base R and using `is.na()` instead:
 
 ```{r, eval=FALSE}
 mtcars_NA[is.na(mtcars_NA)] <- 0
@@ -366,7 +407,7 @@ mtcars_NA[is.na(mtcars_NA)] <- 0
 
 ## Joining dataframes
 
-Mutating joins:
+Mutating joins in `tidyverse` are analogous to the inner and outer joins in SQL syntax:
 
 ```{r}
 df1 <- tibble(
@@ -389,9 +430,9 @@ df1 %>% inner_join(df2, by = 'name')
 df1 %>% left_join(df2, by = 'name')
 ```
 
-Base R:
+Base R uses `merge()` with the argument `all.x = ` and `all_y = `:
 
-```{r, eval=FALSE}
+```{r}
 merge(df1, df2, by = 'name')
 merge(df1, df2, by = 'name', all.x = TRUE)
 ```
