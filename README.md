@@ -4,8 +4,8 @@ This repository contains a collection of Markdown files compiled with `bookdown`
 The book can be accessed here: https://bookdown.org/brianjmpark/everydayR/
 
 ## Table of contents
-#### 1. Introduction
-#### 2. Everyday data wrangling 
+#### 1. [Introduction](https://bookdown.org/brianjmpark/everydayR/)
+#### 2. [Everyday data wrangling](https://bookdown.org/brianjmpark/everydayR/everyday-data-wrangling.html) 
 
 ## R version
 ```{R
