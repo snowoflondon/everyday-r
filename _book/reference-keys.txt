@@ -1,5 +1,7 @@
 introduction
 r-syntax-in-this-book
+r-packages-commonly-used-in-this-book
+installing-r-packages
 code-availability
 everyday-data-wrangling
 renaming-column-headers
@@ -15,3 +17,10 @@ rowwise-operations
 conditional-transformation
 missing-values
 joining-dataframes
+everyday-iterations
+iterating-over-multiple-columns-using-apply-dplyr-and-purrr
+iterating-over-lists
+iterating-over-vectors
+iterating-with-two-inputs
+iterating-over-indices-and-names
+handling-errors-within-purrr

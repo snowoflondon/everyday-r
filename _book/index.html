@@ -144,7 +144,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#r-syntax-in-this-book"><i class="fa fa-check"></i><b>1.1</b> R syntax in this book</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#code-availability"><i class="fa fa-check"></i><b>1.2</b> Code availability</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#r-packages-commonly-used-in-this-book"><i class="fa fa-check"></i><b>1.2</b> R packages commonly used in this book</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#installing-r-packages"><i class="fa fa-check"></i><b>1.3</b> Installing R packages</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#code-availability"><i class="fa fa-check"></i><b>1.4</b> Code availability</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="everyday-data-wrangling.html"><a href="everyday-data-wrangling.html"><i class="fa fa-check"></i><b>2</b> Everyday data wrangling</a>
 <ul>
@@ -161,6 +163,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.11" data-path="everyday-data-wrangling.html"><a href="everyday-data-wrangling.html#conditional-transformation"><i class="fa fa-check"></i><b>2.11</b> Conditional transformation</a></li>
 <li class="chapter" data-level="2.12" data-path="everyday-data-wrangling.html"><a href="everyday-data-wrangling.html#missing-values"><i class="fa fa-check"></i><b>2.12</b> Missing values</a></li>
 <li class="chapter" data-level="2.13" data-path="everyday-data-wrangling.html"><a href="everyday-data-wrangling.html#joining-dataframes"><i class="fa fa-check"></i><b>2.13</b> Joining dataframes</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="everyday-iterations.html"><a href="everyday-iterations.html"><i class="fa fa-check"></i><b>3</b> Everyday iterations</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-multiple-columns-using-apply-dplyr-and-purrr"><i class="fa fa-check"></i><b>3.1</b> Iterating over multiple columns using <code>apply</code>, <code>dplyr</code>, and <code>purrr</code></a></li>
+<li class="chapter" data-level="3.2" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-lists"><i class="fa fa-check"></i><b>3.2</b> Iterating over lists</a></li>
+<li class="chapter" data-level="3.3" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-vectors"><i class="fa fa-check"></i><b>3.3</b> Iterating over vectors</a></li>
+<li class="chapter" data-level="3.4" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-with-two-inputs"><i class="fa fa-check"></i><b>3.4</b> Iterating with two inputs</a></li>
+<li class="chapter" data-level="3.5" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-indices-and-names"><i class="fa fa-check"></i><b>3.5</b> Iterating over indices and names</a></li>
+<li class="chapter" data-level="3.6" data-path="everyday-iterations.html"><a href="everyday-iterations.html#handling-errors-within-purrr"><i class="fa fa-check"></i><b>3.6</b> Handling errors within <code>purrr</code></a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -193,15 +204,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 76.4369237 68.6105364 51.9171139 22.7441995 44.9952489 73.8980003  0.7298823 74.8694468
-##  [9] 30.6383196 78.4543878 93.3116762 24.8269856 86.1226866  6.5530308 52.9560392  3.1868963
-## [17] 73.0393045 48.6647675 34.9391496  8.9322204</code></pre>
+<pre><code>##  [1] 91.559510 99.914859 75.798346  2.396130 48.182374 65.840942 51.424167 38.138774
+##  [9] 21.796856  7.945653 39.866208 77.584292 15.797935 28.494902 35.601256  4.466872
+## [17] 99.964251 35.852859 77.935272 65.085196</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##                               expr   min    lq    mean median    uq   max neval
-##  runif(n = 20, min = 0, max = 100) 1.418 1.584 2.12319  1.668 1.834 7.709   100</code></pre>
+##                               expr   min    lq    mean median     uq   max neval
+##  runif(n = 20, min = 0, max = 100) 1.292 1.418 1.63984  1.542 1.6465 7.209   100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true" tabindex="-1"></a>version</span></code></pre></div>
@@ -221,8 +232,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## version.string R version 4.0.5 (2021-03-31)
 ## nickname       Shake and Throw</code></pre>
 </div>
-<div id="code-availability" class="section level2 hasAnchor" number="1.2">
-<h2><span class="header-section-number">1.2</span> Code availability<a href="index.html#code-availability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="r-packages-commonly-used-in-this-book" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> R packages commonly used in this book<a href="index.html#r-packages-commonly-used-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li><p><code>tidyverse</code>: a collection of packages for data science, including <code>dplyr</code>, <code>purrr</code>, <code>stringr</code>, <code>forcats</code>, <code>readr</code>, and <code>ggplot</code>.</p></li>
+<li><p><code>caret</code>: package for implementation of machine learning models, with support for algorithms such as <code>ranger</code>, <code>rpart</code>, <code>xgbTree</code>, and <code>svmLinear</code>.</p></li>
+<li><p><code>broom</code>: package for summarizing of model estimates.</p></li>
+<li><p><code>Shiny</code>: package for implementation and designing of interactive web apps.</p></li>
+</ul>
+</div>
+<div id="installing-r-packages" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Installing R packages<a href="index.html#installing-r-packages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>R packages found in this book are available on CRAN and thus can be installed simply by running <code>install.packages()</code>. For packages not on CRAN (or if you want to download developmental versions of a package), you can install packages straight from a GitHub repository by running <code>devtools::install_github()</code>.</p>
+</div>
+<div id="code-availability" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Code availability<a href="index.html#code-availability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>All code used to compile this book as well as the individual .Rmd files are available on my repository <a href="https://github.com/snowoflondon/everyday-r">here</a></p>
 
 </div>
