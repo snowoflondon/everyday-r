@@ -1,0 +1,399 @@
+# Everyday iterations
+
+In the previous chapter, I briefly covered writing an iterative function using `purrr::map`. In an everyday practical setting, iterations are the most useful when we've split our dataset based on some sort of a variable of interest. For example, say we have a dataset containing patient outcome after a treatment with a therapeutic. We could split the data based on the type of the therapeutic and iterate a model to compare and contrast treatment effects. On the other hand, we could simply want to apply some sort of a function over multiple columns of a dataset to save the trouble of writing the same function over and over.
+
+A traditional iterative function involves explicitly writing a for loop. Though for loops are often misconstrued as being slower than the functional counterparts (e.g., the `apply` family of functions), the real down-side of for loops, as Hadley argues in [his book, 'Advanced R'](https://adv-r.hadley.nz/functionals.html), is that for loops do a poor job in conveying what should be done with the results. 
+
+```{r, warning=FALSE}
+library(tidyverse)
+```
+
+
+## Iterating over multiple columns using `apply`, `dplyr`, and `purrr`
+
+Returning to the familiar dataset `mtcars`, composed of 32 rows and 12 columns:
+
+```{r}
+data(mtcars)
+mtcars <- as_tibble(mtcars, rownames = 'CAR')
+```
+
+The basic `apply` function needs to know whether you're iterating over columns or over rows using the `MARGIN = ` argument:
+
+```{r}
+apply(mtcars[-1], MARGIN = 2, function(x) x/2) %>% head()
+```
+
+This returns a matrix, as `apply` is typically used for an array or a matrix. The one downside with `apply` is that the user cannot define what form the output will be in. The side effect of this is that I've had to exclude the first column because it contains characters. Running `cbind` afterwards to concatenate `mtcars[1,]` can do the job, though it's cumbersome. Therefore, it's often not advisable to run `apply` on a dataframe or a tibble. A better method is the `dplyr::mutate` solution:
+
+```{r}
+mtcars %>% mutate(across(where(is.numeric), ~ .x/2))
+```
+
+Note that instead of writing out `function(x) x/2` I'm using the `~ .x` notation which is often used in context of `purrr:map`. Either works.
+
+The `purrr:map` solution to this is:
+
+```{r}
+mtcars %>% map_if(is.numeric, ~ .x/2) %>% as_tibble()
+```
+
+Writing a for loop for something like this would be less optimal:
+
+```{r}
+mtcars2 <- mtcars
+for (i in 2:ncol(mtcars2)){
+  mtcars2[,i] <- mtcars2[,i]/2
+}
+mtcars2
+```
+
+
+## Iterating over lists
+
+The usefulness of iteration is more apparent when we're working with grouped data. I've covered a bit of this in the previous chapter, but this is when we've split the data based on some sort of a categorical variable.
+
+```{r}
+mtcars_lst <- mtcars %>% group_split(cyl)
+```
+
+The member of the `apply` family suited for this task is `lapply()` which returns a list:
+
+```{r}
+lapply(mtcars_lst, function(x) cor(x$mpg, x$wt))
+```
+
+Of course, we can define our own function and then pass it over to `lapply()` instead:
+
+```{r}
+get_pval <- function(x){
+  mod <- cor.test(x$mpg, x$wt)
+  pv <- mod$p.value
+  if (pv < 0.05){
+    is_sig <- TRUE
+  } else {
+    is_sig <- FALSE
+  }
+  return(is_sig)
+}
+
+lapply(mtcars_lst, get_pval)
+```
+Using `vapply()` instead allows you to define the class of what the expected output would be:
+
+```{r}
+vapply(mtcars_lst, get_pval, FUN.VALUE = logical(1))
+```
+
+`purrr::map` solution to iterating over list is as such:
+
+```{r}
+mtcars_lst %>% map(~ cor(.x$mpg, .x$wt))
+```
+
+If we want the output to be a flat numeric vector instead of a list:
+
+```{r}
+mtcars_lst %>% map_dbl(~ cor(.x$mpg, .x$wt))
+```
+
+Similarly, using `map_lgl` instead would return a logical vector:
+
+```{r}
+mtcars_lst %>% map_lgl(get_pval)
+```
+
+Iterations are also useful when we want to generate visualizations based on the grouped split:
+
+```{r, warning=FALSE, message=FALSE}
+p <- mtcars_lst %>% map(~ ggplot(data = .x, aes(x = mpg, y = wt)) + 
+                          geom_point() + geom_smooth(method = 'lm') + 
+                          theme_bw())
+
+p[[1]]
+p[[3]]
+```
+
+Combining the package `broom` with iterative model fitting is particularly useful:
+
+```{r, warning=FALSE, message=FALSE}
+library(broom)
+mtcars_lst %>%
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(glance) %>%
+  bind_rows()
+```
+
+Using `lapply()` instead:
+
+```{r}
+lapply(mtcars_lst, function(x) lm(mpg ~ gear, data = x)) %>%
+  lapply(glance) %>% bind_rows()
+```
+
+The `map()` function can also be used to extract elements:
+
+```{r}
+mtcars_lst %>% map('CAR')
+```
+
+```{r}
+mtcars_lst %>%
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(coef) %>%
+  map_dbl(2)
+```
+
+
+## Iterating over vectors
+
+Let's say we have a vector with missing values:
+
+```{r}
+x <- c(3, 2, NA, 2, 1, 4, 2, NA, 2, NA)
+x
+```
+
+Filling the missing values is easy with iteration over the length of the vector:
+
+```{r}
+x %>% map_dbl(~ replace(., is.na(.x), 0))
+```
+Or if we want to replace the missing values with the mean:
+
+```{r}
+x %>% map_dbl(~ replace(., is.na(.x), mean(x, na.rm = TRUE)))
+```
+
+This can of course be done with a for loop instead:
+
+```{r}
+for (i in seq_along(x)){
+  if (is.na(x[i]) == TRUE){
+    x[i] <- mean(x, na.rm = TRUE)
+  }
+}
+
+x
+```
+
+Note that `seq_along(x)` prints the indices along the length of the vector, as if to write `1:length(x)`.
+
+Iterating over a vector of characters requires `map_chr()` to get the character vector back, but the syntax is the same:
+
+```{r}
+z <- c('Brian', 'Connor', 'Harry', 'Sonny')
+map_chr(z, ~ paste0(.x, '_NAME'))
+```
+
+```{r}
+out <- character(length(z))
+for (i in seq_along(z)){
+  out[i] <- paste0(z[i], '_NAME')
+}
+out
+```
+
+In particular cases where the output is printed out, as in the case of `print()` and `cat()`, we may end up echoing both the return values and the output list when using `map()`. To that end, `walk()` is used to avoid showing the result twice:
+
+```{r}
+walk(z, ~ print(paste0(.x, '_NAME')))
+```
+
+## Iterating with two inputs
+
+In contrast to every solution so far, there's a case to be made about iterating over multiple inputs. For that purpose, `purrr:map2` does the job.
+
+```{r}
+x <- c(2, 4, 2, 5)
+y <- c(2, 6, 3, 1)
+map2_dbl(x, y, sum)
+map2_chr(x, y, ~ str_glue('The sum of {.x} and {.y} is {sum(.x, .y)}'))
+```
+
+Note that the iteration occurs at the *i*th position of each vector. 
+
+The intuition behind `map2()` is straightforward and is illustrated by the equivalent for loop:
+
+```{r}
+result <- numeric(length(x))
+for (i in seq_along(x)){
+  result[i] <- sum(x[i], y[i])
+}
+result
+```
+
+One quirk with `map2()` is that it recycles the input:
+
+```{r}
+map2_chr('My name is ', c('Brian', 'Connor'), str_c)
+```
+
+Suppose a dataset such as this:
+
+```{r}
+z <- tibble(A = x, B = y)
+z
+```
+
+There may be cases where we want to create a new column using `mutate()` which results from a transformation of the `A` and `B` columns at each row. 
+
+First, see why the following does not work in creating a column `C` which takes the higher value between `A` and `B` at each row:
+
+```{r}
+z %>% mutate(C = max(A, B))
+```
+
+Using `map2()`, however, this does work:
+
+```{r}
+z %>% mutate(C = map2_dbl(A, B, max))
+```
+
+Other families of `map2()` works normally in this context, for example, if we want to check whether the sum of `A` and `B` at each row is an even number:
+
+```{r}
+z %>% mutate(C = map2_lgl(A, B, ~ (.x + .y) %% 2 == 0))
+```
+
+When there are more than 2 inputs, we can use `pmap()` instead; this function takes a list of the inputs instead:
+
+```{r}
+w <- c(4, 2, 3, 1)
+pmap_dbl(list(x, y, w), sum)
+```
+
+```{r}
+z <- tibble(A = x, B = y, C = w)
+z
+```
+
+```{r}
+z %>% mutate(v = pmap_lgl(list(A, B, C), ~ sum(.) %% 2 == 0))
+```
+
+Using the notation for anonymous functions instead:
+
+```{r}
+z %>% mutate(v = pmap_lgl(list(A, B, C), ~ sum(..1 + ..2 + ..3) %% 2 == 0))
+```
+
+
+## Iterating over indices and names
+
+A related function is `imap()` and its variants, which is analogous to looping over numeric indices, such as in the case of `for (i in seq_along(x))`. That is, it applies a function over an input and its corresponding index. For example:
+
+```{r}
+x <- c(2, 4, 2, 5)
+imap_chr(x, ~ paste0('The index ', .y, ' number in x is ', .x))
+```
+
+Without using `purrr`, this is equivalent to the for loop:
+
+```{r}
+out <- character(length(x))
+for (i in seq_along(x)){
+  out[i] <- paste0('The index ', i, ' number in x is ', x[i])
+}
+out
+```
+
+`imap` also works with names instead of indices, if required:
+
+```{r}
+names(x) <- c('A', 'B', 'C', 'D')
+imap_lgl(x, ~ if(.y %in% c('A', 'C')) TRUE else FALSE)
+```
+
+The equivalent expression in the form of a for loop is as follows:
+
+```{r}
+out <- logical()
+for (i in names(x)){
+  if(i %in% c('A', 'C')){
+    out[i] <- TRUE
+  } else {
+    out[i] <- FALSE
+  }
+}
+out
+```
+
+Therefore, we see clearly that the two uses of `imap()` - iterating over indices and over names - is equivalent to `for (i in seq_along(x))` and `for (i in names(x))`, respectively. 
+
+
+## Handling errors within `purrr`
+
+Let's return to the `mtcars` dataset, specifically after we split the tibble into a list based on `group_split(cyl)`.
+
+```{r}
+mtcars_lst <- mtcars %>% group_split(cyl)
+```
+
+For one of the elements of the list, I'm filling the `gear` column with missing values:
+
+```{r}
+mtcars_lst[[2]] <- mtcars_lst[[2]] %>% mutate(gear = NA)
+mtcars_lst[[2]]
+```
+
+Now, if I were to try and fit a linear model using `lm(mpg ~ wt)` iteratively over the `mtcars_lst`, it will fail at the second element as the `wt` values are all missing. 
+
+```{r, eval=FALSE}
+mtcars_lst %>%
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(coef) %>%
+  map_dbl(2) # returns an error
+```
+
+This is inconvenient in many cases as ideally we'd want to skip over the iteration at which the function fails and get the rest of the results. Thankfully this can be done using `possibly()`; note the second element in the output where the `lm()` function would've failed:
+
+```{r}
+map(mtcars_lst, possibly(~ lm(mpg ~ gear, data = .x), otherwise = NA))
+```
+
+The second argument within `otherwise = ` argument within `possibly()`, where we wrapped the iterative function, provides an alternative solution in case the function fails. As we can see above, the second element of the output corresponds to `NA` and the iteration continued after.
+
+Using `purrr::keep()` I can select for the elements that did not fail:
+
+```{r}
+map(mtcars_lst, possibly(~ lm(mpg ~ gear, data = .x), otherwise = NA)) %>% 
+  keep(~ !is.na(.x) %>% all())
+```
+
+Of course this is the same as running the first `map()` function wrapped around `possibly()` and then running `result[-which(is.na(result)]`.
+
+Sometimes it's not useful to keep the failed element in the first place, so setting `otherwise = NULL` within `possibly()` works too. Afterwards, removing the empty element (i.e., `NULL`) is done using `purrr::compact()`.
+
+```{r}
+map(mtcars_lst, possibly(~ lm(mpg ~ gear, data = .x), otherwise = NULL)) %>%
+  compact()
+```
+
+Instead of discarding the iteration where the function failed, we could also catch the error by using `safely()` instead. This returns a nested list as such:
+
+```{r}
+map(mtcars_lst, safely(~ lm(mpg ~ gear, data = .x)))
+```
+
+We could also just pull the `error` terms and throw away the empty `NULL` elements:
+
+```{r}
+map(mtcars_lst, safely(~ lm(mpg ~ gear, data = .x))) %>% map('error') %>%
+  compact()
+```
+
+In a traditional for loop without `purrr`, a solution could be to use `tryCatch()` with `next`. Below returns the iteration with the error as `NULL` as was the case with `possibly(..., otherwise = NULL)`. 
+
+```{r}
+mod <- list()
+for (i in seq_along(mtcars_lst)){
+  err <- tryCatch(
+    mod[[i]] <- lm(mpg ~ gear, data = mtcars_lst[[i]]), 
+    error = function(e) e
+  )
+  if (inherits(err, 'error')) next
+  mod[[i]] <- lm(mpg ~ gear, data = mtcars_lst[[i]])
+}
+mod
+```
