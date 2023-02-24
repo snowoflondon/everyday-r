@@ -8,6 +8,7 @@ The book can be accessed here: https://bookdown.org/brianjmpark/everydayR/
 ## Table of contents
 #### 1. [Introduction](https://bookdown.org/brianjmpark/everydayR/)
 #### 2. [Everyday data wrangling](https://bookdown.org/brianjmpark/everydayR/everyday-data-wrangling.html) 
+#### 3. [Everyday iterations](https://bookdown.org/brianjmpark/everydayR/everyday-iterations.html)
 
 ## R version
 ```{R
