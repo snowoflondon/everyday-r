@@ -173,6 +173,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.5" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-indices-and-names"><i class="fa fa-check"></i><b>3.5</b> Iterating over indices and names</a></li>
 <li class="chapter" data-level="3.6" data-path="everyday-iterations.html"><a href="everyday-iterations.html#handling-errors-within-purrr"><i class="fa fa-check"></i><b>3.6</b> Handling errors within <code>purrr</code></a></li>
 </ul></li>
+<li class="chapter" data-level="4" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html"><i class="fa fa-check"></i><b>4</b> Interlude I: a glimpse into <code>data.table</code></a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#data-wrangling-operations"><i class="fa fa-check"></i><b>4.1</b> Data wrangling operations</a></li>
+<li class="chapter" data-level="4.2" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#sd-.sdcols-and"><i class="fa fa-check"></i><b>4.2</b> <code>.SD</code>, <code>.SDcols</code>, and <code>:=</code></a></li>
+<li class="chapter" data-level="4.3" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#reshaping-data-using-melt-and-dcast"><i class="fa fa-check"></i><b>4.3</b> Reshaping data using <code>melt</code> and <code>dcast</code></a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -204,15 +210,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 91.559510 99.914859 75.798346  2.396130 48.182374 65.840942 51.424167 38.138774
-##  [9] 21.796856  7.945653 39.866208 77.584292 15.797935 28.494902 35.601256  4.466872
-## [17] 99.964251 35.852859 77.935272 65.085196</code></pre>
+<pre><code>##  [1] 48.980771 20.238538 57.994813 14.730681 35.166596 31.311639 99.787551 33.967499 97.670138
+## [10] 94.676964 56.320497 93.810916 88.344984 27.791518 22.643618  5.855365 30.467067 34.331946
+## [19] 27.677000 15.060046</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##                               expr   min    lq    mean median     uq   max neval
-##  runif(n = 20, min = 0, max = 100) 1.292 1.418 1.63984  1.542 1.6465 7.209   100</code></pre>
+##                               expr   min    lq   mean median    uq  max neval
+##  runif(n = 20, min = 0, max = 100) 1.292 1.417 1.6223  1.542 1.668 7.25   100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true" tabindex="-1"></a>version</span></code></pre></div>

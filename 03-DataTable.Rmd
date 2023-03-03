@@ -1,0 +1,219 @@
+# Interlude I: a glimpse into `data.table`
+
+In the first chapter, we saw various practical solutions in data wrangling using `tidyverse` and base R. One topic that has not been discussed is the idea of computational efficiency and runtime - this matter has been trivial so far since the datasets have been considerably tiny. However, when working with large data, it may be in the user's interest to try using an alternative package designed for reducing programming and computation time - `data.table`. The vignette is available [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html). 
+
+```{r, warning=FALSE}
+library(data.table)
+```
+
+Similarly to how a `tibble` is an enhanced form of a `data.frame` in `tidyverse`, `data.table` uses an object class called a `data.table`. Using `fread()` to read in data - whether the argument corresponds to a local file or a URL pointing to a dataset - automatically generates a `data.table` object. Converting a regular `data.frame` to a `data.table` is done with `setDT()`.
+
+```{r}
+data(mtcars)
+setDT(mtcars)
+head(mtcars, 10)
+class(mtcars)[1]
+```
+
+
+## Data wrangling operations
+
+The vignette does a great job explaining the syntax of `data.table` in detail, but the takeaway message is that it subsets the data by `i`, performs an operation according to `j`, then groups it using `by =`. That is, `DT[i, j, by]`. 
+
+```{r}
+mtcars[cyl == 6, .(mean_mileage = mean(mpg))]
+```
+
+Above, `data.table` has subsetted the object based on `cyl == 6` then calculated the mean mileage. The `j` is wrapped around `.()`, which is equivalent to `list()` - this is because the columns in a table are analogous to a `list` object and we want to return a `data.table` as our output rather than an atomic vector.
+
+```{r}
+class(mtcars[cyl == 6, .(mean_mileage = mean(mpg))])
+```
+
+Multiple calculations can be performed in `j`:
+
+```{r}
+mtcars[cyl == 6 & gear == 4, .(mean_mileage = mean(mpg), median_wt = median(wt))]
+```
+
+Calculating the number of rows in `j` uses a special variable `.N`.
+
+```{r}
+mtcars[cyl == 6 & gear == 4, .N]
+```
+
+The `j` argument can be used to select columns after subsetting rows with `i`; this is analogous to `filter()` and `select()` in `dplyr`:
+
+```{r}
+mtcars[, .(mpg, wt, gear)][1:10]
+```
+
+```{r}
+my_cols <- c('mpg', 'wt', 'gear')
+mtcars[, ..my_cols][1:10]
+```
+
+Using `by = ` argument is similar to `group_by()` in `dplyr`:
+
+```{r}
+mtcars[, .(mean_mileage = mean(mpg), median_wt = median(wt)), by = cyl]
+```
+
+```{r}
+mtcars[, .N, by = cyl]
+```
+
+```{r}
+mtcars[vs == 0, .N, by = .(cyl, gear)]
+```
+
+Piping multiple operations together in `data.table` is straightforward:
+
+```{r}
+mtcars[vs == 0, .(mpg, cyl, gear)][,.(mean_mpg = mean(mpg)), by = .(cyl, gear)]
+```
+
+
+## `.SD`, `.SDcols`, and `:=`
+
+For slightly more difficult operations, we need to define three new concepts: firstly, the `.SD` variable points to the current *subset of data*. 
+
+```{r}
+mtcars[cyl == 6, .SD]
+```
+
+In above context, the `.SD` doesn't do much. but this special variable is useful when you're doing operations over multiple columns. Using `.SDcols` with `.SD` allows user to specifically *point to columns across the current subset of data*.
+
+```{r}
+mtcars[cyl == 6, .SD, .SDcols = c('disp', 'hp', 'drat')]
+```
+
+This means we can easily perform operations across a subset of columns:
+
+```{r}
+mtcars[, lapply(.SD, mean), by = cyl, .SDcols = c('disp', 'hp', 'drat')]
+```
+
+`.SDcols` is flexible because it also accepts indices:
+
+```{r}
+col_idx <- colnames(mtcars) %in% c('disp', 'hp', 'drat')
+mtcars[, lapply(.SD, mean), by = cyl, .SDcols = col_idx]
+```
+
+Using the `:=` operator allows user to define new columns in one of two ways: firstly, in a simple `LHS := RHS` syntax; this creates a new column but does not print the result to the console.
+
+```{r}
+mtcars[, HpPerMpg := .(hp/mpg)]
+head(mtcars, 10)
+```
+
+This allows users to remove columns by setting the RHS to `NULL`:
+
+```{r, eval=FALSE}
+# not run
+mtcars[, HpPerMpg := NULL]
+```
+
+Subsetting using `i` allows for condition-based operations, similar to `mutate(case_when())` in `dplyr`:
+
+```{r}
+mtcars[cyl == 6, CylThreshold := 'Over 6'][cyl != 6, CylThreshold := 'Under 6']
+head(mtcars, 5)
+```
+
+Secondly, `:=` can be used in a functional form:
+
+```{r}
+mtcars[, `:=`(HpPerMpg = hp/mpg, MpgXCyl = mpg*cyl)]
+head(mtcars, 5)
+```
+
+Combining the `:=` with `by =`:
+
+```{r}
+mtcars[, `:=`(mean_mileage = mean(mpg)), by = .(cyl, vs)]
+head(mtcars, 5)
+```
+
+Combining `.SD` with the `:=` operator:
+
+```{r}
+mtcars[, c('max_disp', 'max_hp', 'max_wt') := lapply(.SD, max), 
+       by = cyl, .SDcols = c('disp', 'hp', 'wt')]
+head(mtcars, 5)
+```
+
+Finally, a strange behaviour is observed when we start making copies of data; for example:
+
+```{r}
+data(iris)
+setDT(iris)
+```
+
+```{r}
+iris2 <- iris
+identical(iris, iris2)
+```
+
+Now see what happens when we change one of the columns in `iris2` using `:=`:
+
+```{r}
+iris2[, Petal.Width := Petal.Width/100]
+iris2
+```
+
+It turns out that changing `iris2` has also changed the original data `iris`:
+
+```{r}
+iris
+```
+
+```{r}
+identical(iris, iris2)
+```
+
+However, if we use `<-` to change one of the columns of `iris2`, the original `iris` data does not change:
+
+```{r}
+iris2$Petal.Length <- iris2$Petal.Length/100
+identical(iris, iris2)
+```
+
+The rationale for this behaviour is well-explained in this stackoverflow [post](https://stackoverflow.com/questions/10225098/understanding-exactly-when-a-data-table-is-a-reference-to-vs-a-copy-of-another), but essentially what happens is that `:=` operator *modifies by reference*. Both `iris2` and `iris` are pointing to the same location after copying initially with `<-`. Thus when we modify the copy of `iris` by reference, there is no need to copy the entire dataset `iris` to alter its copy. On the other hand, changing `iris2` using `<-` will copy the entire thing even if we're only changing just one column. This behaviour is undesirable when we're working with very large data.
+
+To avoid changing the original dataset but still use `:=` to update a copy, `data.table` uses the `copy()` function:
+
+```{r}
+iris3 <- copy(iris)
+iris3[, Petal.Width := Petal.Width/100]
+identical(iris, iris3) # only the iris3 object was changed here
+```
+
+
+## Reshaping data using `melt` and `dcast`
+
+In the first chapter, I briefly touched on `melt()` as an alternative to `tidr::pivot_longer()`. Base R's equivalent `reshape()` is rather clunky to use, so I much prefer the `tidyr` or `data.table` solutions. 
+
+```{r}
+DT <- data.table(
+  Team = c('Tottenham', 'Arsenal', 'Chelsea', 'ManUnited'),
+  Wins = c(7, 3, 4, 6),
+  Goals = c(29, 18, 22, 26),
+  CleanSheets = c(3, 1, 2, 3)
+)
+DT
+```
+
+```{r}
+DT_long <- melt(DT, id.vars = 'Team', measure.vars = c('Wins', 'Goals', 'CleanSheets'),
+                variable.name = 'Stat', value.name = 'Value')
+DT_long
+```
+
+The `data.table` equivalent to `tidyr::pivot_wider()` is `dcast()`; this function takes in a formula as an argument (`~`) where the LHS corresponds to the `id.vars` and the RHS corresponds to the column that originated from the `measure.vars`. Running this yields the original dataset:
+
+```{r}
+dcast(DT_long, Team ~ Stat, value.var = 'Value')
+```
+

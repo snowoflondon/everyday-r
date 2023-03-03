@@ -36,7 +36,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="everyday-data-wrangling.html"/>
-
+<link rel="next" href="interlude-i-a-glimpse-into-data.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -172,6 +172,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.4" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-with-two-inputs"><i class="fa fa-check"></i><b>3.4</b> Iterating with two inputs</a></li>
 <li class="chapter" data-level="3.5" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-indices-and-names"><i class="fa fa-check"></i><b>3.5</b> Iterating over indices and names</a></li>
 <li class="chapter" data-level="3.6" data-path="everyday-iterations.html"><a href="everyday-iterations.html#handling-errors-within-purrr"><i class="fa fa-check"></i><b>3.6</b> Handling errors within <code>purrr</code></a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html"><i class="fa fa-check"></i><b>4</b> Interlude I: a glimpse into <code>data.table</code></a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#data-wrangling-operations"><i class="fa fa-check"></i><b>4.1</b> Data wrangling operations</a></li>
+<li class="chapter" data-level="4.2" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#sd-.sdcols-and"><i class="fa fa-check"></i><b>4.2</b> <code>.SD</code>, <code>.SDcols</code>, and <code>:=</code></a></li>
+<li class="chapter" data-level="4.3" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#reshaping-data-using-melt-and-dcast"><i class="fa fa-check"></i><b>4.3</b> Reshaping data using <code>melt</code> and <code>dcast</code></a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -385,8 +391,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>##  [1] 3 2 0 2 1 4 2 0 2 0</code></pre>
 <p>Or if we want to replace the missing values with the mean:</p>
 <div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="everyday-iterations.html#cb158-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">%&gt;%</span> <span class="fu">map_dbl</span>(<span class="sc">~</span> <span class="fu">replace</span>(., <span class="fu">is.na</span>(.x), <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code></pre></div>
-<pre><code>##  [1] 3.000000 2.000000 2.285714 2.000000 1.000000 4.000000 2.000000 2.285714 2.000000
-## [10] 2.285714</code></pre>
+<pre><code>##  [1] 3.000000 2.000000 2.285714 2.000000 1.000000 4.000000 2.000000 2.285714 2.000000 2.285714</code></pre>
 <p>This can of course be done with a for loop instead:</p>
 <div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="everyday-iterations.html#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)){</span>
 <span id="cb160-2"><a href="everyday-iterations.html#cb160-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.na</span>(x[i]) <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
@@ -395,8 +400,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb160-5"><a href="everyday-iterations.html#cb160-5" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb160-6"><a href="everyday-iterations.html#cb160-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb160-7"><a href="everyday-iterations.html#cb160-7" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div>
-<pre><code>##  [1] 3.000000 2.000000 2.285714 2.000000 1.000000 4.000000 2.000000 2.285714 2.000000
-## [10] 2.285714</code></pre>
+<pre><code>##  [1] 3.000000 2.000000 2.285714 2.000000 1.000000 4.000000 2.000000 2.285714 2.000000 2.285714</code></pre>
 <p>Note that <code>seq_along(x)</code> prints the indices along the length of the vector, as if to write <code>1:length(x)</code>.</p>
 <p>Iterating over a vector of characters requires <code>map_chr()</code> to get the character vector back, but the syntax is the same:</p>
 <div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="everyday-iterations.html#cb162-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;Brian&#39;</span>, <span class="st">&#39;Connor&#39;</span>, <span class="st">&#39;Harry&#39;</span>, <span class="st">&#39;Sonny&#39;</span>)</span>
@@ -711,8 +715,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="everyday-data-wrangling.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="everyday-data-wrangling.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="interlude-i-a-glimpse-into-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

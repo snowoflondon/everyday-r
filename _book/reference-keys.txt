@@ -24,3 +24,7 @@ iterating-over-vectors
 iterating-with-two-inputs
 iterating-over-indices-and-names
 handling-errors-within-purrr
+interlude-i-a-glimpse-into-data.table
+data-wrangling-operations
+sd-.sdcols-and
+reshaping-data-using-melt-and-dcast

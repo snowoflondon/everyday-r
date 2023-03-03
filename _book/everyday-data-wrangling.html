@@ -173,6 +173,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.5" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-indices-and-names"><i class="fa fa-check"></i><b>3.5</b> Iterating over indices and names</a></li>
 <li class="chapter" data-level="3.6" data-path="everyday-iterations.html"><a href="everyday-iterations.html#handling-errors-within-purrr"><i class="fa fa-check"></i><b>3.6</b> Handling errors within <code>purrr</code></a></li>
 </ul></li>
+<li class="chapter" data-level="4" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html"><i class="fa fa-check"></i><b>4</b> Interlude I: a glimpse into <code>data.table</code></a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#data-wrangling-operations"><i class="fa fa-check"></i><b>4.1</b> Data wrangling operations</a></li>
+<li class="chapter" data-level="4.2" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#sd-.sdcols-and"><i class="fa fa-check"></i><b>4.2</b> <code>.SD</code>, <code>.SDcols</code>, and <code>:=</code></a></li>
+<li class="chapter" data-level="4.3" data-path="interlude-i-a-glimpse-into-data.html"><a href="interlude-i-a-glimpse-into-data.html#reshaping-data-using-melt-and-dcast"><i class="fa fa-check"></i><b>4.3</b> Reshaping data using <code>melt</code> and <code>dcast</code></a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -318,21 +324,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="everyday-data-wrangling.html#cb28-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
 <span id="cb28-2"><a href="everyday-data-wrangling.html#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="cf">function</span>(x) x<span class="sc">*</span><span class="dv">2</span>, <span class="at">.names =</span> <span class="st">&quot;double_{col}&quot;</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 32 x 23
-##    CAR            mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb double_mpg
-##    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
-##  1 Mazda RX4     21       6  160    110  3.9   2.62  16.5     0     1     4     4       42  
-##  2 Mazda RX4 W…  21       6  160    110  3.9   2.88  17.0     0     1     4     4       42  
-##  3 Datsun 710    22.8     4  108     93  3.85  2.32  18.6     1     1     4     1       45.6
-##  4 Hornet 4 Dr…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1       42.8
-##  5 Hornet Spor…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2       37.4
-##  6 Valiant       18.1     6  225    105  2.76  3.46  20.2     1     0     3     1       36.2
-##  7 Duster 360    14.3     8  360    245  3.21  3.57  15.8     0     0     3     4       28.6
-##  8 Merc 240D     24.4     4  147.    62  3.69  3.19  20       1     0     4     2       48.8
-##  9 Merc 230      22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2       45.6
-## 10 Merc 280      19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4       38.4
+##    CAR              mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb double_mpg
+##    &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Mazda RX4       21       6  160    110  3.9   2.62  16.5     0     1     4     4       42  
+##  2 Mazda RX4 Wag   21       6  160    110  3.9   2.88  17.0     0     1     4     4       42  
+##  3 Datsun 710      22.8     4  108     93  3.85  2.32  18.6     1     1     4     1       45.6
+##  4 Hornet 4 Drive  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1       42.8
+##  5 Hornet Sporta…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2       37.4
+##  6 Valiant         18.1     6  225    105  2.76  3.46  20.2     1     0     3     1       36.2
+##  7 Duster 360      14.3     8  360    245  3.21  3.57  15.8     0     0     3     4       28.6
+##  8 Merc 240D       24.4     4  147.    62  3.69  3.19  20       1     0     4     2       48.8
+##  9 Merc 230        22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2       45.6
+## 10 Merc 280        19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4       38.4
 ## # … with 22 more rows, and 10 more variables: double_cyl &lt;dbl&gt;, double_disp &lt;dbl&gt;,
-## #   double_hp &lt;dbl&gt;, double_drat &lt;dbl&gt;, double_wt &lt;dbl&gt;, double_qsec &lt;dbl&gt;,
-## #   double_vs &lt;dbl&gt;, double_am &lt;dbl&gt;, double_gear &lt;dbl&gt;, double_carb &lt;dbl&gt;</code></pre>
+## #   double_hp &lt;dbl&gt;, double_drat &lt;dbl&gt;, double_wt &lt;dbl&gt;, double_qsec &lt;dbl&gt;, double_vs &lt;dbl&gt;,
+## #   double_am &lt;dbl&gt;, double_gear &lt;dbl&gt;, double_carb &lt;dbl&gt;</code></pre>
 <p>You can overwrite the existing columns completely; also keep in mind that you can pass any function within <code>across()</code> as such:</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="everyday-data-wrangling.html#cb30-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mpg, disp), <span class="cf">function</span>(x) x<span class="sc">*</span><span class="dv">3</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 32 x 12
@@ -776,8 +782,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## # A tibble: 2 x 4
 ##   name   coffee  wine juice
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;
-## 1 Brian       6     4     4
-## 2 Connor      7     3     3</code></pre>
+## 1 Brian       1     5     3
+## 2 Connor      8     1     2</code></pre>
 <p>Sometimes it’s useful to run calculations in a row-wise fashion; for example using <code>mutate()</code> with the helper function <code>c_across()</code>:</p>
 <div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="everyday-data-wrangling.html#cb91-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)),</span>
 <span id="cb91-2"><a href="everyday-data-wrangling.html#cb91-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">avg =</span> <span class="fu">mean</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)))</span></code></pre></div>
@@ -785,8 +791,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## # Rowwise: 
 ##   name   coffee  wine juice total   avg
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
-## 1 Brian       6     4     4    14  4.67
-## 2 Connor      7     3     3    13  4.33</code></pre>
+## 1 Brian       1     5     3     9  3   
+## 2 Connor      8     1     2    11  3.67</code></pre>
 <p>Calculating the proportions using a combination of row-wise and column-wise operations with <code>c_across()</code> and <code>across()</code>:</p>
 <div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="everyday-data-wrangling.html#cb93-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice))) <span class="sc">%&gt;%</span></span>
 <span id="cb93-2"><a href="everyday-data-wrangling.html#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
@@ -795,8 +801,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## # A tibble: 2 x 8
 ##   name   coffee  wine juice total coffee_prop. wine_prop. juice_prop.
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
-## 1 Brian       6     4     4    14        0.429      0.286       0.286
-## 2 Connor      7     3     3    13        0.538      0.231       0.231</code></pre>
+## 1 Brian       1     5     3     9        0.111     0.556        0.333
+## 2 Connor      8     1     2    11        0.727     0.0909       0.182</code></pre>
 </div>
 <div id="conditional-transformation" class="section level2 hasAnchor" number="2.11">
 <h2><span class="header-section-number">2.11</span> Conditional transformation<a href="everyday-data-wrangling.html#conditional-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -806,18 +812,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb95-3"><a href="everyday-data-wrangling.html#cb95-3" aria-hidden="true" tabindex="-1"></a>            mpg <span class="sc">&lt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&#39;Low&#39;</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb95-4"><a href="everyday-data-wrangling.html#cb95-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(mileage_class, <span class="at">.after =</span> mpg)</span></code></pre></div>
 <pre><code>## # A tibble: 32 x 13
-##    CAR         mpg mileage_class   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
-##    &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda RX4  21   High              6  160    110  3.9   2.62  16.5     0     1     4     4
-##  2 Mazda RX…  21   High              6  160    110  3.9   2.88  17.0     0     1     4     4
-##  3 Datsun 7…  22.8 High              4  108     93  3.85  2.32  18.6     1     1     4     1
-##  4 Hornet 4…  21.4 High              6  258    110  3.08  3.22  19.4     1     0     3     1
-##  5 Hornet S…  18.7 Low               8  360    175  3.15  3.44  17.0     0     0     3     2
-##  6 Valiant    18.1 Low               6  225    105  2.76  3.46  20.2     1     0     3     1
-##  7 Duster 3…  14.3 Low               8  360    245  3.21  3.57  15.8     0     0     3     4
-##  8 Merc 240D  24.4 High              4  147.    62  3.69  3.19  20       1     0     4     2
-##  9 Merc 230   22.8 High              4  141.    95  3.92  3.15  22.9     1     0     4     2
-## 10 Merc 280   19.2 Low               6  168.   123  3.92  3.44  18.3     1     0     4     4
+##    CAR           mpg mileage_class   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda RX4    21   High              6  160    110  3.9   2.62  16.5     0     1     4     4
+##  2 Mazda RX4 …  21   High              6  160    110  3.9   2.88  17.0     0     1     4     4
+##  3 Datsun 710   22.8 High              4  108     93  3.85  2.32  18.6     1     1     4     1
+##  4 Hornet 4 D…  21.4 High              6  258    110  3.08  3.22  19.4     1     0     3     1
+##  5 Hornet Spo…  18.7 Low               8  360    175  3.15  3.44  17.0     0     0     3     2
+##  6 Valiant      18.1 Low               6  225    105  2.76  3.46  20.2     1     0     3     1
+##  7 Duster 360   14.3 Low               8  360    245  3.21  3.57  15.8     0     0     3     4
+##  8 Merc 240D    24.4 High              4  147.    62  3.69  3.19  20       1     0     4     2
+##  9 Merc 230     22.8 High              4  141.    95  3.92  3.15  22.9     1     0     4     2
+## 10 Merc 280     19.2 Low               6  168.   123  3.92  3.44  18.3     1     0     4     4
 ## # … with 22 more rows</code></pre>
 <p>In cases where we’re working with character columns, it’s useful to use <code>grepl</code> to match specific strings. After all, formula within <code>case_when()</code> needs to evaluate to a boolean on the left-hand side (e.g., <code>mpg &gt; 20</code>). Additionally, in cases where the condition is not specified or met, you can use <code>TRUE ~</code> within <code>case_when()</code> as such:</p>
 <div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="everyday-data-wrangling.html#cb97-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">CAR =</span> <span class="fu">case_when</span>(<span class="fu">grepl</span>(<span class="st">&#39;Merc&#39;</span>, CAR) <span class="sc">~</span> <span class="fu">toupper</span>(CAR), <span class="cn">TRUE</span> <span class="sc">~</span> CAR))</span></code></pre></div>
@@ -841,18 +847,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb99-3"><a href="everyday-data-wrangling.html#cb99-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb99-4"><a href="everyday-data-wrangling.html#cb99-4" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(mtcars, <span class="at">select =</span> <span class="fu">c</span>(CAR, mpg, mileage_class, cyl<span class="sc">:</span>carb))</span></code></pre></div>
 <pre><code>## # A tibble: 32 x 13
-##    CAR         mpg mileage_class   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
-##    &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda RX4  21   High              6  160    110  3.9   2.62  16.5     0     1     4     4
-##  2 Mazda RX…  21   High              6  160    110  3.9   2.88  17.0     0     1     4     4
-##  3 Datsun 7…  22.8 High              4  108     93  3.85  2.32  18.6     1     1     4     1
-##  4 Hornet 4…  21.4 High              6  258    110  3.08  3.22  19.4     1     0     3     1
-##  5 Hornet S…  18.7 Low               8  360    175  3.15  3.44  17.0     0     0     3     2
-##  6 Valiant    18.1 Low               6  225    105  2.76  3.46  20.2     1     0     3     1
-##  7 Duster 3…  14.3 Low               8  360    245  3.21  3.57  15.8     0     0     3     4
-##  8 Merc 240D  24.4 High              4  147.    62  3.69  3.19  20       1     0     4     2
-##  9 Merc 230   22.8 High              4  141.    95  3.92  3.15  22.9     1     0     4     2
-## 10 Merc 280   19.2 Low               6  168.   123  3.92  3.44  18.3     1     0     4     4
+##    CAR           mpg mileage_class   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda RX4    21   High              6  160    110  3.9   2.62  16.5     0     1     4     4
+##  2 Mazda RX4 …  21   High              6  160    110  3.9   2.88  17.0     0     1     4     4
+##  3 Datsun 710   22.8 High              4  108     93  3.85  2.32  18.6     1     1     4     1
+##  4 Hornet 4 D…  21.4 High              6  258    110  3.08  3.22  19.4     1     0     3     1
+##  5 Hornet Spo…  18.7 Low               8  360    175  3.15  3.44  17.0     0     0     3     2
+##  6 Valiant      18.1 Low               6  225    105  2.76  3.46  20.2     1     0     3     1
+##  7 Duster 360   14.3 Low               8  360    245  3.21  3.57  15.8     0     0     3     4
+##  8 Merc 240D    24.4 High              4  147.    62  3.69  3.19  20       1     0     4     2
+##  9 Merc 230     22.8 High              4  141.    95  3.92  3.15  22.9     1     0     4     2
+## 10 Merc 280     19.2 Low               6  168.   123  3.92  3.44  18.3     1     0     4     4
 ## # … with 22 more rows</code></pre>
 </div>
 <div id="missing-values" class="section level2 hasAnchor" number="2.12">
@@ -863,74 +869,74 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb101-2"><a href="everyday-data-wrangling.html#cb101-2" aria-hidden="true" tabindex="-1"></a>  {x[<span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">NA</span>), <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.01</span>), <span class="at">size =</span> <span class="fu">length</span>(x), <span class="at">replace =</span> <span class="cn">TRUE</span>)]})</span>
 <span id="cb101-3"><a href="everyday-data-wrangling.html#cb101-3" aria-hidden="true" tabindex="-1"></a>mtcars_NA</span></code></pre></div>
 <pre><code>## # A tibble: 32 x 13
-##    CAR         mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb mileage_class
-##    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
-##  1 Mazda RX4  21       6  160    110  3.9   2.62  16.5     0     1     4     4 High         
-##  2 Mazda RX…  21       6  160    110  3.9   2.88  17.0     0     1     4     4 High         
-##  3 Datsun 7…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1 High         
-##  4 Hornet 4…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 High         
-##  5 Hornet S…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2 Low          
-##  6 Valiant    18.1     6  225    105  2.76  3.46  20.2    NA     0     3     1 Low          
-##  7 Duster 3…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4 Low          
-##  8 Merc 240D  24.4     4  147.    62  3.69  3.19  20       1     0     4     2 High         
-##  9 Merc 230   22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2 High         
-## 10 Merc 280   19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4 Low          
+##    CAR           mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb mileage_class
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+##  1 Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4 High         
+##  2 Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4 High         
+##  3 Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1    NA     1 High         
+##  4 Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 High         
+##  5 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2 Low          
+##  6 Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0    NA     1 Low          
+##  7 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4 Low          
+##  8 Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2 High         
+##  9 Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2 High         
+## 10 Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4 Low          
 ## # … with 22 more rows</code></pre>
 <p>Remove rows where any NA occurs:</p>
 <div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="everyday-data-wrangling.html#cb103-1" aria-hidden="true" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span></code></pre></div>
-<pre><code>## # A tibble: 29 x 13
-##    CAR         mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb mileage_class
-##    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
-##  1 Mazda RX4  21       6  160    110  3.9   2.62  16.5     0     1     4     4 High         
-##  2 Mazda RX…  21       6  160    110  3.9   2.88  17.0     0     1     4     4 High         
-##  3 Datsun 7…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1 High         
-##  4 Hornet 4…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 High         
-##  5 Hornet S…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2 Low          
-##  6 Duster 3…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4 Low          
-##  7 Merc 240D  24.4     4  147.    62  3.69  3.19  20       1     0     4     2 High         
-##  8 Merc 230   22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2 High         
-##  9 Merc 280   19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4 Low          
-## 10 Merc 280C  17.8     6  168.   123  3.92  3.44  18.9     1     0     4     4 Low          
-## # … with 19 more rows</code></pre>
+<pre><code>## # A tibble: 27 x 13
+##    CAR           mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb mileage_class
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+##  1 Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4 High         
+##  2 Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4 High         
+##  3 Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 High         
+##  4 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2 Low          
+##  5 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4 Low          
+##  6 Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2 High         
+##  7 Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2 High         
+##  8 Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4 Low          
+##  9 Merc 450SE   16.4     8  276.   180  3.07  4.07  17.4     0     0     3     3 Low          
+## 10 Merc 450SL   17.3     8  276.   180  3.07  3.73  17.6     0     0     3     3 Low          
+## # … with 17 more rows</code></pre>
 <p>Identify columns with NAs and the number of occurrences:</p>
 <div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="everyday-data-wrangling.html#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vapply</span>(mtcars_NA, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##           CAR           mpg           cyl          disp            hp          drat 
-##             0             0             0             1             1             0 
+##             0             0             0             0             0             0 
 ##            wt          qsec            vs            am          gear          carb 
-##             0             0             1             0             0             0 
+##             0             0             0             0             5             0 
 ## mileage_class 
 ##             0</code></pre>
 <p>Remove columns with more than one missing value:</p>
 <div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="everyday-data-wrangling.html#cb107-1" aria-hidden="true" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">where</span>(<span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)) <span class="sc">&lt;</span> <span class="dv">1</span>))</span></code></pre></div>
-<pre><code>## # A tibble: 32 x 10
-##    CAR                 mpg   cyl  drat    wt  qsec    am  gear  carb mileage_class
-##    &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
-##  1 Mazda RX4          21       6  3.9   2.62  16.5     1     4     4 High         
-##  2 Mazda RX4 Wag      21       6  3.9   2.88  17.0     1     4     4 High         
-##  3 Datsun 710         22.8     4  3.85  2.32  18.6     1     4     1 High         
-##  4 Hornet 4 Drive     21.4     6  3.08  3.22  19.4     0     3     1 High         
-##  5 Hornet Sportabout  18.7     8  3.15  3.44  17.0     0     3     2 Low          
-##  6 Valiant            18.1     6  2.76  3.46  20.2     0     3     1 Low          
-##  7 Duster 360         14.3     8  3.21  3.57  15.8     0     3     4 Low          
-##  8 Merc 240D          24.4     4  3.69  3.19  20       0     4     2 High         
-##  9 Merc 230           22.8     4  3.92  3.15  22.9     0     4     2 High         
-## 10 Merc 280           19.2     6  3.92  3.44  18.3     0     4     4 Low          
+<pre><code>## # A tibble: 32 x 12
+##    CAR                 mpg   cyl  disp    hp  drat    wt  qsec    vs    am  carb mileage_class
+##    &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+##  1 Mazda RX4          21       6  160    110  3.9   2.62  16.5     0     1     4 High         
+##  2 Mazda RX4 Wag      21       6  160    110  3.9   2.88  17.0     0     1     4 High         
+##  3 Datsun 710         22.8     4  108     93  3.85  2.32  18.6     1     1     1 High         
+##  4 Hornet 4 Drive     21.4     6  258    110  3.08  3.22  19.4     1     0     1 High         
+##  5 Hornet Sportabout  18.7     8  360    175  3.15  3.44  17.0     0     0     2 Low          
+##  6 Valiant            18.1     6  225    105  2.76  3.46  20.2     1     0     1 Low          
+##  7 Duster 360         14.3     8  360    245  3.21  3.57  15.8     0     0     4 Low          
+##  8 Merc 240D          24.4     4  147.    62  3.69  3.19  20       1     0     2 High         
+##  9 Merc 230           22.8     4  141.    95  3.92  3.15  22.9     1     0     2 High         
+## 10 Merc 280           19.2     6  168.   123  3.92  3.44  18.3     1     0     4 Low          
 ## # … with 22 more rows</code></pre>
 <p>Replace missing values with zero using <code>tidyr::replace_na</code>:</p>
 <div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="everyday-data-wrangling.html#cb109-1" aria-hidden="true" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">map_dfc</span>(<span class="sc">~</span> <span class="fu">replace_na</span>(.x, <span class="dv">0</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 32 x 13
-##    CAR         mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb mileage_class
-##    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
-##  1 Mazda RX4  21       6  160    110  3.9   2.62  16.5     0     1     4     4 High         
-##  2 Mazda RX…  21       6  160    110  3.9   2.88  17.0     0     1     4     4 High         
-##  3 Datsun 7…  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1 High         
-##  4 Hornet 4…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 High         
-##  5 Hornet S…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2 Low          
-##  6 Valiant    18.1     6  225    105  2.76  3.46  20.2     0     0     3     1 Low          
-##  7 Duster 3…  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4 Low          
-##  8 Merc 240D  24.4     4  147.    62  3.69  3.19  20       1     0     4     2 High         
-##  9 Merc 230   22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2 High         
-## 10 Merc 280   19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4 Low          
+##    CAR           mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb mileage_class
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+##  1 Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1     4     4 High         
+##  2 Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1     4     4 High         
+##  3 Datsun 710   22.8     4  108     93  3.85  2.32  18.6     1     1     0     1 High         
+##  4 Hornet 4 D…  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1 High         
+##  5 Hornet Spo…  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2 Low          
+##  6 Valiant      18.1     6  225    105  2.76  3.46  20.2     1     0     0     1 Low          
+##  7 Duster 360   14.3     8  360    245  3.21  3.57  15.8     0     0     3     4 Low          
+##  8 Merc 240D    24.4     4  147.    62  3.69  3.19  20       1     0     4     2 High         
+##  9 Merc 230     22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2 High         
+## 10 Merc 280     19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4 Low          
 ## # … with 22 more rows</code></pre>
 <p>Base R and using <code>is.na()</code> instead:</p>
 <div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="everyday-data-wrangling.html#cb111-1" aria-hidden="true" tabindex="-1"></a>mtcars_NA[<span class="fu">is.na</span>(mtcars_NA)] <span class="ot">&lt;-</span> <span class="dv">0</span></span></code></pre></div>
