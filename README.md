@@ -9,7 +9,7 @@ The book can be accessed here: https://bookdown.org/brianjmpark/everydayR/
 #### 1. [Introduction](https://bookdown.org/brianjmpark/everydayR/)
 #### 2. [Everyday data wrangling](https://bookdown.org/brianjmpark/everydayR/everyday-data-wrangling.html) 
 #### 3. [Everyday iterations](https://bookdown.org/brianjmpark/everydayR/everyday-iterations.html)
-#### 4. [Interlude I: A brief glimpse into `data.table`](https://bookdown.org/brianjmpark/everydayR/interlude-i-a-glimpse-into-data.html#interlude-i-a-glimpse-into-data.table)
+#### 4. [Interlude I: A brief glimpse into `data.table`](https://bookdown.org/brianjmpark/everydayR/interlude-i-a-brief-glimpse-into-data.html)
 
 ## R version
 ```{R
