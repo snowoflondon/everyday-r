@@ -28,3 +28,10 @@ interlude-i-a-brief-glimpse-into-data.table
 data-wrangling-operations
 sd-.sdcols-and
 reshaping-data-using-melt-and-dcast
+everyday-ml-classification
+model-training-and-predictions
+feature-selection-using-univariate-filters
+feature-selection-using-recursive-feature-elimination
+hyperparameter-tuning
+roc-and-precision-recall-curves
+model-comparisons

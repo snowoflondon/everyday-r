@@ -42,6 +42,20 @@ Finally, here is the R version I am currently using:
 version
 ```
 
+## R packages commonly used in this book
+
+* `tidyverse`: a collection of packages for data science, including `dplyr`, `purrr`, `stringr`, `forcats`, `readr`, and `ggplot`.
+
+* `caret`: package for implementation of machine learning models, with support for algorithms such as `ranger`, `rpart`, `xgbTree`, and `svmLinear`.
+
+* `broom`: package for summarizing of model estimates.
+
+* `Shiny`: package for implementation and designing of interactive web apps.
+
+## Installing R packages
+
+R packages found in this book are available on CRAN and thus can be installed simply by running `install.packages()`. For packages not on CRAN (or if you want to download developmental versions of a package), you can install packages straight from a GitHub repository by running `devtools::install_github()`. 
+
 ## Code availability
 
 All code used to compile this book as well as the individual .Rmd files are available on my repository [here](https://github.com/snowoflondon/everyday-r)
