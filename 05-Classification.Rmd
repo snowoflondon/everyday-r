@@ -1,0 +1,419 @@
+# Everyday ML: Classification
+
+In the preceeding chapters, I reviewed the fundamentals of wrangling data as well as running some exploratory data analysis to get a feel for the data at hand. In data science projects, it is often typical to frame problems in context of a model - how does a variable *y* behave according to some other variable *x*? For example, how does the pricing of a residential property behave according to the square footage? Is the relationship linear? Are there confounding variables that affect this relationship we have not accounted for?
+
+In the simplest sense, fitting a linear model using ordinary least squares using `lm()` in R provide us with two parameters: the coefficient and the intercept. We can use these parameters to predict the housing price of a property based on the input *feature* - or *features* most likely - of that particular instance. This is the fundamental concept at the core of supervised learning. This example is a type of a *regression* as the target variable (i.e., the housing price) is a continuous variable. However, if the variable we were trying to predict is categorical (e.g., bins based on the bracket of housing price) the task would be *classification*.
+
+The digression into concepts in ML and the details into each algorithm is beyond the scope of this book, but more details around specific topics are available on my [blog](https://brianjmpark.github.io/) as well as documentation for popular ML packages such as Python's [Scikit-Learn](https://scikit-learn.org/stable/). 
+
+In R, the workhorse of supervised learning models, whether it's classification or regression, is the `caret` package.
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(caret)
+```
+
+
+## Model training and predictions
+
+For the first exercise I will use a dataset from Kaggle [here](https://www.kaggle.com/datasets/kkhandekar/all-datasets-for-practicing-ml) which I also uploaded onto my GitHub for reference:
+
+```{r, warning=FALSE}
+url <- 'https://raw.githubusercontent.com/snowoflondon/everyday-r/main/datasets/Class_Winequality.csv'
+df <- read_delim(url, delim = ';')
+head(df)
+```
+
+This dataset has 11 features and a target label column called `quality`. Firstly, I convert the `quality` column into factors to reiterate the fact that we are working with a categorical column with defined levels.
+
+```{r}
+df <- df %>% mutate(quality = factor(quality)) %>% relocate(quality)
+```
+
+A glimpse into the 11 features shows us that the values are heterogenous in scale:
+
+```{r}
+summary(df %>% select(-quality))
+```
+
+For a quick exploratory analysis, take a look at the distribution of the features and their scales (i.e., y-axis). Typically in ML tasks, the scales need to be preprocessed prior to model training. This isn't necessarily the case in models like the random forest, for example, but it is good practice regardless. I will circle back to this in a bit.
+
+```{r}
+library(RColorBrewer)
+dfm <- df %>% pivot_longer(-quality, names_to = 'feature', 
+               values_to = 'values')
+
+dfm %>% ggplot(aes(x = quality, y = values)) + 
+  geom_boxplot(aes(fill = quality), alpha = .6) + 
+  facet_wrap(~ feature, scales = 'free') + theme_bw() + 
+  theme(legend.position = 'none') + 
+  scale_fill_brewer(palette = 'Set1')
+```
+
+Before doing any kind of preprocessing or normalization, it is imperative to split the data into training and testing to prevent information leak. The `createDataPartition()` function accepts the `p = ` argument which defines the split fraction. Here I use 80/20 split.
+
+```{r}
+set.seed(42)
+df <- df %>% mutate(quality = paste0('Group_', quality)) %>%
+  mutate(quality = factor(quality))
+
+idx <- createDataPartition(y = df$quality, p = .8,
+                           list = FALSE, times = 1)
+
+df_train <- df[idx,]
+df_test <- df[-idx,]
+```
+
+The `createDataPartition()` outputs an array of indices which can be used to split the original data.
+
+Going back to the talk of scaling and preprocessing the data: a common procedure is to `center` and `scale`, that is - subtract the mean and divide by the standard deviation. If you're familiar with `scikit-learn` in Python, this is analogous to running `StandardScaler()`. 
+
+```{r}
+preProcObj <- preProcess(df_train, method = c('center', 'scale'))
+preProcObj
+```
+
+Evidently, the `preProcess()` function recognized the column containing the target labels and ignored it for preprocessing. 
+
+Preprocessing is done on the training data and the learned object is applied to both the training and testing data:
+
+```{r}
+df_train <- predict(preProcObj, df_train)
+df_test <- predict(preProcObj, df_test)
+```
+
+Revisiting the features now shows the effect of the preprocessing step:
+
+```{r}
+summary(df_train %>% select(-quality))
+```
+
+The scales have been normalized, as evident here:
+
+```{r}
+df_train %>% pivot_longer(-quality, names_to = 'feature',
+                          values_to = 'values') %>%
+  ggplot(aes(x = quality, y = values)) +
+  geom_boxplot(aes(fill = quality), alpha = .6) +
+  facet_wrap(~ feature, scales = 'free') + theme_bw() +
+  theme(legend.position = 'none') + 
+  scale_fill_brewer(palette = 'Set1')
+```
+
+Once we're ready to train the model, an important function is `trainControl()`. Here, typically we define the sampling method for the model training. I am using `method = cv` with `number = 5` for k-fold cross-validation with 5 folds. Alternatively, I could use `method = repeatedcv` with `number = 5` and `repeats = 5` for repeated cross-validation with 5 iterations, but for this exercise I will settle with the simple 5-fold cross validation.
+
+```{r}
+tr <- trainControl(method = 'cv',
+                   number = 5,
+                   classProbs = TRUE)
+
+model <- train(quality ~ ., data = df_train,
+               method = 'ranger', importance = 'impurity',
+               trControl = tr)
+```
+
+Above, I defined `method = ranger` within `train()`, which is a wrapper for training a random forest model. For all available methods for `train()`, see `caret`'s documentation [here](https://topepo.github.io/caret/train-models-by-tag.html). The `importance = 'impurity'` asks the model to use the Gini impurity method to rank variable importance. This will be useful later.
+
+Calling the model object summarizes the model's performance on the validation set (i.e., hold-out sets during k-fold cross validation).
+
+```{r}
+model
+```
+
+Various hyperparametes were tested and the combination with the highest validation accuracy was chosen:
+
+```{r}
+model$bestTune
+```
+
+The performance on the resamples during the cross validation process can be found here:
+
+```{r}
+model$resample
+```
+
+The testing dataset has not been touched at all during model training. For model evaluation, above model is tested on this hold-out set using `predict()`:
+
+```{r}
+pred <- predict(model, df_test)
+```
+
+For a clean summary of model evaluation, use `confusionMatrix()`:
+
+```{r}
+confusionMatrix(data = pred, reference = df_test$quality, 
+                mode = 'prec_recall')
+```
+
+Certain models such as the random forest have built-in feature importance. During model training, I defined `importance = 'impurity'`, which means that the feature importance is calculated using the mean decrease in impurity after permutation of a given feature. Accessing this information is useful when we want to know which variables have the greatest influence on model performance and conversely, which ones have the least.
+
+```{r}
+varImp(model)$importance
+```
+
+The variable importance score is automatically scaled so that the highest score is set to 100. This can be turned off using `scale = FALSE` within `varImp()`.
+
+A quick visualization of variable importance is useful:
+
+```{r}
+df_imp <- varImp(model)$importance %>% 
+  rownames_to_column(var = 'Var') %>%
+  as_tibble() %>% arrange(desc(Overall))
+
+ggplot(df_imp, aes(x = reorder(Var, Overall), y = Overall)) + 
+  geom_point(stat = 'identity', color = 'red') + 
+  geom_segment(aes(x = reorder(Var, Overall), 
+                   xend = reorder(Var, Overall),
+                   y = 0,
+                   yend = Overall)) + 
+  theme_classic() + coord_flip() + xlab('') + ylab('Var. Imp.') +
+  theme(text = element_text(size = 14))
+```
+
+
+## Feature selection using univariate filters
+
+When the dataset is considerably larger, the number of *n* features may grow extremely large. In these scenarios, it may be advisable to reduce the number of features to save computation time but also to reduce model complexity. 
+
+Of course, dimensionality reduction is possible, though this transforms the data and the original meaning of the features is lost. An alternative method is *feature selection* - selecting important features and discarding unimportant ones. This relates specifically to the concept of feature importance in the previous section.
+
+`caret` offers a simple way to rank features when built-in feature importance measures are not available. This is by using univariate filters, which are essentially fitting *n* individual models (where *n* is the number of features) against the target label and ranking them based on their statistical significance.
+
+`anoveScores()` is used for classification models and fits an ANOVA for each feature against the label. The null hypothesis here assumes the mean values for each feature is equal for all labels. `gamScores()` is used for regression models and uses a generalized additive model to look for functional relationships between the features and the label. In both cases, each feature in the predictor set is passed individually.
+
+For this part I will use the `Sonar` dataset from `mlbench`.
+
+```{r}
+library(mlbench)
+data(Sonar)
+Sonar <- as_tibble(Sonar)
+Sonar
+```
+
+The target labels in `Sonar` has two classes:
+
+```{r}
+Sonar$Class %>% str()
+```
+
+Since this is a classification task, I will use `anovaScores()` to output a score for each feature.
+
+```{r}
+fit_anova <- function(x, y) {
+    anova_res <- apply(x, 2, function(f) {anovaScores(f, y)})
+    return(anova_res)
+}
+
+aov_res <- fit_anova(x = select(Sonar, -Class), 
+                     y = Sonar$Class)
+
+aov_res <- as.data.frame(aov_res)
+head(aov_res)
+```
+
+The output for each feature is the p-value for the whole model F-test. These can be ranked to find the features with the greatest degree of relationship with the target labels:
+
+```{r}
+aov_res <- aov_res %>% rownames_to_column(var = 'Var') %>%
+  as_tibble() %>% rename(pVal = aov_res) %>% arrange(aov_res)
+
+aov_res
+```
+
+
+## Feature selection using recursive feature elimination
+
+An alternative method for feature selection is recursive feature elimination (RFE). RFE is a wrapper method that uses another model to rank features based on variable importance. This model does not have to be the same model used in the downstream model prediction task. 
+
+The feature importance ranking method depends which model the RFE wrapper uses. Tree models such as the random forest, as previous mentioned, can use impurity scores or mean accuracy decrease to calculate this.
+
+The `rfeControl()` function specifies the RFE model as well as the resampling method. Then `rfe()` runs the algorithm to identify important features as well as the model accuracy as the RFE recursively removes the less important features and trains the model.
+
+```{r}
+rfec <- rfeControl(functions = rfFuncs, method = 'cv',
+                  number = 5)
+
+rfeObj <- rfe(x = select(Sonar, -Class), y = Sonar$Class,
+              rfeControl = rfec)
+```
+
+Calling the output shows that the top 5 most important features show overlap with the result from `anovaScores()` from the previous section, which is good. It also shows that keeping the original 60 features here shows the best model accuracy, which is fine. This won't always be the case with increasing number of dimensions in the data.
+
+```{r}
+rfeObj
+```
+
+The fitted model and its performance can be retrieved as such:
+
+```{r}
+rfeObj$fit
+```
+
+The ranking of the features can be retreived here, which is useful if we were to select the first few and subset our original dataset:
+
+```{r}
+rfeObj$optVariables
+```
+
+Calling `ggplot()` on the RFE result provides a visual look:
+
+```{r}
+ggplot(rfeObj) + theme_bw()
+```
+
+
+## Hyperparameter tuning
+
+Previously when we trained the random forest model using `train()`, it automatically deduced the optimal values for the model hyperparameters. Under the hood, `train()` ran a grid search to find these values, but we can define our own grid as well.
+
+Hyperparameter tuning should of course be done on the training set, so I will use the `Sonar` dataset to arrive at the training and testing sets:
+
+```{r}
+idx <- createDataPartition(y = Sonar$Class, p = .8,
+                           list = FALSE, times = 1)
+
+df_train <- Sonar[idx,]
+df_test <- Sonar[-idx,]
+
+preProcObj <- preProcess(df_train, method = c('center', 'scale'))
+df_train <- predict(preProcObj, df_train)
+df_test <- predict(preProcObj, df_test)
+```
+
+For the random forest model, I define the possible values for the three hyperparameters as such, and then train by providing an input for `tuneGrid = `.
+
+```{r}
+rf_grid <- expand.grid(mtry = c(2, 4, 8, 10), 
+                       splitrule = c("gini", "extratrees"), 
+                       min.node.size = c(1, 3, 5))
+
+model_rf <- train(Class ~ ., data = df_train, method = 'ranger',
+                    importance = 'impurity', trControl = tr,
+                    tuneGrid = rf_grid)
+```
+
+Calling the model then shows the model performance (with the specified resampling method) for each combination of the grid search:
+
+```{r}
+model_rf
+```
+
+As before, the best set of hyperparameters can be retrieved:
+
+```{r}
+model_rf$bestTune
+```
+
+Instead of a predefined grid search, we can do a randomized search instead. This can be done by setting `search = 'random'` within `trainControl()` first and then specifying `tuneLength = ` in `train()`. 
+
+Since we've only used random forest models so far, here I will do a similar grid search but using a support vector machine (SVM) with the radial basis function kernel instead:
+
+```{r}
+tr_svm <- trainControl(method = 'cv',
+                   number = 5,
+                   classProbs = TRUE,
+                   search = 'random')
+
+model_svm <- train(Class ~ ., data = df_train, 
+                   method = 'svmRadial',
+                   trControl = tr_svm, 
+                   tunelength = 8)
+```
+
+Calling the model shows the best combination for `C` (cost) and `sigma` based on the model accuracy:
+
+```{r}
+model_svm
+```
+
+
+## ROC and precision-recall curves
+
+A nice way to visualize model evaluation is by using ROC curves, which uses metrics that were already calculated previously - precision and recall. 
+
+For this I will generate predictions for the random forest model using `Sonar`. Setting `type = 'prob'` yields probabilities for each label classification instead of the label itself:
+
+```{r}
+pred <- predict(model_rf, df_test, type = 'prob')
+head(pred)
+```
+
+The package `MLeval` can be used to generate ROC curves as such; here we achieve the ROC area under the curve of 0.96.
+
+```{r, warning=FALSE}
+library(MLeval)
+roc_rf <- evalm(data.frame(pred, df_test$Class, Group = 'RF'), 
+                showplots = FALSE, silent = TRUE)
+roc_rf$roc
+```
+
+Similarly, a precision-recall curve can also be visualized. This curve shows the tradeoff between the two metrics for each threshold. 
+
+```{r}
+roc_rf$proc
+```
+
+The values can be retrieved here:
+
+```{r}
+roc_rf$optres
+```
+
+For completeness I will make these figures for the SVM model as well:
+
+```{r}
+pred2 <- predict(model_svm, df_test, type = 'prob')
+```
+
+```{r}
+roc_svm <- evalm(data.frame(pred2, df_test$Class, Group = 'SVM'), 
+                showplots = FALSE, silent = TRUE)
+roc_svm$roc
+```
+
+```{r}
+roc_svm$proc
+```
+
+
+## Model comparisons
+
+`caret` provides an elegant way to compare the performance of multiple models for model selection. We have two models trained on `Sonar` dataset already, so I will train two more.
+
+Here I am using a gradient boosted machine (`gbm`) and a k-nearest neighbors (`knn`).
+
+```{r}
+# model_rf
+# model_svm
+model_gbm <- train(Class ~., data = df_train, 
+                   method = 'gbm', trControl = tr, 
+                   verbose = FALSE)
+
+model_knn <- train(Class ~ ., data = df_train,
+                   method = 'knn', trControl = tr)
+```
+
+```{r}
+model_gbm
+```
+
+```{r}
+model_knn
+```
+
+Both accuracy and kappa are then used to compare the model performance across the four models:
+
+```{r}
+comps <- resamples(
+  list(RF = model_rf, SVM = model_svm, GBM = model_gbm, 
+       KNN = model_knn)
+  )
+
+summary(comps)
+```
+
+And finally, a quick visualization at the model performance comparisons:
+
+```{r}
+dotplot(comps)
+```
