@@ -36,7 +36,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="everyday-iterations.html"/>
-<link rel="next" href="everyday-ml-classification.html"/>
+<link rel="next" href="everyday-exploratory-data-analysis.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -179,14 +179,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2" data-path="interlude-i-a-brief-glimpse-into-data.html"><a href="interlude-i-a-brief-glimpse-into-data.html#sd-.sdcols-and"><i class="fa fa-check"></i><b>4.2</b> <code>.SD</code>, <code>.SDcols</code>, and <code>:=</code></a></li>
 <li class="chapter" data-level="4.3" data-path="interlude-i-a-brief-glimpse-into-data.html"><a href="interlude-i-a-brief-glimpse-into-data.html#reshaping-data-using-melt-and-dcast"><i class="fa fa-check"></i><b>4.3</b> Reshaping data using <code>melt</code> and <code>dcast</code></a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html"><i class="fa fa-check"></i><b>5</b> Everyday ML: Classification</a>
+<li class="chapter" data-level="5" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html"><i class="fa fa-check"></i><b>5</b> Everyday exploratory data analysis</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-training-and-predictions"><i class="fa fa-check"></i><b>5.1</b> Model training and predictions</a></li>
-<li class="chapter" data-level="5.2" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-univariate-filters"><i class="fa fa-check"></i><b>5.2</b> Feature selection using univariate filters</a></li>
-<li class="chapter" data-level="5.3" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-recursive-feature-elimination"><i class="fa fa-check"></i><b>5.3</b> Feature selection using recursive feature elimination</a></li>
-<li class="chapter" data-level="5.4" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#hyperparameter-tuning"><i class="fa fa-check"></i><b>5.4</b> Hyperparameter tuning</a></li>
-<li class="chapter" data-level="5.5" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#roc-and-precision-recall-curves"><i class="fa fa-check"></i><b>5.5</b> ROC and precision-recall curves</a></li>
-<li class="chapter" data-level="5.6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-comparisons"><i class="fa fa-check"></i><b>5.6</b> Model comparisons</a></li>
+<li class="chapter" data-level="5.1" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html#workflow-1-continuous-data"><i class="fa fa-check"></i><b>5.1</b> Workflow 1: continuous data</a></li>
+<li class="chapter" data-level="5.2" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html#workflow-2-dates-and-ordinal-data"><i class="fa fa-check"></i><b>5.2</b> Workflow 2: dates and ordinal data</a></li>
+<li class="chapter" data-level="5.3" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html#visualization-of-clusters"><i class="fa fa-check"></i><b>5.3</b> Visualization of clusters</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html"><i class="fa fa-check"></i><b>6</b> Everyday ML: Classification</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-training-and-predictions"><i class="fa fa-check"></i><b>6.1</b> Model training and predictions</a></li>
+<li class="chapter" data-level="6.2" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-univariate-filters"><i class="fa fa-check"></i><b>6.2</b> Feature selection using univariate filters</a></li>
+<li class="chapter" data-level="6.3" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-recursive-feature-elimination"><i class="fa fa-check"></i><b>6.3</b> Feature selection using recursive feature elimination</a></li>
+<li class="chapter" data-level="6.4" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#hyperparameter-tuning"><i class="fa fa-check"></i><b>6.4</b> Hyperparameter tuning</a></li>
+<li class="chapter" data-level="6.5" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#roc-and-precision-recall-curves"><i class="fa fa-check"></i><b>6.5</b> ROC and precision-recall curves</a></li>
+<li class="chapter" data-level="6.6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-comparisons"><i class="fa fa-check"></i><b>6.6</b> Model comparisons</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -217,17 +223,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb216-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
 <span id="cb216-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb216-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setDT</span>(mtcars)</span>
 <span id="cb216-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb216-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars, <span class="dv">10</span>)</span></code></pre></div>
-<pre><code>##      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
-##  1: 21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
-##  2: 21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
-##  3: 22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
-##  4: 21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
-##  5: 18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
-##  6: 18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
-##  7: 14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
-##  8: 24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
-##  9: 22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
-## 10: 19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4</code></pre>
+<pre><code>##      mpg cyl  disp  hp drat    wt  qsec vs am gear
+##  1: 21.0   6 160.0 110 3.90 2.620 16.46  0  1    4
+##  2: 21.0   6 160.0 110 3.90 2.875 17.02  0  1    4
+##  3: 22.8   4 108.0  93 3.85 2.320 18.61  1  1    4
+##  4: 21.4   6 258.0 110 3.08 3.215 19.44  1  0    3
+##  5: 18.7   8 360.0 175 3.15 3.440 17.02  0  0    3
+##  6: 18.1   6 225.0 105 2.76 3.460 20.22  1  0    3
+##  7: 14.3   8 360.0 245 3.21 3.570 15.84  0  0    3
+##  8: 24.4   4 146.7  62 3.69 3.190 20.00  1  0    4
+##  9: 22.8   4 140.8  95 3.92 3.150 22.90  1  0    4
+## 10: 19.2   6 167.6 123 3.92 3.440 18.30  1  0    4
+##     carb
+##  1:    4
+##  2:    4
+##  3:    1
+##  4:    1
+##  5:    2
+##  6:    1
+##  7:    4
+##  8:    2
+##  9:    2
+## 10:    4</code></pre>
 <div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb218-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb218-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(mtcars)[<span class="dv">1</span>]</span></code></pre></div>
 <pre><code>## [1] &quot;data.table&quot;</code></pre>
 <div id="data-wrangling-operations" class="section level2 hasAnchor" number="4.1">
@@ -337,85 +354,99 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Using the <code>:=</code> operator allows user to define new columns in one of two ways: firstly, in a simple <code>LHS := RHS</code> syntax; this creates a new column but does not print the result to the console.</p>
 <div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb248-1" aria-hidden="true" tabindex="-1"></a>mtcars[, HpPerMpg <span class="sc">:</span><span class="er">=</span> .(hp<span class="sc">/</span>mpg)]</span>
 <span id="cb248-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb248-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
-<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
-## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
-## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
-## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 4.078947
-## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 5.140187
-## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 9.358289
-## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 5.801105</code></pre>
+<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+##    HpPerMpg
+## 1: 5.238095
+## 2: 5.238095
+## 3: 4.078947
+## 4: 5.140187
+## 5: 9.358289
+## 6: 5.801105</code></pre>
 <p>This allows users to remove columns by setting the RHS to <code>NULL</code>:</p>
 <div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb250-1" aria-hidden="true" tabindex="-1"></a><span class="co"># not run</span></span>
 <span id="cb250-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb250-2" aria-hidden="true" tabindex="-1"></a>mtcars[, HpPerMpg <span class="sc">:</span><span class="er">=</span> <span class="cn">NULL</span>]</span></code></pre></div>
 <p>Subsetting using <code>i</code> allows for condition-based operations, similar to <code>mutate(case_when())</code> in <code>dplyr</code>:</p>
 <div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb251-1" aria-hidden="true" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, CylThreshold <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;Over 6&#39;</span>][cyl <span class="sc">!=</span> <span class="dv">6</span>, CylThreshold <span class="sc">:</span><span class="er">=</span> <span class="st">&#39;Under 6&#39;</span>]</span>
 <span id="cb251-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb251-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
-<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
-## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
-## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
-## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 4.078947
-## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 5.140187
-## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 9.358289
-## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 5.801105
-##    CylThreshold
-## 1:       Over 6
-## 2:       Over 6
-## 3:      Under 6
-## 4:       Over 6
-## 5:      Under 6
-## 6:       Over 6</code></pre>
+<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+##    HpPerMpg CylThreshold
+## 1: 5.238095       Over 6
+## 2: 5.238095       Over 6
+## 3: 4.078947      Under 6
+## 4: 5.140187       Over 6
+## 5: 9.358289      Under 6
+## 6: 5.801105       Over 6</code></pre>
 <p>Secondly, <code>:=</code> can be used in a functional form:</p>
 <div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb253-1" aria-hidden="true" tabindex="-1"></a>mtcars[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">HpPerMpg =</span> hp<span class="sc">/</span>mpg, <span class="at">MpgXCyl =</span> mpg<span class="sc">*</span>cyl)]</span>
 <span id="cb253-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb253-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
-<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
-## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
-## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
-## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 4.078947
-## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 5.140187
-## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 9.358289
-## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 5.801105
-##    CylThreshold MpgXCyl
-## 1:       Over 6   126.0
-## 2:       Over 6   126.0
-## 3:      Under 6    91.2
-## 4:       Over 6   128.4
-## 5:      Under 6   149.6
-## 6:       Over 6   108.6</code></pre>
+<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+##    HpPerMpg CylThreshold MpgXCyl
+## 1: 5.238095       Over 6   126.0
+## 2: 5.238095       Over 6   126.0
+## 3: 4.078947      Under 6    91.2
+## 4: 5.140187       Over 6   128.4
+## 5: 9.358289      Under 6   149.6
+## 6: 5.801105       Over 6   108.6</code></pre>
 <p>Combining the <code>:=</code> with <code>by =</code>:</p>
 <div class="sourceCode" id="cb255"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb255-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb255-1" aria-hidden="true" tabindex="-1"></a>mtcars[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg)), by <span class="ot">=</span> .(cyl, vs)]</span>
 <span id="cb255-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb255-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
-<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
-## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
-## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
-## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 4.078947
-## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 5.140187
-## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 9.358289
-## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 5.801105
-##    CylThreshold MpgXCyl mean_mileage
-## 1:       Over 6   126.0     20.56667
-## 2:       Over 6   126.0     20.56667
-## 3:      Under 6    91.2     26.73000
-## 4:       Over 6   128.4     19.12500
-## 5:      Under 6   149.6     15.10000
-## 6:       Over 6   108.6     19.12500</code></pre>
+<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+##    HpPerMpg CylThreshold MpgXCyl mean_mileage
+## 1: 5.238095       Over 6   126.0     20.56667
+## 2: 5.238095       Over 6   126.0     20.56667
+## 3: 4.078947      Under 6    91.2     26.73000
+## 4: 5.140187       Over 6   128.4     19.12500
+## 5: 9.358289      Under 6   149.6     15.10000
+## 6: 5.801105       Over 6   108.6     19.12500</code></pre>
 <p>Combining <code>.SD</code> with the <code>:=</code> operator:</p>
 <div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb257-1" aria-hidden="true" tabindex="-1"></a>mtcars[, <span class="fu">c</span>(<span class="st">&#39;max_disp&#39;</span>, <span class="st">&#39;max_hp&#39;</span>, <span class="st">&#39;max_wt&#39;</span>) <span class="sc">:</span><span class="er">=</span> <span class="fu">lapply</span>(.SD, max), </span>
 <span id="cb257-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb257-2" aria-hidden="true" tabindex="-1"></a>       by <span class="ot">=</span> cyl, .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;wt&#39;</span>)]</span>
 <span id="cb257-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb257-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
-<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
-## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
-## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
-## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1 4.078947
-## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1 5.140187
-## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 9.358289
-## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 5.801105
-##    CylThreshold MpgXCyl mean_mileage max_disp max_hp max_wt
-## 1:       Over 6   126.0     20.56667    258.0    175  3.460
-## 2:       Over 6   126.0     20.56667    258.0    175  3.460
-## 3:      Under 6    91.2     26.73000    146.7    113  3.190
-## 4:       Over 6   128.4     19.12500    258.0    175  3.460
-## 5:      Under 6   149.6     15.10000    472.0    335  5.424
-## 6:       Over 6   108.6     19.12500    258.0    175  3.460</code></pre>
+<pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## 3: 22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## 4: 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+##    HpPerMpg CylThreshold MpgXCyl mean_mileage max_disp
+## 1: 5.238095       Over 6   126.0     20.56667    258.0
+## 2: 5.238095       Over 6   126.0     20.56667    258.0
+## 3: 4.078947      Under 6    91.2     26.73000    146.7
+## 4: 5.140187       Over 6   128.4     19.12500    258.0
+## 5: 9.358289      Under 6   149.6     15.10000    472.0
+## 6: 5.801105       Over 6   108.6     19.12500    258.0
+##    max_hp max_wt
+## 1:    175  3.460
+## 2:    175  3.460
+## 3:    113  3.190
+## 4:    175  3.460
+## 5:    335  5.424
+## 6:    175  3.460</code></pre>
 <p>Finally, a strange behaviour is observed when we start making copies of data; for example:</p>
 <div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb259-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
 <span id="cb259-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb259-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setDT</span>(iris)</span></code></pre></div>
@@ -425,27 +456,46 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Now see what happens when we change one of the columns in <code>iris2</code> using <code>:=</code>:</p>
 <div class="sourceCode" id="cb262"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb262-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb262-1" aria-hidden="true" tabindex="-1"></a>iris2[, Petal.Width <span class="sc">:</span><span class="er">=</span> Petal.Width<span class="sc">/</span><span class="dv">100</span>]</span>
 <span id="cb262-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb262-2" aria-hidden="true" tabindex="-1"></a>iris2</span></code></pre></div>
-<pre><code>##      Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
-##   1:          5.1         3.5          1.4       0.002    setosa
-##   2:          4.9         3.0          1.4       0.002    setosa
-##   3:          4.7         3.2          1.3       0.002    setosa
-##   4:          4.6         3.1          1.5       0.002    setosa
-##   5:          5.0         3.6          1.4       0.002    setosa
-##  ---                                                            
-## 146:          6.7         3.0          5.2       0.023 virginica
-## 147:          6.3         2.5          5.0       0.019 virginica
-## 148:          6.5         3.0          5.2       0.020 virginica
-## 149:          6.2         3.4          5.4       0.023 virginica
-## 150:          5.9         3.0          5.1       0.018 virginica</code></pre>
+<pre><code>##      Sepal.Length Sepal.Width Petal.Length Petal.Width
+##   1:          5.1         3.5          1.4       0.002
+##   2:          4.9         3.0          1.4       0.002
+##   3:          4.7         3.2          1.3       0.002
+##   4:          4.6         3.1          1.5       0.002
+##   5:          5.0         3.6          1.4       0.002
+##  ---                                                  
+## 146:          6.7         3.0          5.2       0.023
+## 147:          6.3         2.5          5.0       0.019
+## 148:          6.5         3.0          5.2       0.020
+## 149:          6.2         3.4          5.4       0.023
+## 150:          5.9         3.0          5.1       0.018
+##        Species
+##   1:    setosa
+##   2:    setosa
+##   3:    setosa
+##   4:    setosa
+##   5:    setosa
+##  ---          
+## 146: virginica
+## 147: virginica
+## 148: virginica
+## 149: virginica
+## 150: virginica</code></pre>
 <p>It turns out that changing <code>iris2</code> has also changed the original data <code>iris</code>:</p>
 <div class="sourceCode" id="cb264"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb264-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb264-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(iris)</span></code></pre></div>
-<pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-## 1:          5.1         3.5          1.4       0.002  setosa
-## 2:          4.9         3.0          1.4       0.002  setosa
-## 3:          4.7         3.2          1.3       0.002  setosa
-## 4:          4.6         3.1          1.5       0.002  setosa
-## 5:          5.0         3.6          1.4       0.002  setosa
-## 6:          5.4         3.9          1.7       0.004  setosa</code></pre>
+<pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width
+## 1:          5.1         3.5          1.4       0.002
+## 2:          4.9         3.0          1.4       0.002
+## 3:          4.7         3.2          1.3       0.002
+## 4:          4.6         3.1          1.5       0.002
+## 5:          5.0         3.6          1.4       0.002
+## 6:          5.4         3.9          1.7       0.004
+##    Species
+## 1:  setosa
+## 2:  setosa
+## 3:  setosa
+## 4:  setosa
+## 5:  setosa
+## 6:  setosa</code></pre>
 <div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb266-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(iris, iris2)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>However, if we use <code>&lt;-</code> to change one of the columns of <code>iris2</code>, the original <code>iris</code> data does not change:</p>
@@ -505,7 +555,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         </div>
       </div>
 <a href="everyday-iterations.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="everyday-ml-classification.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="everyday-exploratory-data-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

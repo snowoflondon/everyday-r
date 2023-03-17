@@ -28,6 +28,10 @@ interlude-i-a-brief-glimpse-into-data.table
 data-wrangling-operations
 sd-.sdcols-and
 reshaping-data-using-melt-and-dcast
+everyday-exploratory-data-analysis
+workflow-1-continuous-data
+workflow-2-dates-and-ordinal-data
+visualization-of-clusters
 everyday-ml-classification
 model-training-and-predictions
 feature-selection-using-univariate-filters

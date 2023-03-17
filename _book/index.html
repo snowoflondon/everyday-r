@@ -179,14 +179,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2" data-path="interlude-i-a-brief-glimpse-into-data.html"><a href="interlude-i-a-brief-glimpse-into-data.html#sd-.sdcols-and"><i class="fa fa-check"></i><b>4.2</b> <code>.SD</code>, <code>.SDcols</code>, and <code>:=</code></a></li>
 <li class="chapter" data-level="4.3" data-path="interlude-i-a-brief-glimpse-into-data.html"><a href="interlude-i-a-brief-glimpse-into-data.html#reshaping-data-using-melt-and-dcast"><i class="fa fa-check"></i><b>4.3</b> Reshaping data using <code>melt</code> and <code>dcast</code></a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html"><i class="fa fa-check"></i><b>5</b> Everyday ML: Classification</a>
+<li class="chapter" data-level="5" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html"><i class="fa fa-check"></i><b>5</b> Everyday exploratory data analysis</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-training-and-predictions"><i class="fa fa-check"></i><b>5.1</b> Model training and predictions</a></li>
-<li class="chapter" data-level="5.2" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-univariate-filters"><i class="fa fa-check"></i><b>5.2</b> Feature selection using univariate filters</a></li>
-<li class="chapter" data-level="5.3" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-recursive-feature-elimination"><i class="fa fa-check"></i><b>5.3</b> Feature selection using recursive feature elimination</a></li>
-<li class="chapter" data-level="5.4" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#hyperparameter-tuning"><i class="fa fa-check"></i><b>5.4</b> Hyperparameter tuning</a></li>
-<li class="chapter" data-level="5.5" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#roc-and-precision-recall-curves"><i class="fa fa-check"></i><b>5.5</b> ROC and precision-recall curves</a></li>
-<li class="chapter" data-level="5.6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-comparisons"><i class="fa fa-check"></i><b>5.6</b> Model comparisons</a></li>
+<li class="chapter" data-level="5.1" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html#workflow-1-continuous-data"><i class="fa fa-check"></i><b>5.1</b> Workflow 1: continuous data</a></li>
+<li class="chapter" data-level="5.2" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html#workflow-2-dates-and-ordinal-data"><i class="fa fa-check"></i><b>5.2</b> Workflow 2: dates and ordinal data</a></li>
+<li class="chapter" data-level="5.3" data-path="everyday-exploratory-data-analysis.html"><a href="everyday-exploratory-data-analysis.html#visualization-of-clusters"><i class="fa fa-check"></i><b>5.3</b> Visualization of clusters</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html"><i class="fa fa-check"></i><b>6</b> Everyday ML: Classification</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-training-and-predictions"><i class="fa fa-check"></i><b>6.1</b> Model training and predictions</a></li>
+<li class="chapter" data-level="6.2" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-univariate-filters"><i class="fa fa-check"></i><b>6.2</b> Feature selection using univariate filters</a></li>
+<li class="chapter" data-level="6.3" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#feature-selection-using-recursive-feature-elimination"><i class="fa fa-check"></i><b>6.3</b> Feature selection using recursive feature elimination</a></li>
+<li class="chapter" data-level="6.4" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#hyperparameter-tuning"><i class="fa fa-check"></i><b>6.4</b> Hyperparameter tuning</a></li>
+<li class="chapter" data-level="6.5" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#roc-and-precision-recall-curves"><i class="fa fa-check"></i><b>6.5</b> ROC and precision-recall curves</a></li>
+<li class="chapter" data-level="6.6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-comparisons"><i class="fa fa-check"></i><b>6.6</b> Model comparisons</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -219,18 +225,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 32.553033 68.524571 49.153739 29.040630 38.117121 92.782634
-##  [7] 41.281878 52.214408  4.094402 69.817484  9.163354 32.107790
-## [13] 38.283158 60.332755 27.527097 53.097232 40.109023 25.491680
-## [19] 22.650717 85.058747</code></pre>
+<pre><code>##  [1] 93.23056 82.00248 53.30830 38.44690 54.59883
+##  [6] 79.67279 62.73434 10.39570 19.19925 84.21104
+## [11] 47.93766 77.72606 81.81791 29.69339 22.67099
+## [16] 62.03579 37.38756 88.59724 12.55316 15.79966</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##                               expr   min    lq   mean median    uq
-##  runif(n = 20, min = 0, max = 100) 1.334 1.459 1.6465  1.543 1.626
-##    max neval
-##  7.709   100</code></pre>
+##                               expr   min    lq    mean
+##  runif(n = 20, min = 0, max = 100) 1.376 1.542 1.71565
+##  median    uq   max neval
+##   1.625 1.709 8.042   100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true" tabindex="-1"></a>version</span></code></pre></div>
