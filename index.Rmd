@@ -1,6 +1,6 @@
 --- 
 title: "Everyday-R"
-author: "Brian Jungmin Park"
+author: "by Brian Jungmin Park"
 date: ""
 site: bookdown::bookdown_site
 documentclass: book
@@ -48,7 +48,11 @@ version
 
 * `caret`: package for implementation of machine learning models, with support for algorithms such as `ranger`, `rpart`, `xgbTree`, and `svmLinear`.
 
+* `mlbench`: package for benchmarks and datasets in machine learning.
+
 * `broom`: package for summarizing of model estimates.
+
+* `ggpubr`: package for publication-ready data visualizations.
 
 * `Shiny`: package for implementation and designing of interactive web apps.
 
@@ -58,4 +62,8 @@ R packages found in this book are available on CRAN and thus can be installed si
 
 ## Code availability
 
-All code used to compile this book as well as the individual .Rmd files are available on my repository [here](https://github.com/snowoflondon/everyday-r)
+All code used to compile this book as well as the individual markdown files are available on my repository [here](https://github.com/snowoflondon/everyday-r)
+
+## Website hosting
+
+This book is hosted on the `shinyapps` server, deployed with the R package `rsconnect`. The markdown files are compiled in this book format using the R package `bookdown`. 
