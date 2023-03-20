@@ -3,6 +3,7 @@ r-syntax-in-this-book
 r-packages-commonly-used-in-this-book
 installing-r-packages
 code-availability
+website-hosting
 everyday-data-wrangling
 renaming-column-headers
 grouped-operations
