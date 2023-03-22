@@ -279,7 +279,7 @@ For PCA, I will use the useful `factoextra` package for visualization. The first
 
 The `fviz_pca_ind()` function draws the PCA plot:
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(factoextra)
 
 pc_res <- prcomp(
@@ -318,7 +318,7 @@ hc <- hclust(dm, method = 'complete')
 
 The `dendextend` package can accept the output from `hclust` to make customizable dendrograms:
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(dendextend)
 den <- as.dendrogram(hc)
 
