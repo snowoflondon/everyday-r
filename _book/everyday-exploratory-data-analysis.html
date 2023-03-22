@@ -244,34 +244,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ medv   : num [1:506] 24 21.6 34.7 33.4 36.2 28.7 22.9 27.1 16.5 18.9 ...</code></pre>
 <p>Immediately we see that the column <code>chas</code> is a factor. As previously iterated, this column contains a dummy variable which indicates <code>1</code> if tract bounds river and <code>0</code> if otherwise. As expected, <code>vapply()</code> output says this is the only non-numerical column. We will have to be aware of this.</p>
 <div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="everyday-exploratory-data-analysis.html#cb291-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vapply</span>(df, is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##    crim      zn   indus    chas     nox      rm     age 
-##    TRUE    TRUE    TRUE   FALSE    TRUE    TRUE    TRUE 
-##     dis     rad     tax ptratio       b   lstat    medv 
-##    TRUE    TRUE    TRUE    TRUE    TRUE    TRUE    TRUE</code></pre>
+<pre><code>##    crim      zn   indus    chas     nox      rm     age     dis     rad 
+##    TRUE    TRUE    TRUE   FALSE    TRUE    TRUE    TRUE    TRUE    TRUE 
+##     tax ptratio       b   lstat    medv 
+##    TRUE    TRUE    TRUE    TRUE    TRUE</code></pre>
 <p>Generally, features (also as known as predictors) tend to show some degree of correlations with one another. This can be identified with <code>cor()</code>, which returns a correlation matrix.</p>
 <div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="everyday-exploratory-data-analysis.html#cb293-1" aria-hidden="true" tabindex="-1"></a>cor_res <span class="ot">&lt;-</span> <span class="fu">cor</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(medv, chas)))</span>
 <span id="cb293-2"><a href="everyday-exploratory-data-analysis.html#cb293-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cor_res)</span></code></pre></div>
-<pre><code>##             crim         zn      indus        nox         rm
-## crim   1.0000000 -0.2004692  0.4065834  0.4209717 -0.2192467
-## zn    -0.2004692  1.0000000 -0.5338282 -0.5166037  0.3119906
-## indus  0.4065834 -0.5338282  1.0000000  0.7636514 -0.3916759
-## nox    0.4209717 -0.5166037  0.7636514  1.0000000 -0.3021882
-## rm    -0.2192467  0.3119906 -0.3916759 -0.3021882  1.0000000
-## age    0.3527343 -0.5695373  0.6447785  0.7314701 -0.2402649
-##              age        dis        rad        tax    ptratio
-## crim   0.3527343 -0.3796701  0.6255051  0.5827643  0.2899456
-## zn    -0.5695373  0.6644082 -0.3119478 -0.3145633 -0.3916785
-## indus  0.6447785 -0.7080270  0.5951293  0.7207602  0.3832476
-## nox    0.7314701 -0.7692301  0.6114406  0.6680232  0.1889327
-## rm    -0.2402649  0.2052462 -0.2098467 -0.2920478 -0.3555015
-## age    1.0000000 -0.7478805  0.4560225  0.5064556  0.2615150
-##                b      lstat
-## crim  -0.3850639  0.4556215
-## zn     0.1755203 -0.4129946
-## indus -0.3569765  0.6037997
-## nox   -0.3800506  0.5908789
-## rm     0.1280686 -0.6138083
-## age   -0.2735340  0.6023385</code></pre>
+<pre><code>##             crim         zn      indus        nox         rm        age
+## crim   1.0000000 -0.2004692  0.4065834  0.4209717 -0.2192467  0.3527343
+## zn    -0.2004692  1.0000000 -0.5338282 -0.5166037  0.3119906 -0.5695373
+## indus  0.4065834 -0.5338282  1.0000000  0.7636514 -0.3916759  0.6447785
+## nox    0.4209717 -0.5166037  0.7636514  1.0000000 -0.3021882  0.7314701
+## rm    -0.2192467  0.3119906 -0.3916759 -0.3021882  1.0000000 -0.2402649
+## age    0.3527343 -0.5695373  0.6447785  0.7314701 -0.2402649  1.0000000
+##              dis        rad        tax    ptratio          b      lstat
+## crim  -0.3796701  0.6255051  0.5827643  0.2899456 -0.3850639  0.4556215
+## zn     0.6644082 -0.3119478 -0.3145633 -0.3916785  0.1755203 -0.4129946
+## indus -0.7080270  0.5951293  0.7207602  0.3832476 -0.3569765  0.6037997
+## nox   -0.7692301  0.6114406  0.6680232  0.1889327 -0.3800506  0.5908789
+## rm     0.2052462 -0.2098467 -0.2920478 -0.3555015  0.1280686 -0.6138083
+## age   -0.7478805  0.4560225  0.5064556  0.2615150 -0.2735340  0.6023385</code></pre>
 <p>The package <code>corrplot</code> elegantly outputs a visualization using the correlation matrix:</p>
 <div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="everyday-exploratory-data-analysis.html#cb295-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span></code></pre></div>
 <pre><code>## corrplot 0.84 loaded</code></pre>
@@ -311,20 +304,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb301-7"><a href="everyday-exploratory-data-analysis.html#cb301-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb301-8"><a href="everyday-exploratory-data-analysis.html#cb301-8" aria-hidden="true" tabindex="-1"></a>df_s</span></code></pre></div>
 <pre><code>## # A tibble: 506 × 12
-##      crim      zn  indus    nox     rm     age   dis    rad
-##     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-##  1 -0.419  0.285  -1.29  -0.144  0.413 -0.120  0.140 -0.982
-##  2 -0.417 -0.487  -0.593 -0.740  0.194  0.367  0.557 -0.867
-##  3 -0.417 -0.487  -0.593 -0.740  1.28  -0.266  0.557 -0.867
-##  4 -0.416 -0.487  -1.31  -0.834  1.02  -0.809  1.08  -0.752
-##  5 -0.412 -0.487  -1.31  -0.834  1.23  -0.511  1.08  -0.752
-##  6 -0.417 -0.487  -1.31  -0.834  0.207 -0.351  1.08  -0.752
-##  7 -0.410  0.0487 -0.476 -0.265 -0.388 -0.0702 0.838 -0.522
-##  8 -0.403  0.0487 -0.476 -0.265 -0.160  0.978  1.02  -0.522
-##  9 -0.396  0.0487 -0.476 -0.265 -0.930  1.12   1.09  -0.522
-## 10 -0.400  0.0487 -0.476 -0.265 -0.399  0.615  1.33  -0.522
-## # … with 496 more rows, and 4 more variables: tax &lt;dbl&gt;,
-## #   ptratio &lt;dbl&gt;, b &lt;dbl&gt;, lstat &lt;dbl&gt;</code></pre>
+##      crim      zn  indus    nox     rm     age   dis    rad    tax ptratio
+##     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+##  1 -0.419  0.285  -1.29  -0.144  0.413 -0.120  0.140 -0.982 -0.666  -1.46 
+##  2 -0.417 -0.487  -0.593 -0.740  0.194  0.367  0.557 -0.867 -0.986  -0.303
+##  3 -0.417 -0.487  -0.593 -0.740  1.28  -0.266  0.557 -0.867 -0.986  -0.303
+##  4 -0.416 -0.487  -1.31  -0.834  1.02  -0.809  1.08  -0.752 -1.11    0.113
+##  5 -0.412 -0.487  -1.31  -0.834  1.23  -0.511  1.08  -0.752 -1.11    0.113
+##  6 -0.417 -0.487  -1.31  -0.834  0.207 -0.351  1.08  -0.752 -1.11    0.113
+##  7 -0.410  0.0487 -0.476 -0.265 -0.388 -0.0702 0.838 -0.522 -0.577  -1.50 
+##  8 -0.403  0.0487 -0.476 -0.265 -0.160  0.978  1.02  -0.522 -0.577  -1.50 
+##  9 -0.396  0.0487 -0.476 -0.265 -0.930  1.12   1.09  -0.522 -0.577  -1.50 
+## 10 -0.400  0.0487 -0.476 -0.265 -0.399  0.615  1.33  -0.522 -0.577  -1.50 
+## # … with 496 more rows, and 2 more variables: b &lt;dbl&gt;, lstat &lt;dbl&gt;</code></pre>
 <p>Now the boxplots look more uniform:</p>
 <div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="everyday-exploratory-data-analysis.html#cb303-1" aria-hidden="true" tabindex="-1"></a>df_sm <span class="ot">&lt;-</span> df_s <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), </span>
 <span id="cb303-2"><a href="everyday-exploratory-data-analysis.html#cb303-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">names_to =</span> <span class="st">&#39;Feature&#39;</span>, </span>
@@ -446,28 +438,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb317-2"><a href="everyday-exploratory-data-analysis.html#cb317-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Ozone)</span>
 <span id="cb317-3"><a href="everyday-exploratory-data-analysis.html#cb317-3" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 366 × 13
-##    V1    V2    V3       V4    V5    V6    V7    V8    V9   V10
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 1     1     4         3  5480     8    20    NA  NA    5000
-##  2 1     2     5         3  5660     6    NA    38  NA      NA
-##  3 1     3     6         3  5710     4    28    40  NA    2693
-##  4 1     4     7         5  5700     3    37    45  NA     590
-##  5 1     5     1         5  5760     3    51    54  45.3  1450
-##  6 1     6     2         6  5720     4    69    35  49.6  1568
-##  7 1     7     3         4  5790     6    19    45  46.4  2631
-##  8 1     8     4         4  5790     3    25    55  52.7   554
-##  9 1     9     5         6  5700     3    73    41  48.0  2083
-## 10 1     10    6         7  5700     3    59    44  NA    2654
-## # … with 356 more rows, and 3 more variables: V11 &lt;dbl&gt;,
-## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
+##    V1    V2    V3       V4    V5    V6    V7    V8    V9   V10   V11   V12
+##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 1     1     4         3  5480     8    20    NA  NA    5000   -15  30.6
+##  2 1     2     5         3  5660     6    NA    38  NA      NA   -14  NA  
+##  3 1     3     6         3  5710     4    28    40  NA    2693   -25  47.7
+##  4 1     4     7         5  5700     3    37    45  NA     590   -24  55.0
+##  5 1     5     1         5  5760     3    51    54  45.3  1450    25  57.0
+##  6 1     6     2         6  5720     4    69    35  49.6  1568    15  53.8
+##  7 1     7     3         4  5790     6    19    45  46.4  2631   -33  54.1
+##  8 1     8     4         4  5790     3    25    55  52.7   554   -28  64.8
+##  9 1     9     5         6  5700     3    73    41  48.0  2083    23  52.5
+## 10 1     10    6         7  5700     3    59    44  NA    2654    -2  48.4
+## # … with 356 more rows, and 1 more variable: V13 &lt;dbl&gt;</code></pre>
 <p>It’s not necessary in this case, but since we are working with dates let’s make the date labels easier to read. Using <code>lubridate</code> I will convert the month labels into a factor with character levels. Then using base R’s <code>weekdays()</code> I will convert the days of the week to characters as well.</p>
 <div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb319-1"><a href="everyday-exploratory-data-analysis.html#cb319-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;lubridate&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:data.table&#39;:
 ## 
-##     hour, isoweek, mday, minute, month, quarter,
-##     second, wday, week, yday, year</code></pre>
+##     hour, isoweek, mday, minute, month, quarter, second, wday,
+##     week, yday, year</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     date, intersect, setdiff, union</code></pre>
@@ -478,20 +469,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb323-5"><a href="everyday-exploratory-data-analysis.html#cb323-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb323-6"><a href="everyday-exploratory-data-analysis.html#cb323-6" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 366 × 13
-##    V1    V2    V3       V4    V5    V6    V7    V8    V9   V10
-##    &lt;ord&gt; &lt;fct&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Jan   1     Thur…     3  5480     8    20    NA  NA    5000
-##  2 Jan   2     Frid…     3  5660     6    NA    38  NA      NA
-##  3 Jan   3     Satu…     3  5710     4    28    40  NA    2693
-##  4 Jan   4     Sund…     5  5700     3    37    45  NA     590
-##  5 Jan   5     Mond…     5  5760     3    51    54  45.3  1450
-##  6 Jan   6     Tues…     6  5720     4    69    35  49.6  1568
-##  7 Jan   7     Wedn…     4  5790     6    19    45  46.4  2631
-##  8 Jan   8     Thur…     4  5790     3    25    55  52.7   554
-##  9 Jan   9     Frid…     6  5700     3    73    41  48.0  2083
-## 10 Jan   10    Satu…     7  5700     3    59    44  NA    2654
-## # … with 356 more rows, and 3 more variables: V11 &lt;dbl&gt;,
-## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
+##    V1    V2    V3        V4    V5    V6    V7    V8    V9   V10   V11   V12
+##    &lt;ord&gt; &lt;fct&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Jan   1     Thurs…     3  5480     8    20    NA  NA    5000   -15  30.6
+##  2 Jan   2     Friday     3  5660     6    NA    38  NA      NA   -14  NA  
+##  3 Jan   3     Satur…     3  5710     4    28    40  NA    2693   -25  47.7
+##  4 Jan   4     Sunday     5  5700     3    37    45  NA     590   -24  55.0
+##  5 Jan   5     Monday     5  5760     3    51    54  45.3  1450    25  57.0
+##  6 Jan   6     Tuesd…     6  5720     4    69    35  49.6  1568    15  53.8
+##  7 Jan   7     Wedne…     4  5790     6    19    45  46.4  2631   -33  54.1
+##  8 Jan   8     Thurs…     4  5790     3    25    55  52.7   554   -28  64.8
+##  9 Jan   9     Friday     6  5700     3    73    41  48.0  2083    23  52.5
+## 10 Jan   10    Satur…     7  5700     3    59    44  NA    2654    -2  48.4
+## # … with 356 more rows, and 1 more variable: V13 &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="everyday-exploratory-data-analysis.html#cb325-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
 <span id="cb325-2"><a href="everyday-exploratory-data-analysis.html#cb325-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V3 =</span> <span class="fu">factor</span>(V3, <span class="at">levels=</span> </span>
 <span id="cb325-3"><a href="everyday-exploratory-data-analysis.html#cb325-3" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">weekdays</span>(<span class="fu">.Date</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>))))</span></code></pre></div>
@@ -550,11 +540,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb334-5"><a href="everyday-exploratory-data-analysis.html#cb334-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;wilcox&#39;</span>,</span>
 <span id="cb334-6"><a href="everyday-exploratory-data-analysis.html#cb334-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">ref.group =</span> <span class="st">&#39;Jan&#39;</span>,</span>
 <span id="cb334-7"><a href="everyday-exploratory-data-analysis.html#cb334-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">label =</span> <span class="st">&#39;p.signif&#39;</span>)</span></code></pre></div>
-<pre><code>## Warning: The dot-dot notation (`..p.signif..`) was deprecated in
-## ggplot2 3.4.0.
+<pre><code>## Warning: The dot-dot notation (`..p.signif..`) was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `after_stat(p.signif)` instead.</code></pre>
-<pre><code>## Warning: Removed 2 rows containing non-finite values
-## (`stat_boxplot()`).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (`stat_boxplot()`).</code></pre>
 <pre><code>## Warning: Removed 2 rows containing non-finite values
 ## (`stat_compare_means()`).</code></pre>
 <p><img src="_main_files/figure-html/unnamed-chunk-173-1.png" width="672" /></p>
@@ -563,26 +551,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb338-2"><a href="everyday-exploratory-data-analysis.html#cb338-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(V4<span class="sc">:</span>V13, <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
 <span id="cb338-3"><a href="everyday-exploratory-data-analysis.html#cb338-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">&#39;mean_{col}&#39;</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 12 × 11
-##    V1    mean_V4 mean_V5 mean_V6 mean_V7 mean_V8 mean_V9
-##    &lt;ord&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-##  1 Jan      5.45   5745.    4.23    37.4    53.7    54.6
-##  2 Feb      7.14   5659.    5.69    56.9    47.0    45.9
-##  3 Mar      8.84   5656.    5.03    49.8    49.5    45.3
-##  4 Apr     10      5637.    5.97    58.2    51.7    47.2
-##  5 May     15.8    5753.    5.48    70.9    68.4    56.9
-##  6 Jun     17.1    5792     5.2     63.3    73.6    62.8
-##  7 Jul     20.2    5862.    5.29    72.8    80.5    71.2
-##  8 Aug     17.5    5830.    5.23    67.6    74.4    66.7
-##  9 Sep     12.4    5797.    5.77    73.6    69.2    63.5
-## 10 Oct     12.6    5796.    4.90    62.7    64.5    62.4
-## 11 Nov      7.67   5790.    3.3     50.1    58.8    58.6
-## 12 Dec      4.06   5725     2.42    36.1    50.2    51.9
-## # … with 4 more variables: mean_V10 &lt;dbl&gt;, mean_V11 &lt;dbl&gt;,
-## #   mean_V12 &lt;dbl&gt;, mean_V13 &lt;dbl&gt;</code></pre>
+##    V1    mean_V4 mean_V5 mean_V6 mean_V7 mean_V8 mean_V9 mean_V10 mean_V11
+##    &lt;ord&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Jan      5.45   5745.    4.23    37.4    53.7    54.6    2355.   -22.9 
+##  2 Feb      7.14   5659.    5.69    56.9    47.0    45.9    3339.    12.6 
+##  3 Mar      8.84   5656.    5.03    49.8    49.5    45.3    2703.    16.7 
+##  4 Apr     10      5637.    5.97    58.2    51.7    47.2    3101.    41.4 
+##  5 May     15.8    5753.    5.48    70.9    68.4    56.9    2199.    51.3 
+##  6 Jun     17.1    5792     5.2     63.3    73.6    62.8    1651.    41.7 
+##  7 Jul     20.2    5862.    5.29    72.8    80.5    71.2    1824.    46.6 
+##  8 Aug     17.5    5830.    5.23    67.6    74.4    66.7    2113.    40.3 
+##  9 Sep     12.4    5797.    5.77    73.6    69.2    63.5    2794.    21.4 
+## 10 Oct     12.6    5796.    4.90    62.7    64.5    62.4    2728.     1.10
+## 11 Nov      7.67   5790.    3.3     50.1    58.8    58.6    2834.   -14.5 
+## 12 Dec      4.06   5725     2.42    36.1    50.2    51.9    3487.   -23.2 
+## # … with 2 more variables: mean_V12 &lt;dbl&gt;, mean_V13 &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="everyday-exploratory-data-analysis.html#cb340-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(V1, V3) <span class="sc">%&gt;%</span></span>
 <span id="cb340-2"><a href="everyday-exploratory-data-analysis.html#cb340-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_hum_LAX =</span> <span class="fu">mean</span>(V7, <span class="at">na.rm=</span>T))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;V1&#39;. You can override
-## using the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;V1&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre><code>## # A tibble: 84 × 3
 ## # Groups:   V1 [12]
 ##    V1    V3        mean_hum_LAX
@@ -606,79 +593,55 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb343-2"><a href="everyday-exploratory-data-analysis.html#cb343-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(iris)</span></code></pre></div>
 <p>For PCA, I will use the useful <code>factoextra</code> package for visualization. The first step is to make sure that the input for PCA is numeric; this means that, for example, in the <code>iris</code> dataset, I need to exclude the column containing the target labels. Additionally, I am declaring the target label column as a factor, since I want to label the data points with these labels in the PCA plot.</p>
 <p>The <code>fviz_pca_ind()</code> function draws the PCA plot:</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="everyday-exploratory-data-analysis.html#cb344-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span></code></pre></div>
-<pre><code>## Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa</code></pre>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="everyday-exploratory-data-analysis.html#cb346-1" aria-hidden="true" tabindex="-1"></a>pc_res <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(</span>
-<span id="cb346-2"><a href="everyday-exploratory-data-analysis.html#cb346-2" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Species), <span class="at">scale =</span> <span class="cn">TRUE</span></span>
-<span id="cb346-3"><a href="everyday-exploratory-data-analysis.html#cb346-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb346-4"><a href="everyday-exploratory-data-analysis.html#cb346-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb346-5"><a href="everyday-exploratory-data-analysis.html#cb346-5" aria-hidden="true" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>Species)</span>
-<span id="cb346-6"><a href="everyday-exploratory-data-analysis.html#cb346-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb346-7"><a href="everyday-exploratory-data-analysis.html#cb346-7" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(pc_res, <span class="at">col.ind =</span> groups, </span>
-<span id="cb346-8"><a href="everyday-exploratory-data-analysis.html#cb346-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">addEllipses =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb346-9"><a href="everyday-exploratory-data-analysis.html#cb346-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.title =</span> <span class="st">&#39;Species&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="everyday-exploratory-data-analysis.html#cb344-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb344-2"><a href="everyday-exploratory-data-analysis.html#cb344-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb344-3"><a href="everyday-exploratory-data-analysis.html#cb344-3" aria-hidden="true" tabindex="-1"></a>pc_res <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(</span>
+<span id="cb344-4"><a href="everyday-exploratory-data-analysis.html#cb344-4" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Species), <span class="at">scale =</span> <span class="cn">TRUE</span></span>
+<span id="cb344-5"><a href="everyday-exploratory-data-analysis.html#cb344-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb344-6"><a href="everyday-exploratory-data-analysis.html#cb344-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb344-7"><a href="everyday-exploratory-data-analysis.html#cb344-7" aria-hidden="true" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>Species)</span>
+<span id="cb344-8"><a href="everyday-exploratory-data-analysis.html#cb344-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb344-9"><a href="everyday-exploratory-data-analysis.html#cb344-9" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(pc_res, <span class="at">col.ind =</span> groups, </span>
+<span id="cb344-10"><a href="everyday-exploratory-data-analysis.html#cb344-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">addEllipses =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb344-11"><a href="everyday-exploratory-data-analysis.html#cb344-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.title =</span> <span class="st">&#39;Species&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-177-1.png" width="672" /></p>
 <p>Since this is a tiny and simple dataset frequently used in these types of tutorials, it’s no surprise that we get nice ellipses in the data. The data points separate well across the first PC (the x-axis).</p>
 <p>The <code>fviz_contrib()</code> plot shows the contribution of each variable. The horizontal red line here shows the expected level of contribution if the contributions were uniform. The <code>axes = 1</code> argument states that I want to check for the contribution in the first PC only.</p>
-<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="everyday-exploratory-data-analysis.html#cb347-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_contrib</span>(pc_res, <span class="at">axes =</span> <span class="dv">1</span>, <span class="at">choice =</span> <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="everyday-exploratory-data-analysis.html#cb345-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_contrib</span>(pc_res, <span class="at">axes =</span> <span class="dv">1</span>, <span class="at">choice =</span> <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-178-1.png" width="672" /></p>
 <p>Screeplot shows the level of covariance explained by each PC:</p>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="everyday-exploratory-data-analysis.html#cb348-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_screeplot</span>(pc_res)</span></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="everyday-exploratory-data-analysis.html#cb346-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_screeplot</span>(pc_res)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
 <p>Alternatively, dendrograms are a commonly used tools to visualize hierarchical clustering in the data. Again, the concept behind the clustering method will be explained in greater detail in future chapters, but essentially we need to generate a distance matrix (using some sort of a distance metric, in this case Euclidean distance) and then calculate linkage between each instance. The <code>dist()</code> and <code>hclust()</code> from base R handles this nicely:</p>
-<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="everyday-exploratory-data-analysis.html#cb349-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
-<span id="cb349-2"><a href="everyday-exploratory-data-analysis.html#cb349-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb349-3"><a href="everyday-exploratory-data-analysis.html#cb349-3" aria-hidden="true" tabindex="-1"></a>dm <span class="ot">&lt;-</span> <span class="fu">dist</span>(mtcars, <span class="at">method =</span> <span class="st">&#39;euclidean&#39;</span>)</span>
-<span id="cb349-4"><a href="everyday-exploratory-data-analysis.html#cb349-4" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(dm, <span class="at">method =</span> <span class="st">&#39;complete&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="everyday-exploratory-data-analysis.html#cb347-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb347-2"><a href="everyday-exploratory-data-analysis.html#cb347-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb347-3"><a href="everyday-exploratory-data-analysis.html#cb347-3" aria-hidden="true" tabindex="-1"></a>dm <span class="ot">&lt;-</span> <span class="fu">dist</span>(mtcars, <span class="at">method =</span> <span class="st">&#39;euclidean&#39;</span>)</span>
+<span id="cb347-4"><a href="everyday-exploratory-data-analysis.html#cb347-4" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(dm, <span class="at">method =</span> <span class="st">&#39;complete&#39;</span>)</span></code></pre></div>
 <p>The <code>dendextend</code> package can accept the output from <code>hclust</code> to make customizable dendrograms:</p>
-<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb350-1"><a href="everyday-exploratory-data-analysis.html#cb350-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dendextend)</span></code></pre></div>
-<pre><code>## 
-## ---------------------
-## Welcome to dendextend version 1.15.1
-## Type citation(&#39;dendextend&#39;) for how to cite the package.
-## 
-## Type browseVignettes(package = &#39;dendextend&#39;) for the package vignette.
-## The github page is: https://github.com/talgalili/dendextend/
-## 
-## Suggestions and bug-reports can be submitted at: https://github.com/talgalili/dendextend/issues
-## Or contact: &lt;tal.galili@gmail.com&gt;
-## 
-##  To suppress this message use:  suppressPackageStartupMessages(library(dendextend))
-## ---------------------</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dendextend&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggpubr&#39;:
-## 
-##     rotate</code></pre>
-<pre><code>## The following object is masked from &#39;package:data.table&#39;:
-## 
-##     set</code></pre>
-<pre><code>## The following object is masked from &#39;package:stats&#39;:
-## 
-##     cutree</code></pre>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="everyday-exploratory-data-analysis.html#cb356-1" aria-hidden="true" tabindex="-1"></a>den <span class="ot">&lt;-</span> <span class="fu">as.dendrogram</span>(hc)</span>
-<span id="cb356-2"><a href="everyday-exploratory-data-analysis.html#cb356-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb356-3"><a href="everyday-exploratory-data-analysis.html#cb356-3" aria-hidden="true" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">plot</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="everyday-exploratory-data-analysis.html#cb348-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dendextend)</span>
+<span id="cb348-2"><a href="everyday-exploratory-data-analysis.html#cb348-2" aria-hidden="true" tabindex="-1"></a>den <span class="ot">&lt;-</span> <span class="fu">as.dendrogram</span>(hc)</span>
+<span id="cb348-3"><a href="everyday-exploratory-data-analysis.html#cb348-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb348-4"><a href="everyday-exploratory-data-analysis.html#cb348-4" aria-hidden="true" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">plot</span>()</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
 <p>When we know the number of clusters present, we can color them differently with <code>color_branches()</code>. For an alternative look at dendrograms, we can circlize them using <code>circlize_dendrogram()</code>:</p>
-<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="everyday-exploratory-data-analysis.html#cb357-1" aria-hidden="true" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">color_branches</span>(<span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb357-2"><a href="everyday-exploratory-data-analysis.html#cb357-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">circlize_dendrogram</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="everyday-exploratory-data-analysis.html#cb349-1" aria-hidden="true" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">color_branches</span>(<span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb349-2"><a href="everyday-exploratory-data-analysis.html#cb349-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">circlize_dendrogram</span>()</span></code></pre></div>
 <pre><code>## Loading required namespace: circlize</code></pre>
 <p><img src="_main_files/figure-html/unnamed-chunk-182-1.png" width="672" /></p>
 <p>The <code>cutree()</code> function accepts the <code>hclust()</code> output and assigns a cluster label, depending on the number of clusters defined:</p>
-<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="everyday-exploratory-data-analysis.html#cb359-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cutree</span>(hc, <span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
-<pre><code>##         Mazda RX4     Mazda RX4 Wag        Datsun 710 
-##                 1                 1                 1 
-##    Hornet 4 Drive Hornet Sportabout           Valiant 
-##                 2                 3                 2</code></pre>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="everyday-exploratory-data-analysis.html#cb351-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cutree</span>(hc, <span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>##         Mazda RX4     Mazda RX4 Wag        Datsun 710    Hornet 4 Drive 
+##                 1                 1                 1                 2 
+## Hornet Sportabout           Valiant 
+##                 3                 2</code></pre>
 <p>Finally, identifying the optimal number of clusters in the data can mainly be done using the silhouette method or the elbow (also called the wss) method:</p>
-<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb361-1"><a href="everyday-exploratory-data-analysis.html#cb361-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
-<span id="cb361-2"><a href="everyday-exploratory-data-analysis.html#cb361-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;silhouette&#39;</span>,</span>
-<span id="cb361-3"><a href="everyday-exploratory-data-analysis.html#cb361-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="everyday-exploratory-data-analysis.html#cb353-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
+<span id="cb353-2"><a href="everyday-exploratory-data-analysis.html#cb353-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;silhouette&#39;</span>,</span>
+<span id="cb353-3"><a href="everyday-exploratory-data-analysis.html#cb353-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-184-1.png" width="672" /></p>
-<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="everyday-exploratory-data-analysis.html#cb362-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
-<span id="cb362-2"><a href="everyday-exploratory-data-analysis.html#cb362-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;wss&#39;</span>,</span>
-<span id="cb362-3"><a href="everyday-exploratory-data-analysis.html#cb362-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
+<div class="sourceCode" id="cb354"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb354-1"><a href="everyday-exploratory-data-analysis.html#cb354-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
+<span id="cb354-2"><a href="everyday-exploratory-data-analysis.html#cb354-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;wss&#39;</span>,</span>
+<span id="cb354-3"><a href="everyday-exploratory-data-analysis.html#cb354-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-185-1.png" width="672" /></p>
 
 </div>

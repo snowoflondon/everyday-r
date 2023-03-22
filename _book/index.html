@@ -226,18 +226,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 91.932252 70.530127 39.590243 85.579585 26.985140
-##  [6] 88.853162 27.565190 49.041972  8.371771 69.505876
-## [11] 34.283055 75.980020 77.120005 13.457182 88.602191
-## [16] 74.869536 69.742431 73.735931 17.663024 85.278142</code></pre>
+<pre><code>##  [1]  7.982767 80.517474 51.799448 13.357855 93.070023 42.133350 97.565288
+##  [8] 25.749045 51.195672 91.644563 19.648581 74.736222  6.548477 66.026938
+## [15]  5.740381 98.347159 62.572917 72.010284 34.761230 94.912197</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##                               expr   min    lq    mean median
-##  runif(n = 20, min = 0, max = 100) 1.334 1.417 1.63601 1.5005
-##     uq    max neval
-##  1.625 10.918   100</code></pre>
+##                               expr   min    lq    mean median    uq    max
+##  runif(n = 20, min = 0, max = 100) 1.375 1.501 1.73482 1.6255 1.709 10.209
+##  neval
+##    100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true" tabindex="-1"></a>version</span></code></pre></div>
