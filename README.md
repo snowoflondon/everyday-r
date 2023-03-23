@@ -24,6 +24,8 @@ version.string - R version 4.0.5 (2021-03-31
 * [R for data science by Hadley Wickham](https://r4ds.had.co.nz/)
 * [Advanced R by Hadley Wickham](https://adv-r.hadley.nz/)
 * [Tidyverse documentation](https://www.tidyverse.org/)
+* [Caret documentation](https://topepo.github.io/caret/)
+* [Shiny cheatsheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf)
 
 
 ## My other projects
@@ -31,3 +33,6 @@ version.string - R version 4.0.5 (2021-03-31
 * [Calculation of drug synergy using linear models and Shiny](https://github.com/snowoflondon/CIComputeR_WEB)
 * [Dose-response model estimate analysis using drc on Shiny](https://github.com/snowoflondon/LL4R)
 * [Data science blog covering fundamental concepts with R & Python code](https://brianjmpark.github.io/)
+
+## Footnote
+All source code used to compile the book, including all code chunks and original markdown files are stored in this repository. The book is hosted on the `shinyapps.io` server and compiled using the R package `bookdown`. 
