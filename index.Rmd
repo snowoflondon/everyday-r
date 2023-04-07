@@ -1,5 +1,5 @@
 --- 
-title: "Everyday-R"
+title: "Everyday-R: Practical R for Data Science"
 author: "by Brian Jungmin Park"
 date: ""
 site: bookdown::bookdown_site
