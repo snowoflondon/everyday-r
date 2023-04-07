@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Everyday-R</title>
+  <title>Everyday-R: Practical R for Data Science</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.32.1 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Everyday-R" />
+  <meta property="og:title" content="Everyday-R: Practical R for Data Science" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Everyday-R" />
+  <meta name="twitter:title" content="Everyday-R: Practical R for Data Science" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -207,7 +207,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Everyday-R</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Everyday-R: Practical R for Data Science</a>
           </h1>
         </div>
 
@@ -216,7 +216,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="header">
-<h1 class="title">Everyday-R</h1>
+<h1 class="title">Everyday-R: Practical R for Data Science</h1>
 <p class="author"><em>by Brian Jungmin Park</em></p>
 </div>
 <div id="introduction" class="section level1 hasAnchor" number="1">
@@ -226,17 +226,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1]  7.982767 80.517474 51.799448 13.357855 93.070023 42.133350 97.565288
-##  [8] 25.749045 51.195672 91.644563 19.648581 74.736222  6.548477 66.026938
-## [15]  5.740381 98.347159 62.572917 72.010284 34.761230 94.912197</code></pre>
+<pre><code>##  [1]  8.9439716 37.7512560 81.0413548 61.2058261
+##  [5] 61.1325919 87.5513177 66.1339422 70.1222613
+##  [9] 95.0020952  0.4162706 29.5815117 50.3182850
+## [13]  8.1377600 53.4325483 99.1436448 96.9457800
+## [17] 41.6526640 66.8002933 60.6506614  3.2986007</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##                               expr   min    lq    mean median    uq    max
-##  runif(n = 20, min = 0, max = 100) 1.375 1.501 1.73482 1.6255 1.709 10.209
-##  neval
-##    100</code></pre>
+##                               expr   min    lq
+##  runif(n = 20, min = 0, max = 100) 1.334 1.376
+##     mean median     uq   max neval
+##  1.60857  1.417 1.5635 7.834   100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true" tabindex="-1"></a>version</span></code></pre></div>
