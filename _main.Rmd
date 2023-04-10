@@ -1,0 +1,1946 @@
+--- 
+title: "Everyday-R: Practical R for Data Science"
+author: "by Brian Jungmin Park"
+date: ""
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+# url: your book url like https://bookdown.org/yihui/bookdown
+# cover-image: path to the social sharing image like images/cover.jpg
+description: |
+  This is a minimal example of using the bookdown package to write a book.
+  The HTML output format for this example is bookdown::gitbook,
+  set in the _output.yml file.
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+---
+
+# Introduction
+
+This book serves as a collection of R Markdown files that aims to assist users in learning the practical syntax and usage of R. Mainly, code snippets and workflow aimed at tackling everyday tasks in data science will be covered, including data cleaning, data wrangling, iterations, machine learning with `caret`, data visualization, and web app design using `Shiny`. Each broad topic will be split into chapters, though there will be some overlap.
+
+## R syntax in this book
+
+Code chunks will be presented in a typical Markdown format as such, with the code output below:
+
+```{r}
+runif(n = 20, min = 0, max = 100)
+```
+
+When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:
+
+```{r}
+library(microbenchmark)
+microbenchmark::microbenchmark(runif(n = 20, min = 0, max = 100))
+```
+
+Typically in longer chains of code, I will use `%>%` from `magrittr` as a pipe. This is usually standard practice in code using packages from the `tidyverse` so it's a good habit to start using it.
+
+Finally, here is the R version I am currently using:
+
+```{r}
+version
+```
+
+## R packages commonly used in this book
+
+* `tidyverse`: a collection of packages for data science, including `dplyr`, `purrr`, `stringr`, `forcats`, `readr`, and `ggplot`.
+
+* `caret`: package for implementation of machine learning models, with support for algorithms such as `ranger`, `rpart`, `xgbTree`, and `svmLinear`.
+
+* `mlbench`: package for benchmarks and datasets in machine learning.
+
+* `broom`: package for summarizing of model estimates.
+
+* `ggpubr`: package for publication-ready data visualizations.
+
+* `Shiny`: package for implementation and designing of interactive web apps.
+
+## Installing R packages
+
+R packages found in this book are available on CRAN and thus can be installed simply by running `install.packages()`. For packages not on CRAN (or if you want to download developmental versions of a package), you can install packages straight from a GitHub repository by running `devtools::install_github()`. 
+
+## Code availability
+
+All code used to compile this book as well as the individual markdown files are available on my repository [here](https://github.com/snowoflondon/everyday-r)
+
+## Website hosting
+
+This book is hosted on the `shinyapps` server, deployed with the R package `rsconnect`. The markdown files are compiled in this book format using the R package `bookdown`. 
+
+<!--chapter:end:index.Rmd-->
+
+# Everyday data wrangling
+
+Suppose there exists a test dataset and the user is tasked with proving their proficiency in exploratory data analysis (EDA). Alternatively, the user may be handed a piece of data (e.g., maybe an Excel sheet) and is asked to run some preliminary analysis. Prior to jumping straight into EDA and statistical modeling, the user must be able to transform the original data into a desirable format. This includes, but is not limited to, missing data imputation, scalar transformation, feature selection, group aggregation, and data filtering. The following notebook outlines the fundamentals of data wrangling, using practical base R and `tidyverse` solutions interchangeably. 
+
+```{r, warning=FALSE}
+library(tidyverse)
+```
+
+
+## Renaming column headers
+
+Suppose a `32 x 11` dataset `mtcars` where `rownames` correspond to the car model. 
+
+```{r}
+data(mtcars)
+mtcars <- mtcars %>% as_tibble(rownames = 'CAR')
+```
+
+Renaming column headers with `dplyr::rename` is as simple as `rename(new_name = old_name)`, but with `rename_with()` there's more flexibility:
+
+```{r}
+mtcars %>% rename_with(toupper)
+```
+
+You can pass any function within `rename_with()` to alter the column headers and use the `.cols = ` argument to define which columns you'd apply the function to:
+
+```{r}
+mtcars %>% rename_with(function(x) paste0(x, "_1"), .cols = -1)
+```
+
+Alternatively with base R, you can call the `names` attribute and alter that directly:
+
+```{r, eval=FALSE}
+names(mtcars)[-1] <- paste0(names(mtcars[-1]), '_1') # not run
+```
+
+
+## Grouped operations
+
+Grouped operations are most useful when you're working with data where there is a categorical variable. Grouped summaries are powerful tools easily done with `dplyr::summarise`:
+
+```{r}
+mtcars %>% group_by(cyl) %>% summarise(avg_mpg = mean(mpg))
+```
+
+Using multiple columns at once and renaming the output columns:
+
+```{r}
+mtcars %>% group_by(cyl) %>% 
+  summarise(across(c(mpg, disp, hp), mean, .names = "mean_{col}"))
+```
+
+```{r}
+mtcars %>% group_by(cyl) %>% 
+  summarise(across(where(is.numeric), mean, .names = "mean_{col}"))
+```
+
+Alternatively, in base R, you can use `aggregate()` with the `~`; you can read this as *grouping mpg by cyl* where *by* corresponds to the `~`:
+
+```{r}
+aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+```
+
+When calculating the size of the groups, you can use `n()`:
+
+```{r}
+mtcars %>% group_by(cyl) %>% summarise(count = n())
+```
+
+Filtering by groups of size greater than a certain value:
+
+```{r}
+mtcars %>% group_by(cyl) %>% filter(n() > 7) %>% ungroup()
+```
+
+
+## Data transformation
+
+Sometimes it's useful to transform numeric columns:
+
+```{r}
+mtcars %>% mutate(mpg = mpg*2)
+```
+
+Using `across()` allows for conditional transformation and keep the old columns, while renaming the new columns:
+
+```{r}
+mtcars %>% 
+  mutate(across(where(is.numeric), function(x) x*2, .names = "double_{col}"))
+```
+
+You can overwrite the existing columns completely; also keep in mind that you can pass any function within `across()` as such:
+
+```{r}
+mtcars %>% mutate(across(c(mpg, disp), function(x) x*3))
+```
+
+Iterating across the columns using `purrr::modify` instead:
+
+```{r}
+mtcars %>% modify_if(is.numeric, ~ .x*3)
+```
+
+Mutating columns of characters is also straightforward:
+
+```{r}
+mtcars %>% mutate(CAR = gsub('Merc', 'Mercedes', CAR))
+```
+
+```{r}
+mtcars %>% mutate(CAR = gsub(' ', '_', CAR)) %>% mutate(across(CAR, tolower))
+```
+
+
+## Joining and separating character columns
+
+For the `CAR` column comprised of strings, you can separate the individual strings into multiple columns; the `extra = 'merge'` argument tells the function to separate the string based on the first instance of " " and merge the rest:
+
+```{r, warning=FALSE}
+mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge')
+```
+
+Combining multiple `tidyverse` verbs using the pipe `%>%`:
+
+```{r, warning=FALSE}
+mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge') %>%
+  group_by(Brand) %>% summarise(count = n(), mean_mpg = mean(mpg)) %>%
+  arrange(desc(count))
+```
+
+Note that the pipe `%>%` is part of the `magrittr` package but there's no need to load it after loading `tidyverse`. The pipe notation is frequently used between `tidyverse` verbs but you can also use it in some base R operations as well.
+
+Separation of columns by strings, using base R instead involves using `strsplit()` which outputs a list and therefore we need to unpack it afterwards:
+
+```{r, eval=FALSE}
+mtcars$Brand <- unlist(
+  lapply(strsplit(mtcars$CAR, split = ' '), function(x) x[1])
+) # not run
+mtcars$Model <- unlist(
+  lapply(strsplit(mtcars$CAR, split = ' '), function(x) x[2])
+) # not run
+```
+
+The opposite of `separate()` is `unite()` which combines columns into a single column:
+
+```{r}
+data(iris)
+iris <- as_tibble(iris)
+iris %>% unite('Petal.Dimensions', c(`Petal.Length`, `Petal.Width`),
+               sep = " x ", remove = FALSE)
+```
+
+In base R, we create a new column using the `$` notation:
+
+```{r, eval=FALSE}
+iris$Petal.Dimensions <- paste(iris$Petal.Length, iris$Petal.Width, sep = " x ") # not run
+```
+
+
+## Filtering rows
+
+Typically, filtering involves a condition based on a column to select the corresponding rows. Here I am combining `stringr::str_detect` with `dplyr::filter` since the column I am filtering on is a character vector.
+
+```{r}
+mtcars %>% filter(str_detect(CAR, 'Mazda'))
+```
+
+Combining `filter()` with `grepl()`:
+
+```{r}
+mtcars %>% filter(str_detect(CAR, 'Mazda | Merc'))
+```
+
+Ignoring upper/lower case distinction using `regex(..., ignore_case = TRUE)`:
+
+```{r}
+mtcars %>% filter(str_detect(CAR, regex('mazda', ignore_case = TRUE)))
+```
+
+Alternatively, using base R using `grepl()`:
+
+```{r, eval=FALSE}
+mtcars[grepl('Mazda', mtcars$CAR),] # not run
+mtcars[grepl('Mazda|Merc', mtcars$CAR),] # not run
+```
+
+Using `tolower()` to make sure we're on the same page in regards to case:
+
+```{r}
+mtcars[grepl(tolower('Mazda'), tolower(mtcars$CAR)),]
+```
+
+Filtering rows based on a numeric column:
+
+```{r}
+mtcars %>% filter(between(mpg, 18, 20))
+```
+
+```{r}
+mtcars %>% filter(cyl %in% c(6, 8))
+```
+
+Alternatively, in base R, using `which()`:
+
+```{r, eval=FALSE}
+mtcars[which(mtcars$mpg > 18 & mtcars$mpg < 20),] # not run
+mtcars[which(mtcars$cyl %in% c(6,8)),] # not run
+```
+
+
+## Subsetting columns based on strings
+
+Subsetting columns typically involves using square brackets `[ ]` in base R, but can be done easily with `dplyr::select`; `select()` supports multiple helper functions such as `starts_with()`, `ends_with()`, and `match()`.
+
+```{r}
+mtcars %>% select(contains('m'))
+```
+
+You can use multiple helper functions at once:
+
+```{r}
+mtcars %>% select(starts_with('m'), ends_with('c'))
+```
+
+Using regex, with the anchors `^` and `$`:
+
+```{r}
+mtcars %>% select(matches('^m'), matches('c$'))
+```
+
+Alternatively, in base R and regex:
+
+```{r}
+mtcars[,grepl('^m|c$', names(mtcars))]
+```
+
+
+## Long and wide data formats
+
+Transforming datasets into long/wide formats is a typical task in EDA, and this can be done using `tidyr`:
+
+```{r}
+mtcars_long <- mtcars %>% pivot_longer(-1, names_to = 'Metric', values_to = 'Values')
+mtcars_long
+```
+
+Having the dataset in this long format allows us to create visualizations such as the boxplot much easier. 
+
+Pivoting the long format back to a wide format as also straightforward with `tidyr`:
+
+```{r}
+mtcars_wide <- mtcars_long %>% 
+  pivot_wider(names_from = 'Metric', values_from = 'Values')
+mtcars_wide
+```
+
+In base R, you can use `reshape()` with the argument `direction = ` but I don't find its syntax very intuitive. Alternatively, using `data.table` gets us the solution much easier:
+
+```{r, warning=FALSE}
+library(data.table)
+melt(setDT(mtcars), id.vars = c('CAR'), variable.name = 'Metric')
+```
+
+Note that using `data.table` returns a `data.table` object (due to the `setDT()` function), which differs from the `tibble` we've been using for packages within `tidyverse`. There are some advantages to using `data.table` instead, especially when working with very large datasets. For the sake of this book I will mostly use base R and `tidyverse`, other than exceptional cases. 
+
+
+## Trimming strings
+
+Trimming character columns, then re-encoding them as factors:
+
+```{r}
+iris %>% mutate(Species = strtrim(Species, 3)) %>%
+  mutate(Species = factor(Species, levels = c('set', 'ver', 'vir')))
+```
+
+Sometimes when you're importing datasets from external and/or untrustworthy sources (e.g., an Excel sheet) it's worth checking for any whitespaces. In that case you can use `stringr::str_trim` to remove all whitespaces prior to data analysis.
+
+```{r}
+iris %>% mutate(Species = str_trim(Species))
+```
+
+
+## Iterating over list of dataframes
+
+Analogously to base R's `split`, using `group_split()` allows us to convert the dataset to a list based on a column; the length of this output list would correspond to the unique number of column entries:
+
+```{r}
+mtcars <- as_tibble(mtcars)
+mtcars_lst <- mtcars %>% group_split(cyl)
+```
+
+Iteration will be covered in more detail in a future chapter, but using base R's `apply` family is straightforward. In this case since we're working with lists, we will use `lapply()` and pass a function (in this case, `rename_with()`):
+
+```{r}
+mtcars_lst <- lapply(mtcars_lst, function(x) 
+  rename_with(x, function(y) paste0(y, "_", as.character(unique(x$cyl))), .cols = -1))
+mtcars_lst[[1]]
+```
+
+A `tidyverse` alternative to `apply` is `purrr::map` and its variations:
+
+```{r, warning=FALSE}
+mtcars_lst <- mtcars %>% group_split(cyl)
+mtcars_lst <- mtcars_lst %>% 
+  map(~ rename_with(.x, function(y) paste0(y, "_", as.character(unique(.x$cyl))), 
+                    .cols = -1))
+mtcars_lst[[1]]
+```
+
+Fitting a linear model is easy using iterations; in this case we fit `lm()` on the variables `mpg` and `gear` to identify their relationship:
+
+```{r}
+mtcars_lst <- mtcars %>% group_split(cyl)
+mtcars_lst %>% 
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(coef)
+```
+
+Using `broom::tidy` to clean up modelling result and output the model estimates:
+
+```{r, warning=FALSE}
+library(broom)
+mtcars_lst %>%
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(tidy) %>%
+  bind_rows()
+```
+
+Using base R and the `apply` family instead:
+
+```{r}
+models <- lapply(mtcars_lst, function(x) lm(mpg ~ gear, data = x))
+coefs <- lapply(models, coef)
+coefs[[1]]
+```
+
+
+## Rowwise operations
+
+```{r}
+df <- tibble(name = c('Brian', 'Connor'),
+             coffee = sample(1:10, 2),
+             wine = sample(1:5, 2),
+             juice = sample(1:5, 2))
+df
+```
+
+Sometimes it's useful to run calculations in a row-wise fashion; for example using `mutate()` with the helper function `c_across()`:
+
+```{r}
+df %>% rowwise() %>% mutate(total = sum(c_across(coffee:juice)),
+                            avg = mean(c_across(coffee:juice)))
+```
+
+Calculating the proportions using a combination of row-wise and column-wise operations with `c_across()` and `across()`:
+
+```{r}
+df %>% rowwise() %>% mutate(total = sum(c_across(coffee:juice))) %>%
+  ungroup() %>%
+  mutate(across(coffee:juice, function(x) x/total,
+                .names = "{col}_prop."))
+```
+
+
+## Conditional transformation
+
+Conditional transformations are useful when creating categories based on a series of logical statements; this is done using `case_when()` to define the conditions:
+
+```{r}
+mtcars %>% mutate(mileage_class = 
+  case_when(mpg > 20 ~ 'High',
+            mpg < 20 ~ 'Low')) %>%
+  relocate(mileage_class, .after = mpg)
+```
+
+In cases where we're working with character columns, it's useful to use `grepl` to match specific strings. After all, formula within `case_when()` needs to evaluate to a boolean on the left-hand side (e.g., `mpg > 20`). Additionally, in cases where the condition is not specified or met, you can use `TRUE ~ ` within `case_when()` as such:
+
+```{r}
+mtcars %>% mutate(CAR = case_when(grepl('Merc', CAR) ~ toupper(CAR), TRUE ~ CAR))
+```
+
+Conditional mutate using base R involves using `ifelse()`:
+
+```{r}
+mtcars$mileage_class <- ifelse(
+  mtcars$mpg > 20, 'High', 'Low'
+)
+subset(mtcars, select = c(CAR, mpg, mileage_class, cyl:carb))
+```
+
+
+## Missing values
+
+Handling missing values is tedious but often required when working with dodgy data.
+
+First, for the sake of our exercise we insert NAs randomly in the `mtcars` dataset:
+
+```{r}
+mtcars_NA <- map_df(mtcars, function(x) 
+  {x[sample(c(TRUE, NA), prob = c(0.95, 0.01), size = length(x), replace = TRUE)]})
+mtcars_NA
+```
+
+Remove rows where any NA occurs:
+
+```{r}
+mtcars_NA %>% na.omit()
+```
+
+Identify columns with NAs and the number of occurrences:
+
+```{r}
+vapply(mtcars_NA, function(x) sum(is.na(x)), double(1))
+```
+
+Remove columns with more than one missing value: 
+
+```{r}
+mtcars_NA %>% select(where(function(x) sum(is.na(x)) < 1))
+```
+
+Replace missing values with zero using `tidyr::replace_na`: 
+
+```{r, eval = FALSE}
+mtcars_NA %>% map_dfc(~ replace_na(.x, 0))
+```
+
+Base R and using `is.na()` instead:
+
+```{r, eval=FALSE}
+mtcars_NA[is.na(mtcars_NA)] <- 0 # not run
+```
+
+
+## Joining dataframes
+
+Mutating joins in `tidyverse` are analogous to the inner and outer joins in SQL syntax:
+
+```{r}
+df1 <- tibble(
+  name = c('Brian', 'Connor', 'Jon'),
+  city = c('Tokyo', 'London', 'Milan'),
+  age = c(28, 25, 21)
+)
+df2 <- tibble(
+  name = c('Brian', 'Connor'),
+  hair = c('black', 'brown'),
+  eyes = c('dark', 'hazel')
+)
+```
+
+```{r}
+df1 %>% inner_join(df2, by = 'name')
+```
+
+```{r}
+df1 %>% left_join(df2, by = 'name')
+```
+
+Base R uses `merge()` with the argument `all.x = ` and `all_y = `:
+
+```{r}
+merge(df1, df2, by = 'name')
+merge(df1, df2, by = 'name', all.x = TRUE)
+```
+
+
+
+<!--chapter:end:01-DataWrangling.Rmd-->
+
+# Everyday iterations
+
+In the previous chapter, I briefly covered writing an iterative function using `purrr::map`. In an everyday practical setting, iterations are the most useful when we've split our dataset based on some sort of a variable of interest. For example, say we have a dataset containing patient outcome after a treatment with a therapeutic. We could split the data based on the type of the therapeutic and iterate a model to compare and contrast treatment effects. On the other hand, we could simply want to apply some sort of a function over multiple columns of a dataset to save the trouble of writing the same function over and over.
+
+A traditional iterative function involves explicitly writing a for loop. Though for loops are often misconstrued as being slower than the functional counterparts (e.g., the `apply` family of functions), the real down-side of for loops, as Hadley argues in [his book, 'Advanced R'](https://adv-r.hadley.nz/functionals.html), is that for loops do a poor job in conveying what should be done with the results. 
+
+```{r, warning=FALSE}
+library(tidyverse)
+```
+
+
+## Iterating over multiple columns using `apply`, `dplyr`, and `purrr`
+
+Returning to the familiar dataset `mtcars`, composed of 32 rows and 12 columns:
+
+```{r}
+data(mtcars)
+mtcars <- as_tibble(mtcars, rownames = 'CAR')
+```
+
+The basic `apply` function needs to know whether you're iterating over columns or over rows using the `MARGIN = ` argument:
+
+```{r}
+apply(mtcars[-1], MARGIN = 2, function(x) x/2) %>% head()
+```
+
+This returns a matrix, as `apply` is typically used for an array or a matrix. The one downside with `apply` is that the user cannot define what form the output will be in. The side effect of this is that I've had to exclude the first column because it contains characters. Running `cbind` afterwards to concatenate `mtcars[1,]` can do the job, though it's cumbersome. Therefore, it's often not advisable to run `apply` on a dataframe or a tibble. A better method is the `dplyr::mutate` solution:
+
+```{r}
+mtcars %>% mutate(across(where(is.numeric), ~ .x/2))
+```
+
+Note that instead of writing out `function(x) x/2` I'm using the `~ .x` notation which is often used in context of `purrr:map`. Either works.
+
+The `purrr:map` solution to this is:
+
+```{r}
+mtcars %>% map_if(is.numeric, ~ .x/2) %>% as_tibble()
+```
+
+Writing a for loop for something like this would be less optimal:
+
+```{r}
+mtcars2 <- mtcars
+for (i in 2:ncol(mtcars2)){
+  mtcars2[,i] <- mtcars2[,i]/2
+}
+mtcars2
+```
+
+
+## Iterating over lists
+
+The usefulness of iteration is more apparent when we're working with grouped data. I've covered a bit of this in the previous chapter, but this is when we've split the data based on some sort of a categorical variable.
+
+```{r}
+mtcars_lst <- mtcars %>% group_split(cyl)
+```
+
+The member of the `apply` family suited for this task is `lapply()` which returns a list:
+
+```{r}
+lapply(mtcars_lst, function(x) cor(x$mpg, x$wt))
+```
+
+Of course, we can define our own function and then pass it over to `lapply()` instead:
+
+```{r}
+get_pval <- function(x){
+  mod <- cor.test(x$mpg, x$wt)
+  pv <- mod$p.value
+  if (pv < 0.05){
+    is_sig <- TRUE
+  } else {
+    is_sig <- FALSE
+  }
+  return(is_sig)
+}
+
+lapply(mtcars_lst, get_pval)
+```
+Using `vapply()` instead allows you to define the class of what the expected output would be:
+
+```{r}
+vapply(mtcars_lst, get_pval, FUN.VALUE = logical(1))
+```
+
+`purrr::map` solution to iterating over list is as such:
+
+```{r}
+mtcars_lst %>% map(~ cor(.x$mpg, .x$wt))
+```
+
+If we want the output to be a flat numeric vector instead of a list:
+
+```{r}
+mtcars_lst %>% map_dbl(~ cor(.x$mpg, .x$wt))
+```
+
+Similarly, using `map_lgl` instead would return a logical vector:
+
+```{r}
+mtcars_lst %>% map_lgl(get_pval)
+```
+
+Iterations are also useful when we want to generate visualizations based on the grouped split:
+
+```{r, warning=FALSE, message=FALSE}
+p <- mtcars_lst %>% map(~ ggplot(data = .x, aes(x = mpg, y = wt)) + 
+                          geom_point() + geom_smooth(method = 'lm') + 
+                          theme_bw())
+
+p[[1]]
+p[[3]]
+```
+
+Combining the package `broom` with iterative model fitting is particularly useful:
+
+```{r, warning=FALSE, message=FALSE}
+library(broom)
+mtcars_lst %>%
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(glance) %>%
+  bind_rows()
+```
+
+Using `lapply()` instead:
+
+```{r}
+lapply(mtcars_lst, function(x) lm(mpg ~ gear, data = x)) %>%
+  lapply(glance) %>% bind_rows()
+```
+
+The `map()` function can also be used to extract elements:
+
+```{r}
+mtcars_lst %>% map('CAR')
+```
+
+```{r}
+mtcars_lst %>%
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(coef) %>%
+  map_dbl(2)
+```
+
+
+## Iterating over vectors
+
+Let's say we have a vector with missing values:
+
+```{r}
+x <- c(3, 2, NA, 2, 1, 4, 2, NA, 2, NA)
+x
+```
+
+Filling the missing values is easy with iteration over the length of the vector:
+
+```{r}
+x %>% map_dbl(~ replace(., is.na(.x), 0))
+```
+Or if we want to replace the missing values with the mean:
+
+```{r}
+x %>% map_dbl(~ replace(., is.na(.x), mean(x, na.rm = TRUE)))
+```
+
+This can of course be done with a for loop instead:
+
+```{r}
+for (i in seq_along(x)){
+  if (is.na(x[i]) == TRUE){
+    x[i] <- mean(x, na.rm = TRUE)
+  }
+}
+
+x
+```
+
+Note that `seq_along(x)` prints the indices along the length of the vector, as if to write `1:length(x)`.
+
+Iterating over a vector of characters requires `map_chr()` to get the character vector back, but the syntax is the same:
+
+```{r}
+z <- c('Brian', 'Connor', 'Harry', 'Sonny')
+map_chr(z, ~ paste0(.x, '_NAME'))
+```
+
+```{r}
+out <- character(length(z))
+for (i in seq_along(z)){
+  out[i] <- paste0(z[i], '_NAME')
+}
+out
+```
+
+In particular cases where the output is printed out, as in the case of `print()` and `cat()`, we may end up echoing both the return values and the output list when using `map()`. To that end, `walk()` is used to avoid showing the result twice:
+
+```{r}
+walk(z, ~ print(paste0(.x, '_NAME')))
+```
+
+## Iterating with two inputs
+
+In contrast to every solution so far, there's a case to be made about iterating over multiple inputs. For that purpose, `purrr:map2` does the job.
+
+```{r}
+x <- c(2, 4, 2, 5)
+y <- c(2, 6, 3, 1)
+map2_dbl(x, y, sum)
+map2_chr(x, y, ~ str_glue('The sum of {.x} and {.y} is {sum(.x, .y)}'))
+```
+
+Note that the iteration occurs at the *i*th position of each vector. 
+
+The intuition behind `map2()` is straightforward and is illustrated by the equivalent for loop:
+
+```{r}
+result <- numeric(length(x))
+for (i in seq_along(x)){
+  result[i] <- sum(x[i], y[i])
+}
+result
+```
+
+One quirk with `map2()` is that it recycles the input:
+
+```{r}
+map2_chr('My name is ', c('Brian', 'Connor'), str_c)
+```
+
+Suppose a dataset such as this:
+
+```{r}
+z <- tibble(A = x, B = y)
+z
+```
+
+There may be cases where we want to create a new column using `mutate()` which results from a transformation of the `A` and `B` columns at each row. 
+
+First, see why the following does not work in creating a column `C` which takes the higher value between `A` and `B` at each row:
+
+```{r}
+z %>% mutate(C = max(A, B))
+```
+
+Using `map2()`, however, this does work:
+
+```{r}
+z %>% mutate(C = map2_dbl(A, B, max))
+```
+
+Other families of `map2()` works normally in this context, for example, if we want to check whether the sum of `A` and `B` at each row is an even number:
+
+```{r}
+z %>% mutate(C = map2_lgl(A, B, ~ (.x + .y) %% 2 == 0))
+```
+
+When there are more than 2 inputs, we can use `pmap()` instead; this function takes a list of the inputs instead:
+
+```{r}
+w <- c(4, 2, 3, 1)
+pmap_dbl(list(x, y, w), sum)
+```
+
+```{r}
+z <- tibble(A = x, B = y, C = w)
+z
+```
+
+```{r}
+z %>% mutate(v = pmap_lgl(list(A, B, C), ~ sum(.) %% 2 == 0))
+```
+
+Using the notation for anonymous functions instead:
+
+```{r}
+z %>% mutate(v = pmap_lgl(list(A, B, C), ~ sum(..1 + ..2 + ..3) %% 2 == 0))
+```
+
+
+## Iterating over indices and names
+
+A related function is `imap()` and its variants, which is analogous to looping over numeric indices, such as in the case of `for (i in seq_along(x))`. That is, it applies a function over an input and its corresponding index. For example:
+
+```{r}
+x <- c(2, 4, 2, 5)
+imap_chr(x, ~ paste0('The index ', .y, ' number in x is ', .x))
+```
+
+Without using `purrr`, this is equivalent to the for loop:
+
+```{r}
+out <- character(length(x))
+for (i in seq_along(x)){
+  out[i] <- paste0('The index ', i, ' number in x is ', x[i])
+}
+out
+```
+
+`imap` also works with names instead of indices, if required:
+
+```{r}
+names(x) <- c('A', 'B', 'C', 'D')
+imap_lgl(x, ~ if(.y %in% c('A', 'C')) TRUE else FALSE)
+```
+
+The equivalent expression in the form of a for loop is as follows:
+
+```{r}
+out <- logical()
+for (i in names(x)){
+  if(i %in% c('A', 'C')){
+    out[i] <- TRUE
+  } else {
+    out[i] <- FALSE
+  }
+}
+out
+```
+
+Therefore, we see clearly that the two uses of `imap()` - iterating over indices and over names - is equivalent to `for (i in seq_along(x))` and `for (i in names(x))`, respectively. 
+
+
+## Handling errors within `purrr`
+
+Let's return to the `mtcars` dataset, specifically after we split the tibble into a list based on `group_split(cyl)`.
+
+```{r}
+mtcars_lst <- mtcars %>% group_split(cyl)
+```
+
+For one of the elements of the list, I'm filling the `gear` column with missing values:
+
+```{r}
+mtcars_lst[[2]] <- mtcars_lst[[2]] %>% mutate(gear = NA)
+mtcars_lst[[2]]
+```
+
+Now, if I were to try and fit a linear model using `lm(mpg ~ wt)` iteratively over the `mtcars_lst`, it will fail at the second element as the `wt` values are all missing. 
+
+```{r, eval=FALSE}
+mtcars_lst %>%
+  map(~ lm(mpg ~ gear, data = .x)) %>%
+  map(coef) %>%
+  map_dbl(2) # returns an error
+```
+
+This is inconvenient in many cases as ideally we'd want to skip over the iteration at which the function fails and get the rest of the results. Thankfully this can be done using `possibly()`; note the second element in the output where the `lm()` function would've failed:
+
+```{r}
+map(mtcars_lst, possibly(~ lm(mpg ~ gear, data = .x), otherwise = NA))
+```
+
+The second argument within `otherwise = ` argument within `possibly()`, where we wrapped the iterative function, provides an alternative solution in case the function fails. As we can see above, the second element of the output corresponds to `NA` and the iteration continued after.
+
+Using `purrr::keep()` I can select for the elements that did not fail:
+
+```{r}
+map(mtcars_lst, possibly(~ lm(mpg ~ gear, data = .x), otherwise = NA)) %>% 
+  keep(~ !is.na(.x) %>% all())
+```
+
+Of course this is the same as running the first `map()` function wrapped around `possibly()` and then running `result[-which(is.na(result)]`.
+
+Sometimes it's not useful to keep the failed element in the first place, so setting `otherwise = NULL` within `possibly()` works too. Afterwards, removing the empty element (i.e., `NULL`) is done using `purrr::compact()`.
+
+```{r}
+map(mtcars_lst, possibly(~ lm(mpg ~ gear, data = .x), otherwise = NULL)) %>%
+  compact()
+```
+
+Instead of discarding the iteration where the function failed, we could also catch the error by using `safely()` instead. This returns a nested list as such:
+
+```{r}
+map(mtcars_lst, safely(~ lm(mpg ~ gear, data = .x)))
+```
+
+We could also just pull the `error` terms and throw away the empty `NULL` elements:
+
+```{r}
+map(mtcars_lst, safely(~ lm(mpg ~ gear, data = .x))) %>% map('error') %>%
+  compact()
+```
+
+In a traditional for loop without `purrr`, a solution could be to use `tryCatch()` with `next`. Below returns the iteration with the error as `NULL` as was the case with `possibly(..., otherwise = NULL)`. 
+
+```{r}
+mod <- list()
+for (i in seq_along(mtcars_lst)){
+  err <- tryCatch(
+    mod[[i]] <- lm(mpg ~ gear, data = mtcars_lst[[i]]), 
+    error = function(e) e
+  )
+  if (inherits(err, 'error')) next
+  mod[[i]] <- lm(mpg ~ gear, data = mtcars_lst[[i]])
+}
+mod
+```
+
+<!--chapter:end:02-Iterations.Rmd-->
+
+# Interlude I: A brief glimpse into `data.table`
+
+In the first chapter, we saw various practical solutions in data wrangling using `tidyverse` and base R. One topic that has not been discussed is the idea of computational efficiency and runtime - this matter has been trivial so far since the datasets have been considerably tiny. However, when working with large data, it may be in the user's interest to try using an alternative package designed for reducing programming and computation time - `data.table`. The vignette is available [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html). 
+
+```{r, warning=FALSE}
+library(data.table)
+options(datatable.print.nrows=10)
+```
+
+Similarly to how a `tibble` is an enhanced form of a `data.frame` in `tidyverse`, `data.table` uses an object class called a `data.table`. Using `fread()` to read in data - whether the argument corresponds to a local file or a URL pointing to a dataset - automatically generates a `data.table` object. Converting a regular `data.frame` to a `data.table` is done with `setDT()`.
+
+```{r}
+data(mtcars)
+setDT(mtcars)
+head(mtcars, 10)
+class(mtcars)[1]
+```
+
+
+## Data wrangling operations
+
+The vignette does a great job explaining the syntax of `data.table` in detail, but the takeaway message is that it subsets the data by `i`, performs an operation according to `j`, then groups it using `by =`. That is, `DT[i, j, by]`. 
+
+```{r}
+mtcars[cyl == 6, .(mean_mileage = mean(mpg))]
+```
+
+Above, `data.table` has subsetted the object based on `cyl == 6` then calculated the mean mileage. The `j` is wrapped around `.()`, which is equivalent to `list()` - this is because the columns in a table are analogous to a `list` object and we want to return a `data.table` as our output rather than an atomic vector.
+
+```{r}
+class(mtcars[cyl == 6, .(mean_mileage = mean(mpg))])
+```
+
+Multiple calculations can be performed in `j`:
+
+```{r}
+mtcars[cyl == 6 & gear == 4, .(mean_mileage = mean(mpg), median_wt = median(wt))]
+```
+
+Calculating the number of rows in `j` uses a special variable `.N`.
+
+```{r}
+mtcars[cyl == 6 & gear == 4, .N]
+```
+
+The `j` argument can be used to select columns after subsetting rows with `i`; this is analogous to `filter()` and `select()` in `dplyr`:
+
+```{r}
+mtcars[, .(mpg, wt, gear)][1:10]
+```
+
+```{r}
+my_cols <- c('mpg', 'wt', 'gear')
+mtcars[, ..my_cols][1:10]
+```
+
+Using `by = ` argument is similar to `group_by()` in `dplyr`:
+
+```{r}
+mtcars[, .(mean_mileage = mean(mpg), median_wt = median(wt)), by = cyl]
+```
+
+```{r}
+mtcars[, .N, by = cyl]
+```
+
+```{r}
+mtcars[vs == 0, .N, by = .(cyl, gear)]
+```
+
+Piping multiple operations together in `data.table` is straightforward:
+
+```{r}
+mtcars[vs == 0, .(mpg, cyl, gear)][,.(mean_mpg = mean(mpg)), by = .(cyl, gear)]
+```
+
+
+## `.SD`, `.SDcols`, and `:=`
+
+For slightly more difficult operations, we need to define three new concepts: firstly, the `.SD` variable points to the current *subset of data*. 
+
+```{r}
+mtcars[cyl == 6, .SD]
+```
+
+In above context, the `.SD` doesn't do much. but this special variable is useful when you're doing operations over multiple columns. Using `.SDcols` with `.SD` allows user to specifically *point to columns across the current subset of data*.
+
+```{r}
+mtcars[cyl == 6, .SD, .SDcols = c('disp', 'hp', 'drat')]
+```
+
+This means we can easily perform operations across a subset of columns:
+
+```{r}
+mtcars[, lapply(.SD, mean), by = cyl, .SDcols = c('disp', 'hp', 'drat')]
+```
+
+`.SDcols` is flexible because it also accepts indices:
+
+```{r}
+col_idx <- colnames(mtcars) %in% c('disp', 'hp', 'drat')
+mtcars[, lapply(.SD, mean), by = cyl, .SDcols = col_idx]
+```
+
+Using the `:=` operator allows user to define new columns in one of two ways: firstly, in a simple `LHS := RHS` syntax; this creates a new column but does not print the result to the console.
+
+```{r}
+mtcars[, HpPerMpg := .(hp/mpg)]
+head(mtcars)
+```
+
+This allows users to remove columns by setting the RHS to `NULL`:
+
+```{r, eval=FALSE}
+# not run
+mtcars[, HpPerMpg := NULL]
+```
+
+Subsetting using `i` allows for condition-based operations, similar to `mutate(case_when())` in `dplyr`:
+
+```{r}
+mtcars[cyl == 6, CylThreshold := 'Over 6'][cyl != 6, CylThreshold := 'Under 6']
+head(mtcars)
+```
+
+Secondly, `:=` can be used in a functional form:
+
+```{r}
+mtcars[, `:=`(HpPerMpg = hp/mpg, MpgXCyl = mpg*cyl)]
+head(mtcars)
+```
+
+Combining the `:=` with `by =`:
+
+```{r}
+mtcars[, `:=`(mean_mileage = mean(mpg)), by = .(cyl, vs)]
+head(mtcars)
+```
+
+Combining `.SD` with the `:=` operator:
+
+```{r}
+mtcars[, c('max_disp', 'max_hp', 'max_wt') := lapply(.SD, max), 
+       by = cyl, .SDcols = c('disp', 'hp', 'wt')]
+head(mtcars)
+```
+
+Finally, a strange behaviour is observed when we start making copies of data; for example:
+
+```{r}
+data(iris)
+setDT(iris)
+```
+
+```{r}
+iris2 <- iris
+identical(iris, iris2)
+```
+
+Now see what happens when we change one of the columns in `iris2` using `:=`:
+
+```{r}
+iris2[, Petal.Width := Petal.Width/100]
+iris2
+```
+
+It turns out that changing `iris2` has also changed the original data `iris`:
+
+```{r}
+head(iris)
+```
+
+```{r}
+identical(iris, iris2)
+```
+
+However, if we use `<-` to change one of the columns of `iris2`, the original `iris` data does not change:
+
+```{r}
+iris2$Petal.Length <- iris2$Petal.Length/100
+identical(iris, iris2)
+```
+
+The rationale for this behaviour is well-explained in this stackoverflow [post](https://stackoverflow.com/questions/10225098/understanding-exactly-when-a-data-table-is-a-reference-to-vs-a-copy-of-another), but essentially what happens is that `:=` operator *modifies by reference*. Both `iris2` and `iris` are pointing to the same location after copying initially with `<-`. Thus when we modify the copy of `iris` by reference, there is no need to copy the entire dataset `iris` to alter its copy. On the other hand, changing `iris2` using `<-` will copy the entire thing even if we're only changing just one column. This behaviour is undesirable when we're working with very large data.
+
+To avoid changing the original dataset but still use `:=` to update a copy, `data.table` uses the `copy()` function:
+
+```{r}
+iris3 <- copy(iris)
+iris3[, Petal.Width := Petal.Width/100]
+identical(iris, iris3) # only the iris3 object was changed here
+```
+
+
+## Reshaping data using `melt` and `dcast`
+
+In the first chapter, I briefly touched on `melt()` as an alternative to `tidr::pivot_longer()`. Base R's equivalent `reshape()` is rather clunky to use, so I much prefer the `tidyr` or `data.table` solutions. 
+
+```{r}
+DT <- data.table(
+  Team = c('Tottenham', 'Arsenal', 'Chelsea', 'ManUnited'),
+  Wins = c(7, 3, 4, 6),
+  Goals = c(29, 18, 22, 26),
+  CleanSheets = c(3, 1, 2, 3)
+)
+DT
+```
+
+```{r}
+DT_long <- melt(DT, id.vars = 'Team', measure.vars = c('Wins', 'Goals', 'CleanSheets'),
+                variable.name = 'Stat', value.name = 'Value')
+DT_long
+```
+
+The `data.table` equivalent to `tidyr::pivot_wider()` is `dcast()`; this function takes in a formula as an argument (`~`) where the LHS corresponds to the `id.vars` and the RHS corresponds to the column that originated from the `measure.vars`. Running this yields the original dataset:
+
+```{r}
+dcast(DT_long, Team ~ Stat, value.var = 'Value')
+```
+
+
+<!--chapter:end:03-DataTable.Rmd-->
+
+# Everyday exploratory data analysis
+
+Before diving straight into complex modeling tasks, many downstream failures and oversights can be avoided with a broad, preliminary look at the data. Exploratory data analysis (EDA) doesn't aim to answer a specific question or a hypothesis, but seeks to find general, interesting trends and quirks in the data. Finding and identifying outliers, understanding data formats, and investigating the distribution of the data are all components of EDA. There is no one set rule or protocol, but this chapter aims to follow a typical EDA workflow working with continuous, categorical, and ordinal data.
+
+```{r,warning=FALSE}
+library(tidyverse)
+library(mlbench)
+```
+
+
+## Workflow 1: continuous data
+
+For this exercise I will use the Boston Housing dataset from `mlbench`, which is a common dataset used in ML tutorials. It consists of numerical features (except one column `chas`, which is a binary dummy variable) and a continuous target variable `medv` - median value of homes.
+
+```{r}
+data("BostonHousing")
+df <- as_tibble(BostonHousing)
+```
+
+The function `str()` conveniently returns the structure of the dataset and as we can see, it returns the nature of each column.
+
+```{r}
+str(df)
+```
+
+Immediately we see that the column `chas` is a factor. As previously iterated, this column contains a dummy variable which indicates `1` if tract bounds river and `0` if otherwise. As expected, `vapply()` output says this is the only non-numerical column. We will have to be aware of this.
+
+```{r}
+vapply(df, is.numeric, logical(1))
+```
+
+Generally, features (also as known as predictors) tend to show some degree of correlations with one another. This can be identified with `cor()`, which returns a correlation matrix. 
+
+```{r}
+cor_res <- cor(df %>% select(-c(medv, chas)))
+head(cor_res)
+```
+
+The package `corrplot` elegantly outputs a visualization using the correlation matrix:
+
+```{r, warning=FALSE}
+library(corrplot)
+corrplot(cor_res, method = 'color')
+```
+
+Now it's time to check the distribution of the features. For this I want to make a boxplot, but for that I need to reshape the dataset first. As seen in Chapter 1, `tidyr::pivot_longer()` can be used to convert the data into long format.
+
+```{r}
+dfm <- df %>% select(-c(medv, chas)) %>%
+  pivot_longer(everything(), names_to = 'Feature', values_to = 'Value')
+
+dfm
+```
+
+Now it's trivial to use `ggplot()` to make the boxplot:
+
+```{r}
+ggplot(dfm, aes(x = Feature, y = Value)) + 
+  geom_boxplot(aes(fill = Feature), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none')
+```
+
+It looks like the scales for the features are not consistent. This is common in real-life data and for most ML algorithms, features need to be preprocessed. I will cover this in the future chapters, but in brief, we can calculate the z-score as such for each predictor:
+
+```{r}
+zs <- function(x){
+  (x - mean(x)) / sd(x)
+}
+
+df_s <- df %>% select(-c(medv, chas)) %>%
+  mutate(across(everything(), zs))
+
+df_s
+```
+
+Now the boxplots look more uniform: 
+
+```{r}
+df_sm <- df_s %>% pivot_longer(everything(), 
+                               names_to = 'Feature', 
+                               values_to = 'Value')
+
+ggplot(df_sm, aes(x = Feature, y = Value)) + 
+  geom_boxplot(aes(fill = Feature), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none')
+```
+
+How about our target variable - the housing price? This column is also continuous so let's check the shape of this distribution using a histogram:
+
+```{r}
+hist(df$medv)
+```
+
+It looks like the mean value for `medv` is at around 22 to 23. Changing the number of bins can give us a better look, if needed.
+
+Since the target variable is continuous, we can easily fit a simple linear model to check for relationships between the predictors and the target. This part may be delving a bit deeper than our initial goal of EDA, but it's still useful to make us aware of possible relationships in our data.
+
+```{r}
+df_num <- df %>% select(-chas)
+
+lm_mod <- lm(medv ~ ., data = df_num)
+summary(lm_mod)
+```
+
+An ANOVA table on the fitted model gives us additional info such as the mean sum of squares:
+
+```{r}
+anova(lm_mod)
+```
+
+The `broom` package is useful in converting summaries of model objects into workable tibbles:
+
+```{r}
+library(broom)
+tidy(lm_mod)
+```
+
+Since we seem to have linear relationships across our dataset, we can use scatterplots in combination with correlation analysis to generate useful visualizations:
+
+```{r, warning=FALSE}
+library(ggpubr)
+ggplot(df_num, aes(x = rm, y = medv)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm') + theme_bw() + 
+  stat_cor(method = 'pearson')
+```
+
+Oops! Even though it's clear there is indeed a linear relationship between the number of rooms `rm` and the housing price `medv`, it looks like there is a strange behaviour at `medv == 50`. Indeed, it looks like the measurement was artificially capped at 50 and there are 16 instances where this value is found:
+
+```{r}
+length(df$medv[df$medv == 50])
+```
+Since we're only concerned with EDA for now, we won't delve further into how we're going to tackle this. Of course, if we are training a prediction model, we probably shouldn't leave the values capped like that as is. EDA have made us aware of this before we started high-level modeling tasks, and that's good.
+
+Let's circle back to the dummy variable `chas`. Since this is a factor, let's treat them as groups and compare the distribution of `medv` using a Wilcoxon test:
+
+```{r}
+df_chas <- df %>% select(medv, chas)
+
+ggplot(df_chas, aes(x = chas, y = medv)) +
+  geom_boxplot(aes(fill = chas), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none') +
+  stat_compare_means(method = 'wilcox')
+```
+
+Boxplots are nice but violin plots give us a further look at the shape of the distributions: this way we can actually see that `medv` values are capped at 50.
+
+```{r}
+ggplot(df_chas, aes(x = chas, y = medv)) +
+  geom_violin(aes(fill = chas), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none') +
+  stat_compare_means(method = 'wilcox')
+```
+
+
+## Workflow 2: dates and ordinal data
+
+For this part I will pull the `Ozone` data from `mlbench` which has the following three columns as the first three: integers coding for the month, integers coding for the day of the month, and integers coding for the day of the week, with Monday coded as the first day (i.e., 1 = Mon., 2 = Tues.,...). The rest of the columns correspond to various weather measurements as continuous values such as the temperature, humidity, and visibility.
+
+```{r}
+data('Ozone')
+df <- as_tibble(Ozone)
+df
+```
+
+It's not necessary in this case, but since we are working with dates let's make the date labels easier to read. Using `lubridate` I will convert the month labels into a factor with character levels. Then using base R's `weekdays()` I will convert the days of the week to characters as well.
+
+```{r}
+library(lubridate)
+df <- df %>% 
+  mutate(V1 = lubridate::month(as.numeric(V1), 
+                               label = TRUE)) %>%
+  mutate(V3 = weekdays(.Date(4:10))[df$V3])
+
+df
+```
+
+```{r}
+df <- df %>% 
+  mutate(V3 = factor(V3, levels= 
+                       weekdays(.Date(4:10))))
+```
+
+Another thing to note - since this data is temporal data, there's a big chance there are many missing values due to external factors. Let's see:
+
+```{r}
+vapply(df, function(x) sum(is.na(x)), double(1))
+```
+Column `V9`, which correspond to temperature measured in El Monte, CA has 139 missing values! Immediately you could argue we can replace these with 0s but remember the nature of this data - a 0 degree weather has actual meaning. Imputation cases like this are tricky and that will be important during modeling tasks. 
+
+Since we are working with ordinal data - in our case, data points over time, it makes sense to make a trendline. Using `facet_wrap()`, in `ggplot()`, I can make a grid based on the time of the month; here I am plotting `V8` - temperature measured at Sandburg, CA - versus `V2` - day of the month.
+
+```{r, warning=FALSE}
+ggplot(df, aes(x = V2, y = V8)) + 
+  geom_point() + geom_line(aes(group = 1)) +
+  facet_wrap(~ V1) + theme_bw() +
+  theme(axis.text.x = element_blank())
+```
+
+For a visual reference, let's see what happens when we plot the temperature at El Monte instead, with all those missing values:
+
+```{r, warning=FALSE}
+ggplot(df, aes(x = V2, y = V9)) + 
+  geom_point() + geom_line(aes(group = 1)) +
+  facet_wrap(~ V1) + theme_bw() +
+  theme(axis.text.x = element_blank())
+```
+
+Adding multiple trendlines is easy using the `group = ` aesthetic within `geom_line()`; here I will plot `V7` and `V11` together - humidity and pressure gradient measured at LAX, respectively:
+
+```{r, warning=FALSE}
+df_2 <- df %>% select(V1, V2, V7, V11) %>%
+  pivot_longer(c(V7, V11), 
+               names_to = 'Measurement', 
+               values_to = 'Values')
+
+ggplot(df_2, aes(x = V2, y = Values)) +
+  geom_point() + 
+  geom_line(aes(group = Measurement,
+                color = Measurement)) +
+  facet_wrap(~ V1) + theme_bw() + 
+  theme(legend.position = 'bottom',
+        axis.text.x = element_blank())
+```
+
+Working with grouped data such as this means an ANOVA tells us whether there is a significant variation across the group means relative to the within-group means:
+
+```{r}
+aov_mod <- aov(V8 ~ V1, data = df)
+summary(aov_mod)
+```
+
+A nice way to visualize an ANOVA result is by using grouped boxplots; here I am adding the Kruskal-Wallis ANOVA result from `ggpubr()`:
+
+```{r, warning=FALSE}
+ggplot(df, aes(x = V1, y = V8)) +
+  geom_boxplot(aes(fill = V1), alpha = .6) +
+  theme_bw() + xlab('') +
+  theme(legend.position = 'none') +
+  stat_compare_means(method = 'kruskal')
+```
+
+Instead of an ANOVA, I can also run pairwise Wilcoxon tests against a reference group. Here I will make January the reference group:
+
+```{r, warnings=FALSE}
+ggplot(df, aes(x = V1, y = V8)) +
+  geom_boxplot(aes(fill = V1), alpha = .6) +
+  theme_bw() + xlab('') +
+  theme(legend.position = 'none') +
+  stat_compare_means(method = 'wilcox',
+                     ref.group = 'Jan',
+                     label = 'p.signif')
+```
+
+If we want to calculate values based on groups, `dplyr`'s `group_by()` is useful, as seen in Chapter 1:
+
+```{r}
+df %>% group_by(V1) %>%
+  summarise(across(V4:V13, ~ mean(.x, na.rm = TRUE), 
+                   .names = 'mean_{col}'))
+```
+
+```{r,warning=FALSE}
+df %>% group_by(V1, V3) %>%
+  summarise(mean_hum_LAX = mean(V7, na.rm=T))
+```
+
+
+## Visualization of clusters 
+
+Clustering and dimensionality reduction tasks can give us a visual look at groupings in the data. The concept of unsupervised clustering and dimensionality reduction techniques will be covered in one of the future chapters, but this is a high-level glance that will be useful in quickly identifying clusters:
+
+```{r}
+data("iris")
+df <- as_tibble(iris)
+```
+
+For PCA, I will use the useful `factoextra` package for visualization. The first step is to make sure that the input for PCA is numeric; this means that, for example, in the `iris` dataset, I need to exclude the column containing the target labels. Additionally, I am declaring the target label column as a factor, since I want to label the data points with these labels in the PCA plot.
+
+The `fviz_pca_ind()` function draws the PCA plot:
+
+```{r, warning=FALSE, message=FALSE}
+library(factoextra)
+
+pc_res <- prcomp(
+  df %>% select(-Species), scale = TRUE
+)
+
+groups <- factor(df$Species)
+
+fviz_pca_ind(pc_res, col.ind = groups, 
+             addEllipses = TRUE, 
+             legend.title = 'Species')
+```
+
+Since this is a tiny and simple dataset frequently used in these types of tutorials, it's no surprise that we get nice ellipses in the data. The data points separate well across the first PC (the x-axis).
+
+The `fviz_contrib()` plot shows the contribution of each variable. The horizontal red line here shows the expected level of contribution if the contributions were uniform. The `axes = 1` argument states that I want to check for the contribution in the first PC only.
+
+```{r}
+fviz_contrib(pc_res, axes = 1, choice = 'var')
+```
+
+Screeplot shows the level of covariance explained by each PC:
+
+```{r}
+fviz_screeplot(pc_res)
+```
+
+Alternatively, dendrograms are a commonly used tools to visualize hierarchical clustering in the data. Again, the concept behind the clustering method will be explained in greater detail in future chapters, but essentially we need to generate a distance matrix (using some sort of a distance metric, in this case Euclidean distance) and then calculate linkage between each instance. The `dist()` and `hclust()` from base R handles this nicely:
+
+```{r}
+data(mtcars)
+
+dm <- dist(mtcars, method = 'euclidean')
+hc <- hclust(dm, method = 'complete')
+```
+
+The `dendextend` package can accept the output from `hclust` to make customizable dendrograms:
+
+```{r, warning=FALSE, message=FALSE}
+library(dendextend)
+den <- as.dendrogram(hc)
+
+den %>% plot()
+```
+
+When we know the number of clusters present, we can color them differently with `color_branches()`. For an alternative look at dendrograms, we can circlize them using `circlize_dendrogram()`:
+
+```{r}
+den %>% color_branches(k = 4) %>%
+  circlize_dendrogram()
+```
+
+The `cutree()` function accepts the `hclust()` output and assigns a cluster label, depending on the number of clusters defined:
+
+```{r}
+cutree(hc, k = 4) %>% head()
+```
+
+Finally, identifying the optimal number of clusters in the data can mainly be done using the silhouette method or the elbow (also called the wss) method:
+
+```{r}
+fviz_nbclust(mtcars, FUNcluster = hcut,
+             method = 'silhouette',
+             diss = dm)
+```
+
+```{r}
+fviz_nbclust(mtcars, FUNcluster = hcut,
+             method = 'wss',
+             diss = dm)
+```
+
+
+<!--chapter:end:04-EDA.Rmd-->
+
+# Everyday ML: Classification
+
+In the preceeding chapters, I reviewed the fundamentals of wrangling data as well as running some exploratory data analysis to get a feel for the data at hand. In data science projects, it is often typical to frame problems in context of a model - how does a variable *y* behave according to some other variable *x*? For example, how does the pricing of a residential property behave according to the square footage? Is the relationship linear? Are there confounding variables that affect this relationship we have not accounted for?
+
+In the simplest sense, fitting a linear model using ordinary least squares using `lm()` in R provide us with two parameters: the coefficient and the intercept. We can use these parameters to predict the housing price of a property based on the input *feature* - or *features* most likely - of that particular instance. This is the fundamental concept at the core of supervised learning. This example is a type of a *regression* as the target variable (i.e., the housing price) is a continuous variable. However, if the variable we were trying to predict is categorical (e.g., bins based on the bracket of housing price) the task would be *classification*.
+
+The digression into concepts in ML and the details into each algorithm is beyond the scope of this book, but more details around specific topics are available on my [blog](https://brianjmpark.github.io/) as well as documentation for popular ML packages such as Python's [Scikit-Learn](https://scikit-learn.org/stable/). 
+
+In R, the workhorse of supervised learning models, whether it's classification or regression, is the `caret` package.
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(caret)
+```
+
+
+## Model training and predictions
+
+For the first exercise I will use a dataset from Kaggle [here](https://www.kaggle.com/datasets/kkhandekar/all-datasets-for-practicing-ml) which I also uploaded onto my GitHub for reference:
+
+```{r, warning=FALSE}
+url <- 'https://raw.githubusercontent.com/snowoflondon/everyday-r/main/datasets/Class_Winequality.csv'
+df <- read_delim(url, delim = ';')
+head(df)
+```
+
+This dataset has 11 features and a target label column called `quality`. Firstly, I convert the `quality` column into factors to reiterate the fact that we are working with a categorical column with defined levels.
+
+```{r}
+df <- df %>% mutate(quality = factor(quality)) %>% relocate(quality)
+```
+
+A glimpse into the 11 features shows us that the values are heterogenous in scale:
+
+```{r}
+summary(df %>% select(-quality))
+```
+
+For a quick exploratory analysis, take a look at the distribution of the features and their scales (i.e., y-axis). Typically in ML tasks, the scales need to be preprocessed prior to model training. This isn't necessarily the case in models like the random forest, for example, but it is good practice regardless. I will circle back to this in a bit.
+
+```{r}
+library(RColorBrewer)
+dfm <- df %>% pivot_longer(-quality, names_to = 'feature', 
+               values_to = 'values')
+
+dfm %>% ggplot(aes(x = quality, y = values)) + 
+  geom_boxplot(aes(fill = quality), alpha = .6) + 
+  facet_wrap(~ feature, scales = 'free') + theme_bw() + 
+  theme(legend.position = 'none') + 
+  scale_fill_brewer(palette = 'Set1')
+```
+
+Before doing any kind of preprocessing or normalization, it is imperative to split the data into training and testing to prevent information leak. The `createDataPartition()` function accepts the `p = ` argument which defines the split fraction. Here I use 80/20 split.
+
+```{r}
+set.seed(42)
+df <- df %>% mutate(quality = paste0('Group_', quality)) %>%
+  mutate(quality = factor(quality))
+
+idx <- createDataPartition(y = df$quality, p = .8,
+                           list = FALSE, times = 1)
+
+df_train <- df[idx,]
+df_test <- df[-idx,]
+```
+
+The `createDataPartition()` outputs an array of indices which can be used to split the original data.
+
+Going back to the talk of scaling and preprocessing the data: a common procedure is to `center` and `scale`, that is - subtract the mean and divide by the standard deviation. If you're familiar with `scikit-learn` in Python, this is analogous to running `StandardScaler()`. 
+
+```{r}
+preProcObj <- preProcess(df_train, method = c('center', 'scale'))
+preProcObj
+```
+
+Evidently, the `preProcess()` function recognized the column containing the target labels and ignored it for preprocessing. 
+
+Preprocessing is done on the training data and the learned object is applied to both the training and testing data:
+
+```{r}
+df_train <- predict(preProcObj, df_train)
+df_test <- predict(preProcObj, df_test)
+```
+
+Revisiting the features now shows the effect of the preprocessing step:
+
+```{r}
+summary(df_train %>% select(-quality))
+```
+
+The scales have been normalized, as evident here:
+
+```{r}
+df_train %>% pivot_longer(-quality, names_to = 'feature',
+                          values_to = 'values') %>%
+  ggplot(aes(x = quality, y = values)) +
+  geom_boxplot(aes(fill = quality), alpha = .6) +
+  facet_wrap(~ feature, scales = 'free') + theme_bw() +
+  theme(legend.position = 'none') + 
+  scale_fill_brewer(palette = 'Set1')
+```
+
+Once we're ready to train the model, an important function is `trainControl()`. Here, typically we define the sampling method for the model training. I am using `method = cv` with `number = 5` for k-fold cross-validation with 5 folds. Alternatively, I could use `method = repeatedcv` with `number = 5` and `repeats = 5` for repeated cross-validation with 5 iterations, but for this exercise I will settle with the simple 5-fold cross validation.
+
+```{r}
+tr <- trainControl(method = 'cv',
+                   number = 5,
+                   classProbs = TRUE)
+
+model <- train(quality ~ ., data = df_train,
+               method = 'ranger', importance = 'impurity',
+               trControl = tr)
+```
+
+Above, I defined `method = ranger` within `train()`, which is a wrapper for training a random forest model. For all available methods for `train()`, see `caret`'s documentation [here](https://topepo.github.io/caret/train-models-by-tag.html). The `importance = 'impurity'` asks the model to use the Gini impurity method to rank variable importance. This will be useful later.
+
+Calling the model object summarizes the model's performance on the validation set (i.e., hold-out sets during k-fold cross validation).
+
+```{r}
+model
+```
+
+Various hyperparametes were tested and the combination with the highest validation accuracy was chosen:
+
+```{r}
+model$bestTune
+```
+
+The performance on the resamples during the cross validation process can be found here:
+
+```{r}
+model$resample
+```
+
+The testing dataset has not been touched at all during model training. For model evaluation, above model is tested on this hold-out set using `predict()`:
+
+```{r}
+pred <- predict(model, df_test)
+```
+
+For a clean summary of model evaluation, use `confusionMatrix()`:
+
+```{r}
+confusionMatrix(data = pred, reference = df_test$quality, 
+                mode = 'prec_recall')
+```
+
+Certain models such as the random forest have built-in feature importance. During model training, I defined `importance = 'impurity'`, which means that the feature importance is calculated using the mean decrease in impurity after permutation of a given feature. Accessing this information is useful when we want to know which variables have the greatest influence on model performance and conversely, which ones have the least.
+
+```{r}
+varImp(model)$importance
+```
+
+The variable importance score is automatically scaled so that the highest score is set to 100. This can be turned off using `scale = FALSE` within `varImp()`.
+
+A quick visualization of variable importance is useful:
+
+```{r}
+df_imp <- varImp(model)$importance %>% 
+  rownames_to_column(var = 'Var') %>%
+  as_tibble() %>% arrange(desc(Overall))
+
+ggplot(df_imp, aes(x = reorder(Var, Overall), y = Overall)) + 
+  geom_point(stat = 'identity', color = 'red') + 
+  geom_segment(aes(x = reorder(Var, Overall), 
+                   xend = reorder(Var, Overall),
+                   y = 0,
+                   yend = Overall)) + 
+  theme_classic() + coord_flip() + xlab('') + ylab('Var. Imp.') +
+  theme(text = element_text(size = 14))
+```
+
+
+## Feature selection using univariate filters
+
+When the dataset is considerably larger, the number of *n* features may grow extremely large. In these scenarios, it may be advisable to reduce the number of features to save computation time but also to reduce model complexity. 
+
+Of course, dimensionality reduction is possible, though this transforms the data and the original meaning of the features is lost. An alternative method is *feature selection* - selecting important features and discarding unimportant ones. This relates specifically to the concept of feature importance in the previous section.
+
+`caret` offers a simple way to rank features when built-in feature importance measures are not available. This is by using univariate filters, which are essentially fitting *n* individual models (where *n* is the number of features) against the target label and ranking them based on their statistical significance.
+
+`anoveScores()` is used for classification models and fits an ANOVA for each feature against the label. The null hypothesis here assumes the mean values for each feature is equal for all labels. `gamScores()` is used for regression models and uses a generalized additive model to look for functional relationships between the features and the label. In both cases, each feature in the predictor set is passed individually.
+
+For this part I will use the `Sonar` dataset from `mlbench`.
+
+```{r}
+library(mlbench)
+data(Sonar)
+Sonar <- as_tibble(Sonar)
+Sonar
+```
+
+The target labels in `Sonar` has two classes:
+
+```{r}
+Sonar$Class %>% str()
+```
+
+Since this is a classification task, I will use `anovaScores()` to output a score for each feature.
+
+```{r}
+fit_anova <- function(x, y) {
+    anova_res <- apply(x, 2, function(f) {anovaScores(f, y)})
+    return(anova_res)
+}
+
+aov_res <- fit_anova(x = select(Sonar, -Class), 
+                     y = Sonar$Class)
+
+aov_res <- as.data.frame(aov_res)
+head(aov_res)
+```
+
+The output for each feature is the p-value for the whole model F-test. These can be ranked to find the features with the greatest degree of relationship with the target labels:
+
+```{r}
+aov_res <- aov_res %>% rownames_to_column(var = 'Var') %>%
+  as_tibble() %>% rename(pVal = aov_res) %>% arrange(aov_res)
+
+aov_res
+```
+
+
+## Feature selection using recursive feature elimination
+
+An alternative method for feature selection is recursive feature elimination (RFE). RFE is a wrapper method that uses another model to rank features based on variable importance. This model does not have to be the same model used in the downstream model prediction task. 
+
+The feature importance ranking method depends which model the RFE wrapper uses. Tree models such as the random forest, as previous mentioned, can use impurity scores or mean accuracy decrease to calculate this.
+
+The `rfeControl()` function specifies the RFE model as well as the resampling method. Then `rfe()` runs the algorithm to identify important features as well as the model accuracy as the RFE recursively removes the less important features and trains the model.
+
+```{r}
+rfec <- rfeControl(functions = rfFuncs, method = 'cv',
+                  number = 5)
+
+rfeObj <- rfe(x = select(Sonar, -Class), y = Sonar$Class,
+              rfeControl = rfec)
+```
+
+Calling the output shows that the top 5 most important features show overlap with the result from `anovaScores()` from the previous section, which is good. It also shows that keeping the original 60 features here shows the best model accuracy, which is fine. This won't always be the case with increasing number of dimensions in the data.
+
+```{r}
+rfeObj
+```
+
+The fitted model and its performance can be retrieved as such:
+
+```{r}
+rfeObj$fit
+```
+
+The ranking of the features can be retreived here, which is useful if we were to select the first few and subset our original dataset:
+
+```{r}
+rfeObj$optVariables
+```
+
+Calling `ggplot()` on the RFE result provides a visual look:
+
+```{r}
+ggplot(rfeObj) + theme_bw()
+```
+
+
+## Hyperparameter tuning
+
+Previously when we trained the random forest model using `train()`, it automatically deduced the optimal values for the model hyperparameters. Under the hood, `train()` ran a grid search to find these values, but we can define our own grid as well.
+
+Hyperparameter tuning should of course be done on the training set, so I will use the `Sonar` dataset to arrive at the training and testing sets:
+
+```{r}
+idx <- createDataPartition(y = Sonar$Class, p = .8,
+                           list = FALSE, times = 1)
+
+df_train <- Sonar[idx,]
+df_test <- Sonar[-idx,]
+
+preProcObj <- preProcess(df_train, method = c('center', 'scale'))
+df_train <- predict(preProcObj, df_train)
+df_test <- predict(preProcObj, df_test)
+```
+
+For the random forest model, I define the possible values for the three hyperparameters as such, and then train by providing an input for `tuneGrid = `.
+
+```{r}
+rf_grid <- expand.grid(mtry = c(2, 4, 8, 10), 
+                       splitrule = c("gini", "extratrees"), 
+                       min.node.size = c(1, 3, 5))
+
+model_rf <- train(Class ~ ., data = df_train, method = 'ranger',
+                    importance = 'impurity', trControl = tr,
+                    tuneGrid = rf_grid)
+```
+
+Calling the model then shows the model performance (with the specified resampling method) for each combination of the grid search:
+
+```{r}
+model_rf
+```
+
+As before, the best set of hyperparameters can be retrieved:
+
+```{r}
+model_rf$bestTune
+```
+
+Instead of a predefined grid search, we can do a randomized search instead. This can be done by setting `search = 'random'` within `trainControl()` first and then specifying `tuneLength = ` in `train()`. 
+
+Since we've only used random forest models so far, here I will do a similar grid search but using a support vector machine (SVM) with the radial basis function kernel instead:
+
+```{r}
+tr_svm <- trainControl(method = 'cv',
+                   number = 5,
+                   classProbs = TRUE,
+                   search = 'random')
+
+model_svm <- train(Class ~ ., data = df_train, 
+                   method = 'svmRadial',
+                   trControl = tr_svm, 
+                   tunelength = 8)
+```
+
+Calling the model shows the best combination for `C` (cost) and `sigma` based on the model accuracy:
+
+```{r}
+model_svm
+```
+
+
+## ROC and precision-recall curves
+
+A nice way to visualize model evaluation is by using ROC curves, which uses metrics that were already calculated previously - precision and recall. 
+
+For this I will generate predictions for the random forest model using `Sonar`. Setting `type = 'prob'` yields probabilities for each label classification instead of the label itself:
+
+```{r}
+pred <- predict(model_rf, df_test, type = 'prob')
+head(pred)
+```
+
+The package `MLeval` can be used to generate ROC curves as such; here we achieve the ROC area under the curve of 0.96.
+
+```{r, warning=FALSE}
+library(MLeval)
+roc_rf <- evalm(data.frame(pred, df_test$Class, Group = 'RF'), 
+                showplots = FALSE, silent = TRUE)
+roc_rf$roc
+```
+
+Similarly, a precision-recall curve can also be visualized. This curve shows the tradeoff between the two metrics for each threshold. 
+
+```{r}
+roc_rf$proc
+```
+
+The values can be retrieved here:
+
+```{r}
+roc_rf$optres
+```
+
+For completeness I will make these figures for the SVM model as well:
+
+```{r}
+pred2 <- predict(model_svm, df_test, type = 'prob')
+```
+
+```{r}
+roc_svm <- evalm(data.frame(pred2, df_test$Class, Group = 'SVM'), 
+                showplots = FALSE, silent = TRUE)
+roc_svm$roc
+```
+
+```{r}
+roc_svm$proc
+```
+
+
+## Model comparisons
+
+`caret` provides an elegant way to compare the performance of multiple models for model selection. We have two models trained on `Sonar` dataset already, so I will train two more.
+
+Here I am using a gradient boosted machine (`gbm`) and a k-nearest neighbors (`knn`).
+
+```{r}
+# model_rf
+# model_svm
+model_gbm <- train(Class ~., data = df_train, 
+                   method = 'gbm', trControl = tr, 
+                   verbose = FALSE)
+
+model_knn <- train(Class ~ ., data = df_train,
+                   method = 'knn', trControl = tr)
+```
+
+```{r}
+model_gbm
+```
+
+```{r}
+model_knn
+```
+
+Both accuracy and kappa are then used to compare the model performance across the four models:
+
+```{r}
+comps <- resamples(
+  list(RF = model_rf, SVM = model_svm, GBM = model_gbm, 
+       KNN = model_knn)
+  )
+
+summary(comps)
+```
+
+And finally, a quick visualization at the model performance comparisons:
+
+```{r}
+dotplot(comps)
+```
+
+<!--chapter:end:05-Classification.Rmd-->
+
