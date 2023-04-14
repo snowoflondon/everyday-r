@@ -4,7 +4,7 @@ In the previous chapter, I briefly covered writing an iterative function using `
 
 A traditional iterative function involves explicitly writing a for loop. Though for loops are often misconstrued as being slower than the functional counterparts (e.g., the `apply` family of functions), the real down-side of for loops, as Hadley argues in [his book, 'Advanced R'](https://adv-r.hadley.nz/functionals.html), is that for loops do a poor job in conveying what should be done with the results. 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
 ```
 

@@ -2,7 +2,7 @@
 
 Before diving straight into complex modeling tasks, many downstream failures and oversights can be avoided with a broad, preliminary look at the data. Exploratory data analysis (EDA) doesn't aim to answer a specific question or a hypothesis, but seeks to find general, interesting trends and quirks in the data. Finding and identifying outliers, understanding data formats, and investigating the distribution of the data are all components of EDA. There is no one set rule or protocol, but this chapter aims to follow a typical EDA workflow working with continuous, categorical, and ordinal data.
 
-```{r,warning=FALSE}
+```{r,warning=FALSE, message=FALSE}
 library(tidyverse)
 library(mlbench)
 ```
@@ -38,7 +38,7 @@ head(cor_res)
 
 The package `corrplot` elegantly outputs a visualization using the correlation matrix:
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(corrplot)
 corrplot(cor_res, method = 'color')
 ```
@@ -110,14 +110,14 @@ anova(lm_mod)
 
 The `broom` package is useful in converting summaries of model objects into workable tibbles:
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(broom)
 tidy(lm_mod)
 ```
 
 Since we seem to have linear relationships across our dataset, we can use scatterplots in combination with correlation analysis to generate useful visualizations:
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(ggpubr)
 ggplot(df_num, aes(x = rm, y = medv)) + 
   geom_point() + 
@@ -165,7 +165,7 @@ df
 
 It's not necessary in this case, but since we are working with dates let's make the date labels easier to read. Using `lubridate` I will convert the month labels into a factor with character levels. Then using base R's `weekdays()` I will convert the days of the week to characters as well.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(lubridate)
 df <- df %>% 
   mutate(V1 = lubridate::month(as.numeric(V1), 

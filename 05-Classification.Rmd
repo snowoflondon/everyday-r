@@ -8,7 +8,7 @@ The digression into concepts in ML and the details into each algorithm is beyond
 
 In R, the workhorse of supervised learning models, whether it's classification or regression, is the `caret` package.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(caret)
 ```
@@ -183,7 +183,7 @@ Of course, dimensionality reduction is possible, though this transforms the data
 
 For this part I will use the `Sonar` dataset from `mlbench`.
 
-```{r}
+```{r, message=FALSE}
 library(mlbench)
 data(Sonar)
 Sonar <- as_tibble(Sonar)
@@ -340,7 +340,7 @@ head(pred)
 
 The package `MLeval` can be used to generate ROC curves as such; here we achieve the ROC area under the curve of 0.96.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(MLeval)
 roc_rf <- evalm(data.frame(pred, df_test$Class, Group = 'RF'), 
                 showplots = FALSE, silent = TRUE)

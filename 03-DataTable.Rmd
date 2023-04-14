@@ -2,7 +2,7 @@
 
 In the first chapter, we saw various practical solutions in data wrangling using `tidyverse` and base R. One topic that has not been discussed is the idea of computational efficiency and runtime - this matter has been trivial so far since the datasets have been considerably tiny. However, when working with large data, it may be in the user's interest to try using an alternative package designed for reducing programming and computation time - `data.table`. The vignette is available [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html). 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(data.table)
 options(datatable.print.nrows=10)
 ```

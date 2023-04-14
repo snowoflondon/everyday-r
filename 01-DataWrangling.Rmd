@@ -2,7 +2,7 @@
 
 Suppose there exists a test dataset and the user is tasked with proving their proficiency in exploratory data analysis (EDA). Alternatively, the user may be handed a piece of data (e.g., maybe an Excel sheet) and is asked to run some preliminary analysis. Prior to jumping straight into EDA and statistical modeling, the user must be able to transform the original data into a desirable format. This includes, but is not limited to, missing data imputation, scalar transformation, feature selection, group aggregation, and data filtering. The following notebook outlines the fundamentals of data wrangling, using practical base R and `tidyverse` solutions interchangeably. 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
 ```
 
@@ -256,7 +256,7 @@ mtcars_wide
 
 In base R, you can use `reshape()` with the argument `direction = ` but I don't find its syntax very intuitive. Alternatively, using `data.table` gets us the solution much easier:
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(data.table)
 melt(setDT(mtcars), id.vars = c('CAR'), variable.name = 'Metric')
 ```
@@ -318,7 +318,7 @@ mtcars_lst %>%
 
 Using `broom::tidy` to clean up modelling result and output the model estimates:
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(broom)
 mtcars_lst %>%
   map(~ lm(mpg ~ gear, data = .x)) %>%
