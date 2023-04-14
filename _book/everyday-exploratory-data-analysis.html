@@ -218,15 +218,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="everyday-exploratory-data-analysis" class="section level1 hasAnchor" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Everyday exploratory data analysis<a href="everyday-exploratory-data-analysis.html#everyday-exploratory-data-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Before diving straight into complex modeling tasks, many downstream failures and oversights can be avoided with a broad, preliminary look at the data. Exploratory data analysis (EDA) doesn’t aim to answer a specific question or a hypothesis, but seeks to find general, interesting trends and quirks in the data. Finding and identifying outliers, understanding data formats, and investigating the distribution of the data are all components of EDA. There is no one set rule or protocol, but this chapter aims to follow a typical EDA workflow working with continuous, categorical, and ordinal data.</p>
-<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="everyday-exploratory-data-analysis.html#cb287-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb287-2"><a href="everyday-exploratory-data-analysis.html#cb287-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlbench)</span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="everyday-exploratory-data-analysis.html#cb278-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb278-2"><a href="everyday-exploratory-data-analysis.html#cb278-2" tabindex="-1"></a><span class="fu">library</span>(mlbench)</span></code></pre></div>
 <div id="workflow-1-continuous-data" class="section level2 hasAnchor" number="5.1">
 <h2><span class="header-section-number">5.1</span> Workflow 1: continuous data<a href="everyday-exploratory-data-analysis.html#workflow-1-continuous-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For this exercise I will use the Boston Housing dataset from <code>mlbench</code>, which is a common dataset used in ML tutorials. It consists of numerical features (except one column <code>chas</code>, which is a binary dummy variable) and a continuous target variable <code>medv</code> - median value of homes.</p>
-<div class="sourceCode" id="cb288"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb288-1"><a href="everyday-exploratory-data-analysis.html#cb288-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;BostonHousing&quot;</span>)</span>
-<span id="cb288-2"><a href="everyday-exploratory-data-analysis.html#cb288-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(BostonHousing)</span></code></pre></div>
+<div class="sourceCode" id="cb279"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb279-1"><a href="everyday-exploratory-data-analysis.html#cb279-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;BostonHousing&quot;</span>)</span>
+<span id="cb279-2"><a href="everyday-exploratory-data-analysis.html#cb279-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(BostonHousing)</span></code></pre></div>
 <p>The function <code>str()</code> conveniently returns the structure of the dataset and as we can see, it returns the nature of each column.</p>
-<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="everyday-exploratory-data-analysis.html#cb289-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="everyday-exploratory-data-analysis.html#cb280-1" tabindex="-1"></a><span class="fu">str</span>(df)</span></code></pre></div>
 <pre><code>## tibble [506 × 14] (S3: tbl_df/tbl/data.frame)
 ##  $ crim   : num [1:506] 0.00632 0.02731 0.02729 0.03237 0.06905 ...
 ##  $ zn     : num [1:506] 18 0 0 0 0 0 12.5 12.5 12.5 12.5 ...
@@ -243,47 +243,44 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ lstat  : num [1:506] 4.98 9.14 4.03 2.94 5.33 ...
 ##  $ medv   : num [1:506] 24 21.6 34.7 33.4 36.2 28.7 22.9 27.1 16.5 18.9 ...</code></pre>
 <p>Immediately we see that the column <code>chas</code> is a factor. As previously iterated, this column contains a dummy variable which indicates <code>1</code> if tract bounds river and <code>0</code> if otherwise. As expected, <code>vapply()</code> output says this is the only non-numerical column. We will have to be aware of this.</p>
-<div class="sourceCode" id="cb291"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb291-1"><a href="everyday-exploratory-data-analysis.html#cb291-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vapply</span>(df, is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##    crim      zn   indus    chas     nox      rm 
-##    TRUE    TRUE    TRUE   FALSE    TRUE    TRUE 
-##     age     dis     rad     tax ptratio       b 
-##    TRUE    TRUE    TRUE    TRUE    TRUE    TRUE 
-##   lstat    medv 
-##    TRUE    TRUE</code></pre>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="everyday-exploratory-data-analysis.html#cb282-1" tabindex="-1"></a><span class="fu">vapply</span>(df, is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))</span></code></pre></div>
+<pre><code>##    crim      zn   indus    chas     nox      rm     age     dis 
+##    TRUE    TRUE    TRUE   FALSE    TRUE    TRUE    TRUE    TRUE 
+##     rad     tax ptratio       b   lstat    medv 
+##    TRUE    TRUE    TRUE    TRUE    TRUE    TRUE</code></pre>
 <p>Generally, features (also as known as predictors) tend to show some degree of correlations with one another. This can be identified with <code>cor()</code>, which returns a correlation matrix.</p>
-<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="everyday-exploratory-data-analysis.html#cb293-1" aria-hidden="true" tabindex="-1"></a>cor_res <span class="ot">&lt;-</span> <span class="fu">cor</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(medv, chas)))</span>
-<span id="cb293-2"><a href="everyday-exploratory-data-analysis.html#cb293-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cor_res)</span></code></pre></div>
-<pre><code>##             crim         zn      indus        nox
-## crim   1.0000000 -0.2004692  0.4065834  0.4209717
-## zn    -0.2004692  1.0000000 -0.5338282 -0.5166037
-## indus  0.4065834 -0.5338282  1.0000000  0.7636514
-## nox    0.4209717 -0.5166037  0.7636514  1.0000000
-## rm    -0.2192467  0.3119906 -0.3916759 -0.3021882
-## age    0.3527343 -0.5695373  0.6447785  0.7314701
-##               rm        age        dis        rad
-## crim  -0.2192467  0.3527343 -0.3796701  0.6255051
-## zn     0.3119906 -0.5695373  0.6644082 -0.3119478
-## indus -0.3916759  0.6447785 -0.7080270  0.5951293
-## nox   -0.3021882  0.7314701 -0.7692301  0.6114406
-## rm     1.0000000 -0.2402649  0.2052462 -0.2098467
-## age   -0.2402649  1.0000000 -0.7478805  0.4560225
-##              tax    ptratio          b      lstat
-## crim   0.5827643  0.2899456 -0.3850639  0.4556215
-## zn    -0.3145633 -0.3916785  0.1755203 -0.4129946
-## indus  0.7207602  0.3832476 -0.3569765  0.6037997
-## nox    0.6680232  0.1889327 -0.3800506  0.5908789
-## rm    -0.2920478 -0.3555015  0.1280686 -0.6138083
-## age    0.5064556  0.2615150 -0.2735340  0.6023385</code></pre>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="everyday-exploratory-data-analysis.html#cb284-1" tabindex="-1"></a>cor_res <span class="ot">&lt;-</span> <span class="fu">cor</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(medv, chas)))</span>
+<span id="cb284-2"><a href="everyday-exploratory-data-analysis.html#cb284-2" tabindex="-1"></a><span class="fu">head</span>(cor_res)</span></code></pre></div>
+<pre><code>##             crim         zn      indus        nox         rm
+## crim   1.0000000 -0.2004692  0.4065834  0.4209717 -0.2192467
+## zn    -0.2004692  1.0000000 -0.5338282 -0.5166037  0.3119906
+## indus  0.4065834 -0.5338282  1.0000000  0.7636514 -0.3916759
+## nox    0.4209717 -0.5166037  0.7636514  1.0000000 -0.3021882
+## rm    -0.2192467  0.3119906 -0.3916759 -0.3021882  1.0000000
+## age    0.3527343 -0.5695373  0.6447785  0.7314701 -0.2402649
+##              age        dis        rad        tax    ptratio
+## crim   0.3527343 -0.3796701  0.6255051  0.5827643  0.2899456
+## zn    -0.5695373  0.6644082 -0.3119478 -0.3145633 -0.3916785
+## indus  0.6447785 -0.7080270  0.5951293  0.7207602  0.3832476
+## nox    0.7314701 -0.7692301  0.6114406  0.6680232  0.1889327
+## rm    -0.2402649  0.2052462 -0.2098467 -0.2920478 -0.3555015
+## age    1.0000000 -0.7478805  0.4560225  0.5064556  0.2615150
+##                b      lstat
+## crim  -0.3850639  0.4556215
+## zn     0.1755203 -0.4129946
+## indus -0.3569765  0.6037997
+## nox   -0.3800506  0.5908789
+## rm     0.1280686 -0.6138083
+## age   -0.2735340  0.6023385</code></pre>
 <p>The package <code>corrplot</code> elegantly outputs a visualization using the correlation matrix:</p>
-<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb295-1"><a href="everyday-exploratory-data-analysis.html#cb295-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span></code></pre></div>
-<pre><code>## corrplot 0.84 loaded</code></pre>
-<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="everyday-exploratory-data-analysis.html#cb297-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor_res, <span class="at">method =</span> <span class="st">&#39;color&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb286-1"><a href="everyday-exploratory-data-analysis.html#cb286-1" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb286-2"><a href="everyday-exploratory-data-analysis.html#cb286-2" tabindex="-1"></a><span class="fu">corrplot</span>(cor_res, <span class="at">method =</span> <span class="st">&#39;color&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-151-1.png" width="672" /></p>
 <p>Now it’s time to check the distribution of the features. For this I want to make a boxplot, but for that I need to reshape the dataset first. As seen in Chapter 1, <code>tidyr::pivot_longer()</code> can be used to convert the data into long format.</p>
-<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="everyday-exploratory-data-analysis.html#cb298-1" aria-hidden="true" tabindex="-1"></a>dfm <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(medv, chas)) <span class="sc">%&gt;%</span></span>
-<span id="cb298-2"><a href="everyday-exploratory-data-analysis.html#cb298-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&#39;Feature&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Value&#39;</span>)</span>
-<span id="cb298-3"><a href="everyday-exploratory-data-analysis.html#cb298-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb298-4"><a href="everyday-exploratory-data-analysis.html#cb298-4" aria-hidden="true" tabindex="-1"></a>dfm</span></code></pre></div>
+<div class="sourceCode" id="cb287"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb287-1"><a href="everyday-exploratory-data-analysis.html#cb287-1" tabindex="-1"></a>dfm <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(medv, chas)) <span class="sc">%&gt;%</span></span>
+<span id="cb287-2"><a href="everyday-exploratory-data-analysis.html#cb287-2" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&#39;Feature&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Value&#39;</span>)</span>
+<span id="cb287-3"><a href="everyday-exploratory-data-analysis.html#cb287-3" tabindex="-1"></a></span>
+<span id="cb287-4"><a href="everyday-exploratory-data-analysis.html#cb287-4" tabindex="-1"></a>dfm</span></code></pre></div>
 <pre><code>## # A tibble: 6,072 × 2
 ##    Feature     Value
 ##    &lt;chr&gt;       &lt;dbl&gt;
@@ -299,53 +296,52 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 10 ptratio  15.3    
 ## # … with 6,062 more rows</code></pre>
 <p>Now it’s trivial to use <code>ggplot()</code> to make the boxplot:</p>
-<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="everyday-exploratory-data-analysis.html#cb300-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfm, <span class="fu">aes</span>(<span class="at">x =</span> Feature, <span class="at">y =</span> Value)) <span class="sc">+</span> </span>
-<span id="cb300-2"><a href="everyday-exploratory-data-analysis.html#cb300-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> Feature), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
-<span id="cb300-3"><a href="everyday-exploratory-data-analysis.html#cb300-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="everyday-exploratory-data-analysis.html#cb289-1" tabindex="-1"></a><span class="fu">ggplot</span>(dfm, <span class="fu">aes</span>(<span class="at">x =</span> Feature, <span class="at">y =</span> Value)) <span class="sc">+</span> </span>
+<span id="cb289-2"><a href="everyday-exploratory-data-analysis.html#cb289-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> Feature), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb289-3"><a href="everyday-exploratory-data-analysis.html#cb289-3" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-153-1.png" width="672" /></p>
 <p>It looks like the scales for the features are not consistent. This is common in real-life data and for most ML algorithms, features need to be preprocessed. I will cover this in the future chapters, but in brief, we can calculate the z-score as such for each predictor:</p>
-<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="everyday-exploratory-data-analysis.html#cb301-1" aria-hidden="true" tabindex="-1"></a>zs <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb301-2"><a href="everyday-exploratory-data-analysis.html#cb301-2" aria-hidden="true" tabindex="-1"></a>  (x <span class="sc">-</span> <span class="fu">mean</span>(x)) <span class="sc">/</span> <span class="fu">sd</span>(x)</span>
-<span id="cb301-3"><a href="everyday-exploratory-data-analysis.html#cb301-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb301-4"><a href="everyday-exploratory-data-analysis.html#cb301-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb301-5"><a href="everyday-exploratory-data-analysis.html#cb301-5" aria-hidden="true" tabindex="-1"></a>df_s <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(medv, chas)) <span class="sc">%&gt;%</span></span>
-<span id="cb301-6"><a href="everyday-exploratory-data-analysis.html#cb301-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), zs))</span>
-<span id="cb301-7"><a href="everyday-exploratory-data-analysis.html#cb301-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb301-8"><a href="everyday-exploratory-data-analysis.html#cb301-8" aria-hidden="true" tabindex="-1"></a>df_s</span></code></pre></div>
+<div class="sourceCode" id="cb290"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb290-1"><a href="everyday-exploratory-data-analysis.html#cb290-1" tabindex="-1"></a>zs <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb290-2"><a href="everyday-exploratory-data-analysis.html#cb290-2" tabindex="-1"></a>  (x <span class="sc">-</span> <span class="fu">mean</span>(x)) <span class="sc">/</span> <span class="fu">sd</span>(x)</span>
+<span id="cb290-3"><a href="everyday-exploratory-data-analysis.html#cb290-3" tabindex="-1"></a>}</span>
+<span id="cb290-4"><a href="everyday-exploratory-data-analysis.html#cb290-4" tabindex="-1"></a></span>
+<span id="cb290-5"><a href="everyday-exploratory-data-analysis.html#cb290-5" tabindex="-1"></a>df_s <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(medv, chas)) <span class="sc">%&gt;%</span></span>
+<span id="cb290-6"><a href="everyday-exploratory-data-analysis.html#cb290-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), zs))</span>
+<span id="cb290-7"><a href="everyday-exploratory-data-analysis.html#cb290-7" tabindex="-1"></a></span>
+<span id="cb290-8"><a href="everyday-exploratory-data-analysis.html#cb290-8" tabindex="-1"></a>df_s</span></code></pre></div>
 <pre><code>## # A tibble: 506 × 12
-##      crim      zn  indus    nox     rm     age
-##     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-##  1 -0.419  0.285  -1.29  -0.144  0.413 -0.120 
-##  2 -0.417 -0.487  -0.593 -0.740  0.194  0.367 
-##  3 -0.417 -0.487  -0.593 -0.740  1.28  -0.266 
-##  4 -0.416 -0.487  -1.31  -0.834  1.02  -0.809 
-##  5 -0.412 -0.487  -1.31  -0.834  1.23  -0.511 
-##  6 -0.417 -0.487  -1.31  -0.834  0.207 -0.351 
-##  7 -0.410  0.0487 -0.476 -0.265 -0.388 -0.0702
-##  8 -0.403  0.0487 -0.476 -0.265 -0.160  0.978 
-##  9 -0.396  0.0487 -0.476 -0.265 -0.930  1.12  
-## 10 -0.400  0.0487 -0.476 -0.265 -0.399  0.615 
-## # … with 496 more rows, and 6 more variables:
-## #   dis &lt;dbl&gt;, rad &lt;dbl&gt;, tax &lt;dbl&gt;,
-## #   ptratio &lt;dbl&gt;, b &lt;dbl&gt;, lstat &lt;dbl&gt;</code></pre>
+##      crim      zn  indus    nox     rm     age   dis    rad    tax
+##     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 -0.419  0.285  -1.29  -0.144  0.413 -0.120  0.140 -0.982 -0.666
+##  2 -0.417 -0.487  -0.593 -0.740  0.194  0.367  0.557 -0.867 -0.986
+##  3 -0.417 -0.487  -0.593 -0.740  1.28  -0.266  0.557 -0.867 -0.986
+##  4 -0.416 -0.487  -1.31  -0.834  1.02  -0.809  1.08  -0.752 -1.11 
+##  5 -0.412 -0.487  -1.31  -0.834  1.23  -0.511  1.08  -0.752 -1.11 
+##  6 -0.417 -0.487  -1.31  -0.834  0.207 -0.351  1.08  -0.752 -1.11 
+##  7 -0.410  0.0487 -0.476 -0.265 -0.388 -0.0702 0.838 -0.522 -0.577
+##  8 -0.403  0.0487 -0.476 -0.265 -0.160  0.978  1.02  -0.522 -0.577
+##  9 -0.396  0.0487 -0.476 -0.265 -0.930  1.12   1.09  -0.522 -0.577
+## 10 -0.400  0.0487 -0.476 -0.265 -0.399  0.615  1.33  -0.522 -0.577
+## # … with 496 more rows, and 3 more variables: ptratio &lt;dbl&gt;,
+## #   b &lt;dbl&gt;, lstat &lt;dbl&gt;</code></pre>
 <p>Now the boxplots look more uniform:</p>
-<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="everyday-exploratory-data-analysis.html#cb303-1" aria-hidden="true" tabindex="-1"></a>df_sm <span class="ot">&lt;-</span> df_s <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), </span>
-<span id="cb303-2"><a href="everyday-exploratory-data-analysis.html#cb303-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">names_to =</span> <span class="st">&#39;Feature&#39;</span>, </span>
-<span id="cb303-3"><a href="everyday-exploratory-data-analysis.html#cb303-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">values_to =</span> <span class="st">&#39;Value&#39;</span>)</span>
-<span id="cb303-4"><a href="everyday-exploratory-data-analysis.html#cb303-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb303-5"><a href="everyday-exploratory-data-analysis.html#cb303-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_sm, <span class="fu">aes</span>(<span class="at">x =</span> Feature, <span class="at">y =</span> Value)) <span class="sc">+</span> </span>
-<span id="cb303-6"><a href="everyday-exploratory-data-analysis.html#cb303-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> Feature), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
-<span id="cb303-7"><a href="everyday-exploratory-data-analysis.html#cb303-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="everyday-exploratory-data-analysis.html#cb292-1" tabindex="-1"></a>df_sm <span class="ot">&lt;-</span> df_s <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), </span>
+<span id="cb292-2"><a href="everyday-exploratory-data-analysis.html#cb292-2" tabindex="-1"></a>                               <span class="at">names_to =</span> <span class="st">&#39;Feature&#39;</span>, </span>
+<span id="cb292-3"><a href="everyday-exploratory-data-analysis.html#cb292-3" tabindex="-1"></a>                               <span class="at">values_to =</span> <span class="st">&#39;Value&#39;</span>)</span>
+<span id="cb292-4"><a href="everyday-exploratory-data-analysis.html#cb292-4" tabindex="-1"></a></span>
+<span id="cb292-5"><a href="everyday-exploratory-data-analysis.html#cb292-5" tabindex="-1"></a><span class="fu">ggplot</span>(df_sm, <span class="fu">aes</span>(<span class="at">x =</span> Feature, <span class="at">y =</span> Value)) <span class="sc">+</span> </span>
+<span id="cb292-6"><a href="everyday-exploratory-data-analysis.html#cb292-6" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> Feature), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb292-7"><a href="everyday-exploratory-data-analysis.html#cb292-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-155-1.png" width="672" /></p>
 <p>How about our target variable - the housing price? This column is also continuous so let’s check the shape of this distribution using a histogram:</p>
-<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="everyday-exploratory-data-analysis.html#cb304-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(df<span class="sc">$</span>medv)</span></code></pre></div>
+<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb293-1"><a href="everyday-exploratory-data-analysis.html#cb293-1" tabindex="-1"></a><span class="fu">hist</span>(df<span class="sc">$</span>medv)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-156-1.png" width="672" /></p>
 <p>It looks like the mean value for <code>medv</code> is at around 22 to 23. Changing the number of bins can give us a better look, if needed.</p>
 <p>Since the target variable is continuous, we can easily fit a simple linear model to check for relationships between the predictors and the target. This part may be delving a bit deeper than our initial goal of EDA, but it’s still useful to make us aware of possible relationships in our data.</p>
-<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="everyday-exploratory-data-analysis.html#cb305-1" aria-hidden="true" tabindex="-1"></a>df_num <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>chas)</span>
-<span id="cb305-2"><a href="everyday-exploratory-data-analysis.html#cb305-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb305-3"><a href="everyday-exploratory-data-analysis.html#cb305-3" aria-hidden="true" tabindex="-1"></a>lm_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(medv <span class="sc">~</span> ., <span class="at">data =</span> df_num)</span>
-<span id="cb305-4"><a href="everyday-exploratory-data-analysis.html#cb305-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_mod)</span></code></pre></div>
+<div class="sourceCode" id="cb294"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb294-1"><a href="everyday-exploratory-data-analysis.html#cb294-1" tabindex="-1"></a>df_num <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>chas)</span>
+<span id="cb294-2"><a href="everyday-exploratory-data-analysis.html#cb294-2" tabindex="-1"></a></span>
+<span id="cb294-3"><a href="everyday-exploratory-data-analysis.html#cb294-3" tabindex="-1"></a>lm_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(medv <span class="sc">~</span> ., <span class="at">data =</span> df_num)</span>
+<span id="cb294-4"><a href="everyday-exploratory-data-analysis.html#cb294-4" tabindex="-1"></a><span class="fu">summary</span>(lm_mod)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = medv ~ ., data = df_num)
@@ -355,243 +351,196 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## -13.3968  -2.8103  -0.6455   1.9141  26.3755 
 ## 
 ## Coefficients:
-##               Estimate Std. Error t value
-## (Intercept)  36.891960   5.146516   7.168
-## crim         -0.113139   0.033113  -3.417
-## zn            0.047052   0.013847   3.398
-## indus         0.040311   0.061707   0.653
-## nox         -17.366999   3.851224  -4.509
-## rm            3.850492   0.421402   9.137
-## age           0.002784   0.013309   0.209
-## dis          -1.485374   0.201187  -7.383
-## rad           0.328311   0.066542   4.934
-## tax          -0.013756   0.003766  -3.653
-## ptratio      -0.990958   0.131399  -7.542
-## b             0.009741   0.002706   3.600
-## lstat        -0.534158   0.051072 -10.459
-##             Pr(&gt;|t|)    
-## (Intercept) 2.79e-12 ***
-## crim        0.000686 ***
-## zn          0.000734 ***
-## indus       0.513889    
-## nox         8.13e-06 ***
-## rm           &lt; 2e-16 ***
-## age         0.834407    
-## dis         6.64e-13 ***
-## rad         1.10e-06 ***
-## tax         0.000287 ***
-## ptratio     2.25e-13 ***
-## b           0.000351 ***
-## lstat        &lt; 2e-16 ***
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  36.891960   5.146516   7.168 2.79e-12 ***
+## crim         -0.113139   0.033113  -3.417 0.000686 ***
+## zn            0.047052   0.013847   3.398 0.000734 ***
+## indus         0.040311   0.061707   0.653 0.513889    
+## nox         -17.366999   3.851224  -4.509 8.13e-06 ***
+## rm            3.850492   0.421402   9.137  &lt; 2e-16 ***
+## age           0.002784   0.013309   0.209 0.834407    
+## dis          -1.485374   0.201187  -7.383 6.64e-13 ***
+## rad           0.328311   0.066542   4.934 1.10e-06 ***
+## tax          -0.013756   0.003766  -3.653 0.000287 ***
+## ptratio      -0.990958   0.131399  -7.542 2.25e-13 ***
+## b             0.009741   0.002706   3.600 0.000351 ***
+## lstat        -0.534158   0.051072 -10.459  &lt; 2e-16 ***
 ## ---
-## Signif. codes:  
-## 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Residual standard error: 4.787 on 493 degrees of freedom
 ## Multiple R-squared:  0.7355, Adjusted R-squared:  0.7291 
 ## F-statistic: 114.3 on 12 and 493 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>An ANOVA table on the fitted model gives us additional info such as the mean sum of squares:</p>
-<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="everyday-exploratory-data-analysis.html#cb307-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm_mod)</span></code></pre></div>
+<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="everyday-exploratory-data-analysis.html#cb296-1" tabindex="-1"></a><span class="fu">anova</span>(lm_mod)</span></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Response: medv
-##            Df  Sum Sq Mean Sq  F value    Pr(&gt;F)
-## crim        1  6440.8  6440.8 281.0564 &lt; 2.2e-16
-## zn          1  3554.3  3554.3 155.1005 &lt; 2.2e-16
-## indus       1  2551.2  2551.2 111.3283 &lt; 2.2e-16
-## nox         1    28.7    28.7   1.2507   0.26397
-## rm          1 11794.6 11794.6 514.6823 &lt; 2.2e-16
-## age         1    74.1    74.1   3.2330   0.07278
-## dis         1  1858.3  1858.3  81.0890 &lt; 2.2e-16
-## rad         1    46.9    46.9   2.0447   0.15337
-## tax         1   454.1   454.1  19.8158 1.055e-05
-## ptratio     1  1458.7  1458.7  63.6538 1.046e-14
-## b           1   650.0   650.0  28.3656 1.529e-07
-## lstat       1  2506.8  2506.8 109.3905 &lt; 2.2e-16
-## Residuals 493 11297.8    22.9                   
-##              
-## crim      ***
-## zn        ***
-## indus     ***
-## nox          
-## rm        ***
-## age       .  
-## dis       ***
-## rad          
-## tax       ***
-## ptratio   ***
-## b         ***
-## lstat     ***
-## Residuals    
+##            Df  Sum Sq Mean Sq  F value    Pr(&gt;F)    
+## crim        1  6440.8  6440.8 281.0564 &lt; 2.2e-16 ***
+## zn          1  3554.3  3554.3 155.1005 &lt; 2.2e-16 ***
+## indus       1  2551.2  2551.2 111.3283 &lt; 2.2e-16 ***
+## nox         1    28.7    28.7   1.2507   0.26397    
+## rm          1 11794.6 11794.6 514.6823 &lt; 2.2e-16 ***
+## age         1    74.1    74.1   3.2330   0.07278 .  
+## dis         1  1858.3  1858.3  81.0890 &lt; 2.2e-16 ***
+## rad         1    46.9    46.9   2.0447   0.15337    
+## tax         1   454.1   454.1  19.8158 1.055e-05 ***
+## ptratio     1  1458.7  1458.7  63.6538 1.046e-14 ***
+## b           1   650.0   650.0  28.3656 1.529e-07 ***
+## lstat       1  2506.8  2506.8 109.3905 &lt; 2.2e-16 ***
+## Residuals 493 11297.8    22.9                       
 ## ---
-## Signif. codes:  
-## 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>The <code>broom</code> package is useful in converting summaries of model objects into workable tibbles:</p>
-<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="everyday-exploratory-data-analysis.html#cb309-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb309-2"><a href="everyday-exploratory-data-analysis.html#cb309-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(lm_mod)</span></code></pre></div>
+<div class="sourceCode" id="cb298"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb298-1"><a href="everyday-exploratory-data-analysis.html#cb298-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb298-2"><a href="everyday-exploratory-data-analysis.html#cb298-2" tabindex="-1"></a><span class="fu">tidy</span>(lm_mod)</span></code></pre></div>
 <pre><code>## # A tibble: 13 × 5
-##    term         estimate std.er…¹ stati…²  p.value
-##    &lt;chr&gt;           &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
-##  1 (Intercept)  36.9      5.15      7.17  2.79e-12
-##  2 crim         -0.113    0.0331   -3.42  6.86e- 4
-##  3 zn            0.0471   0.0138    3.40  7.34e- 4
-##  4 indus         0.0403   0.0617    0.653 5.14e- 1
-##  5 nox         -17.4      3.85     -4.51  8.13e- 6
-##  6 rm            3.85     0.421     9.14  1.66e-18
-##  7 age           0.00278  0.0133    0.209 8.34e- 1
-##  8 dis          -1.49     0.201    -7.38  6.64e-13
-##  9 rad           0.328    0.0665    4.93  1.10e- 6
-## 10 tax          -0.0138   0.00377  -3.65  2.87e- 4
-## 11 ptratio      -0.991    0.131    -7.54  2.25e-13
-## 12 b             0.00974  0.00271   3.60  3.51e- 4
-## 13 lstat        -0.534    0.0511  -10.5   2.94e-23
-## # … with abbreviated variable names ¹​std.error,
-## #   ²​statistic</code></pre>
+##    term         estimate std.error statistic  p.value
+##    &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)  36.9       5.15        7.17  2.79e-12
+##  2 crim         -0.113     0.0331     -3.42  6.86e- 4
+##  3 zn            0.0471    0.0138      3.40  7.34e- 4
+##  4 indus         0.0403    0.0617      0.653 5.14e- 1
+##  5 nox         -17.4       3.85       -4.51  8.13e- 6
+##  6 rm            3.85      0.421       9.14  1.66e-18
+##  7 age           0.00278   0.0133      0.209 8.34e- 1
+##  8 dis          -1.49      0.201      -7.38  6.64e-13
+##  9 rad           0.328     0.0665      4.93  1.10e- 6
+## 10 tax          -0.0138    0.00377    -3.65  2.87e- 4
+## 11 ptratio      -0.991     0.131      -7.54  2.25e-13
+## 12 b             0.00974   0.00271     3.60  3.51e- 4
+## 13 lstat        -0.534     0.0511    -10.5   2.94e-23</code></pre>
 <p>Since we seem to have linear relationships across our dataset, we can use scatterplots in combination with correlation analysis to generate useful visualizations:</p>
-<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="everyday-exploratory-data-analysis.html#cb311-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
-<span id="cb311-2"><a href="everyday-exploratory-data-analysis.html#cb311-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_num, <span class="fu">aes</span>(<span class="at">x =</span> rm, <span class="at">y =</span> medv)) <span class="sc">+</span> </span>
-<span id="cb311-3"><a href="everyday-exploratory-data-analysis.html#cb311-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb311-4"><a href="everyday-exploratory-data-analysis.html#cb311-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;lm&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb311-5"><a href="everyday-exploratory-data-analysis.html#cb311-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">&#39;pearson&#39;</span>)</span></code></pre></div>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<div class="sourceCode" id="cb300"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb300-1"><a href="everyday-exploratory-data-analysis.html#cb300-1" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb300-2"><a href="everyday-exploratory-data-analysis.html#cb300-2" tabindex="-1"></a><span class="fu">ggplot</span>(df_num, <span class="fu">aes</span>(<span class="at">x =</span> rm, <span class="at">y =</span> medv)) <span class="sc">+</span> </span>
+<span id="cb300-3"><a href="everyday-exploratory-data-analysis.html#cb300-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb300-4"><a href="everyday-exploratory-data-analysis.html#cb300-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;lm&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb300-5"><a href="everyday-exploratory-data-analysis.html#cb300-5" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">&#39;pearson&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-160-1.png" width="672" /></p>
 <p>Oops! Even though it’s clear there is indeed a linear relationship between the number of rooms <code>rm</code> and the housing price <code>medv</code>, it looks like there is a strange behaviour at <code>medv == 50</code>. Indeed, it looks like the measurement was artificially capped at 50 and there are 16 instances where this value is found:</p>
-<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="everyday-exploratory-data-analysis.html#cb313-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(df<span class="sc">$</span>medv[df<span class="sc">$</span>medv <span class="sc">==</span> <span class="dv">50</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="everyday-exploratory-data-analysis.html#cb301-1" tabindex="-1"></a><span class="fu">length</span>(df<span class="sc">$</span>medv[df<span class="sc">$</span>medv <span class="sc">==</span> <span class="dv">50</span>])</span></code></pre></div>
 <pre><code>## [1] 16</code></pre>
 <p>Since we’re only concerned with EDA for now, we won’t delve further into how we’re going to tackle this. Of course, if we are training a prediction model, we probably shouldn’t leave the values capped like that as is. EDA have made us aware of this before we started high-level modeling tasks, and that’s good.</p>
 <p>Let’s circle back to the dummy variable <code>chas</code>. Since this is a factor, let’s treat them as groups and compare the distribution of <code>medv</code> using a Wilcoxon test:</p>
-<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="everyday-exploratory-data-analysis.html#cb315-1" aria-hidden="true" tabindex="-1"></a>df_chas <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(medv, chas)</span>
-<span id="cb315-2"><a href="everyday-exploratory-data-analysis.html#cb315-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb315-3"><a href="everyday-exploratory-data-analysis.html#cb315-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_chas, <span class="fu">aes</span>(<span class="at">x =</span> chas, <span class="at">y =</span> medv)) <span class="sc">+</span></span>
-<span id="cb315-4"><a href="everyday-exploratory-data-analysis.html#cb315-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> chas), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
-<span id="cb315-5"><a href="everyday-exploratory-data-analysis.html#cb315-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
-<span id="cb315-6"><a href="everyday-exploratory-data-analysis.html#cb315-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;wilcox&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb303-1"><a href="everyday-exploratory-data-analysis.html#cb303-1" tabindex="-1"></a>df_chas <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(medv, chas)</span>
+<span id="cb303-2"><a href="everyday-exploratory-data-analysis.html#cb303-2" tabindex="-1"></a></span>
+<span id="cb303-3"><a href="everyday-exploratory-data-analysis.html#cb303-3" tabindex="-1"></a><span class="fu">ggplot</span>(df_chas, <span class="fu">aes</span>(<span class="at">x =</span> chas, <span class="at">y =</span> medv)) <span class="sc">+</span></span>
+<span id="cb303-4"><a href="everyday-exploratory-data-analysis.html#cb303-4" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> chas), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb303-5"><a href="everyday-exploratory-data-analysis.html#cb303-5" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
+<span id="cb303-6"><a href="everyday-exploratory-data-analysis.html#cb303-6" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;wilcox&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-162-1.png" width="672" /></p>
 <p>Boxplots are nice but violin plots give us a further look at the shape of the distributions: this way we can actually see that <code>medv</code> values are capped at 50.</p>
-<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="everyday-exploratory-data-analysis.html#cb316-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_chas, <span class="fu">aes</span>(<span class="at">x =</span> chas, <span class="at">y =</span> medv)) <span class="sc">+</span></span>
-<span id="cb316-2"><a href="everyday-exploratory-data-analysis.html#cb316-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> chas), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
-<span id="cb316-3"><a href="everyday-exploratory-data-analysis.html#cb316-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
-<span id="cb316-4"><a href="everyday-exploratory-data-analysis.html#cb316-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;wilcox&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="everyday-exploratory-data-analysis.html#cb304-1" tabindex="-1"></a><span class="fu">ggplot</span>(df_chas, <span class="fu">aes</span>(<span class="at">x =</span> chas, <span class="at">y =</span> medv)) <span class="sc">+</span></span>
+<span id="cb304-2"><a href="everyday-exploratory-data-analysis.html#cb304-2" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">fill =</span> chas), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb304-3"><a href="everyday-exploratory-data-analysis.html#cb304-3" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
+<span id="cb304-4"><a href="everyday-exploratory-data-analysis.html#cb304-4" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;wilcox&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-163-1.png" width="672" /></p>
 </div>
 <div id="workflow-2-dates-and-ordinal-data" class="section level2 hasAnchor" number="5.2">
 <h2><span class="header-section-number">5.2</span> Workflow 2: dates and ordinal data<a href="everyday-exploratory-data-analysis.html#workflow-2-dates-and-ordinal-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For this part I will pull the <code>Ozone</code> data from <code>mlbench</code> which has the following three columns as the first three: integers coding for the month, integers coding for the day of the month, and integers coding for the day of the week, with Monday coded as the first day (i.e., 1 = Mon., 2 = Tues.,…). The rest of the columns correspond to various weather measurements as continuous values such as the temperature, humidity, and visibility.</p>
-<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="everyday-exploratory-data-analysis.html#cb317-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;Ozone&#39;</span>)</span>
-<span id="cb317-2"><a href="everyday-exploratory-data-analysis.html#cb317-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Ozone)</span>
-<span id="cb317-3"><a href="everyday-exploratory-data-analysis.html#cb317-3" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
+<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="everyday-exploratory-data-analysis.html#cb305-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;Ozone&#39;</span>)</span>
+<span id="cb305-2"><a href="everyday-exploratory-data-analysis.html#cb305-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Ozone)</span>
+<span id="cb305-3"><a href="everyday-exploratory-data-analysis.html#cb305-3" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 366 × 13
-##    V1    V2    V3       V4    V5    V6    V7    V8
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 1     1     4         3  5480     8    20    NA
-##  2 1     2     5         3  5660     6    NA    38
-##  3 1     3     6         3  5710     4    28    40
-##  4 1     4     7         5  5700     3    37    45
-##  5 1     5     1         5  5760     3    51    54
-##  6 1     6     2         6  5720     4    69    35
-##  7 1     7     3         4  5790     6    19    45
-##  8 1     8     4         4  5790     3    25    55
-##  9 1     9     5         6  5700     3    73    41
-## 10 1     10    6         7  5700     3    59    44
-## # … with 356 more rows, and 5 more variables:
-## #   V9 &lt;dbl&gt;, V10 &lt;dbl&gt;, V11 &lt;dbl&gt;, V12 &lt;dbl&gt;,
-## #   V13 &lt;dbl&gt;</code></pre>
+##    V1    V2    V3       V4    V5    V6    V7    V8    V9   V10
+##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 1     1     4         3  5480     8    20    NA  NA    5000
+##  2 1     2     5         3  5660     6    NA    38  NA      NA
+##  3 1     3     6         3  5710     4    28    40  NA    2693
+##  4 1     4     7         5  5700     3    37    45  NA     590
+##  5 1     5     1         5  5760     3    51    54  45.3  1450
+##  6 1     6     2         6  5720     4    69    35  49.6  1568
+##  7 1     7     3         4  5790     6    19    45  46.4  2631
+##  8 1     8     4         4  5790     3    25    55  52.7   554
+##  9 1     9     5         6  5700     3    73    41  48.0  2083
+## 10 1     10    6         7  5700     3    59    44  NA    2654
+## # … with 356 more rows, and 3 more variables: V11 &lt;dbl&gt;,
+## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
 <p>It’s not necessary in this case, but since we are working with dates let’s make the date labels easier to read. Using <code>lubridate</code> I will convert the month labels into a factor with character levels. Then using base R’s <code>weekdays()</code> I will convert the days of the week to characters as well.</p>
-<div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb319-1"><a href="everyday-exploratory-data-analysis.html#cb319-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div>
-<pre><code>## 
-## Attaching package: &#39;lubridate&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:data.table&#39;:
-## 
-##     hour, isoweek, mday, minute, month,
-##     quarter, second, wday, week, yday, year</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     date, intersect, setdiff, union</code></pre>
-<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb323-1"><a href="everyday-exploratory-data-analysis.html#cb323-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb323-2"><a href="everyday-exploratory-data-analysis.html#cb323-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V1 =</span> lubridate<span class="sc">::</span><span class="fu">month</span>(<span class="fu">as.numeric</span>(V1), </span>
-<span id="cb323-3"><a href="everyday-exploratory-data-analysis.html#cb323-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">label =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb323-4"><a href="everyday-exploratory-data-analysis.html#cb323-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V3 =</span> <span class="fu">weekdays</span>(<span class="fu">.Date</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>))[df<span class="sc">$</span>V3])</span>
-<span id="cb323-5"><a href="everyday-exploratory-data-analysis.html#cb323-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb323-6"><a href="everyday-exploratory-data-analysis.html#cb323-6" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="everyday-exploratory-data-analysis.html#cb307-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb307-2"><a href="everyday-exploratory-data-analysis.html#cb307-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb307-3"><a href="everyday-exploratory-data-analysis.html#cb307-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V1 =</span> lubridate<span class="sc">::</span><span class="fu">month</span>(<span class="fu">as.numeric</span>(V1), </span>
+<span id="cb307-4"><a href="everyday-exploratory-data-analysis.html#cb307-4" tabindex="-1"></a>                               <span class="at">label =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb307-5"><a href="everyday-exploratory-data-analysis.html#cb307-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V3 =</span> <span class="fu">weekdays</span>(<span class="fu">.Date</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>))[df<span class="sc">$</span>V3])</span>
+<span id="cb307-6"><a href="everyday-exploratory-data-analysis.html#cb307-6" tabindex="-1"></a></span>
+<span id="cb307-7"><a href="everyday-exploratory-data-analysis.html#cb307-7" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 366 × 13
-##    V1    V2    V3       V4    V5    V6    V7    V8
-##    &lt;ord&gt; &lt;fct&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Jan   1     Thur…     3  5480     8    20    NA
-##  2 Jan   2     Frid…     3  5660     6    NA    38
-##  3 Jan   3     Satu…     3  5710     4    28    40
-##  4 Jan   4     Sund…     5  5700     3    37    45
-##  5 Jan   5     Mond…     5  5760     3    51    54
-##  6 Jan   6     Tues…     6  5720     4    69    35
-##  7 Jan   7     Wedn…     4  5790     6    19    45
-##  8 Jan   8     Thur…     4  5790     3    25    55
-##  9 Jan   9     Frid…     6  5700     3    73    41
-## 10 Jan   10    Satu…     7  5700     3    59    44
-## # … with 356 more rows, and 5 more variables:
-## #   V9 &lt;dbl&gt;, V10 &lt;dbl&gt;, V11 &lt;dbl&gt;, V12 &lt;dbl&gt;,
-## #   V13 &lt;dbl&gt;</code></pre>
-<div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="everyday-exploratory-data-analysis.html#cb325-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb325-2"><a href="everyday-exploratory-data-analysis.html#cb325-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V3 =</span> <span class="fu">factor</span>(V3, <span class="at">levels=</span> </span>
-<span id="cb325-3"><a href="everyday-exploratory-data-analysis.html#cb325-3" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">weekdays</span>(<span class="fu">.Date</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>))))</span></code></pre></div>
+##    V1    V2    V3           V4    V5    V6    V7    V8    V9   V10
+##    &lt;ord&gt; &lt;fct&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Jan   1     Thursday      3  5480     8    20    NA  NA    5000
+##  2 Jan   2     Friday        3  5660     6    NA    38  NA      NA
+##  3 Jan   3     Saturday      3  5710     4    28    40  NA    2693
+##  4 Jan   4     Sunday        5  5700     3    37    45  NA     590
+##  5 Jan   5     Monday        5  5760     3    51    54  45.3  1450
+##  6 Jan   6     Tuesday       6  5720     4    69    35  49.6  1568
+##  7 Jan   7     Wednesday     4  5790     6    19    45  46.4  2631
+##  8 Jan   8     Thursday      4  5790     3    25    55  52.7   554
+##  9 Jan   9     Friday        6  5700     3    73    41  48.0  2083
+## 10 Jan   10    Saturday      7  5700     3    59    44  NA    2654
+## # … with 356 more rows, and 3 more variables: V11 &lt;dbl&gt;,
+## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="everyday-exploratory-data-analysis.html#cb309-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb309-2"><a href="everyday-exploratory-data-analysis.html#cb309-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V3 =</span> <span class="fu">factor</span>(V3, <span class="at">levels=</span> </span>
+<span id="cb309-3"><a href="everyday-exploratory-data-analysis.html#cb309-3" tabindex="-1"></a>                       <span class="fu">weekdays</span>(<span class="fu">.Date</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>))))</span></code></pre></div>
 <p>Another thing to note - since this data is temporal data, there’s a big chance there are many missing values due to external factors. Let’s see:</p>
-<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="everyday-exploratory-data-analysis.html#cb326-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vapply</span>(df, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
-<pre><code>##  V1  V2  V3  V4  V5  V6  V7  V8  V9 V10 V11 V12 
-##   0   0   0   5  12   0  15   2 139  15   1  14 
-## V13 
-##   0</code></pre>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="everyday-exploratory-data-analysis.html#cb310-1" tabindex="-1"></a><span class="fu">vapply</span>(df, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
+<pre><code>##  V1  V2  V3  V4  V5  V6  V7  V8  V9 V10 V11 V12 V13 
+##   0   0   0   5  12   0  15   2 139  15   1  14   0</code></pre>
 <p>Column <code>V9</code>, which correspond to temperature measured in El Monte, CA has 139 missing values! Immediately you could argue we can replace these with 0s but remember the nature of this data - a 0 degree weather has actual meaning. Imputation cases like this are tricky and that will be important during modeling tasks.</p>
 <p>Since we are working with ordinal data - in our case, data points over time, it makes sense to make a trendline. Using <code>facet_wrap()</code>, in <code>ggplot()</code>, I can make a grid based on the time of the month; here I am plotting <code>V8</code> - temperature measured at Sandburg, CA - versus <code>V2</code> - day of the month.</p>
-<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="everyday-exploratory-data-analysis.html#cb328-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V2, <span class="at">y =</span> V8)) <span class="sc">+</span> </span>
-<span id="cb328-2"><a href="everyday-exploratory-data-analysis.html#cb328-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb328-3"><a href="everyday-exploratory-data-analysis.html#cb328-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> V1) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb328-4"><a href="everyday-exploratory-data-analysis.html#cb328-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="everyday-exploratory-data-analysis.html#cb312-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V2, <span class="at">y =</span> V8)) <span class="sc">+</span> </span>
+<span id="cb312-2"><a href="everyday-exploratory-data-analysis.html#cb312-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb312-3"><a href="everyday-exploratory-data-analysis.html#cb312-3" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> V1) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb312-4"><a href="everyday-exploratory-data-analysis.html#cb312-4" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-168-1.png" width="672" /></p>
 <p>For a visual reference, let’s see what happens when we plot the temperature at El Monte instead, with all those missing values:</p>
-<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="everyday-exploratory-data-analysis.html#cb329-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V2, <span class="at">y =</span> V9)) <span class="sc">+</span> </span>
-<span id="cb329-2"><a href="everyday-exploratory-data-analysis.html#cb329-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb329-3"><a href="everyday-exploratory-data-analysis.html#cb329-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> V1) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb329-4"><a href="everyday-exploratory-data-analysis.html#cb329-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="everyday-exploratory-data-analysis.html#cb313-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V2, <span class="at">y =</span> V9)) <span class="sc">+</span> </span>
+<span id="cb313-2"><a href="everyday-exploratory-data-analysis.html#cb313-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb313-3"><a href="everyday-exploratory-data-analysis.html#cb313-3" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> V1) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb313-4"><a href="everyday-exploratory-data-analysis.html#cb313-4" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-169-1.png" width="672" /></p>
 <p>Adding multiple trendlines is easy using the <code>group =</code> aesthetic within <code>geom_line()</code>; here I will plot <code>V7</code> and <code>V11</code> together - humidity and pressure gradient measured at LAX, respectively:</p>
-<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="everyday-exploratory-data-analysis.html#cb330-1" aria-hidden="true" tabindex="-1"></a>df_2 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(V1, V2, V7, V11) <span class="sc">%&gt;%</span></span>
-<span id="cb330-2"><a href="everyday-exploratory-data-analysis.html#cb330-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(V7, V11), </span>
-<span id="cb330-3"><a href="everyday-exploratory-data-analysis.html#cb330-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&#39;Measurement&#39;</span>, </span>
-<span id="cb330-4"><a href="everyday-exploratory-data-analysis.html#cb330-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&#39;Values&#39;</span>)</span>
-<span id="cb330-5"><a href="everyday-exploratory-data-analysis.html#cb330-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb330-6"><a href="everyday-exploratory-data-analysis.html#cb330-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_2, <span class="fu">aes</span>(<span class="at">x =</span> V2, <span class="at">y =</span> Values)) <span class="sc">+</span></span>
-<span id="cb330-7"><a href="everyday-exploratory-data-analysis.html#cb330-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb330-8"><a href="everyday-exploratory-data-analysis.html#cb330-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> Measurement,</span>
-<span id="cb330-9"><a href="everyday-exploratory-data-analysis.html#cb330-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> Measurement)) <span class="sc">+</span></span>
-<span id="cb330-10"><a href="everyday-exploratory-data-analysis.html#cb330-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> V1) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb330-11"><a href="everyday-exploratory-data-analysis.html#cb330-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;bottom&#39;</span>,</span>
-<span id="cb330-12"><a href="everyday-exploratory-data-analysis.html#cb330-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="everyday-exploratory-data-analysis.html#cb314-1" tabindex="-1"></a>df_2 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(V1, V2, V7, V11) <span class="sc">%&gt;%</span></span>
+<span id="cb314-2"><a href="everyday-exploratory-data-analysis.html#cb314-2" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(V7, V11), </span>
+<span id="cb314-3"><a href="everyday-exploratory-data-analysis.html#cb314-3" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&#39;Measurement&#39;</span>, </span>
+<span id="cb314-4"><a href="everyday-exploratory-data-analysis.html#cb314-4" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&#39;Values&#39;</span>)</span>
+<span id="cb314-5"><a href="everyday-exploratory-data-analysis.html#cb314-5" tabindex="-1"></a></span>
+<span id="cb314-6"><a href="everyday-exploratory-data-analysis.html#cb314-6" tabindex="-1"></a><span class="fu">ggplot</span>(df_2, <span class="fu">aes</span>(<span class="at">x =</span> V2, <span class="at">y =</span> Values)) <span class="sc">+</span></span>
+<span id="cb314-7"><a href="everyday-exploratory-data-analysis.html#cb314-7" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb314-8"><a href="everyday-exploratory-data-analysis.html#cb314-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> Measurement,</span>
+<span id="cb314-9"><a href="everyday-exploratory-data-analysis.html#cb314-9" tabindex="-1"></a>                <span class="at">color =</span> Measurement)) <span class="sc">+</span></span>
+<span id="cb314-10"><a href="everyday-exploratory-data-analysis.html#cb314-10" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> V1) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb314-11"><a href="everyday-exploratory-data-analysis.html#cb314-11" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;bottom&#39;</span>,</span>
+<span id="cb314-12"><a href="everyday-exploratory-data-analysis.html#cb314-12" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-170-1.png" width="672" /></p>
 <p>Working with grouped data such as this means an ANOVA tells us whether there is a significant variation across the group means relative to the within-group means:</p>
-<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="everyday-exploratory-data-analysis.html#cb331-1" aria-hidden="true" tabindex="-1"></a>aov_mod <span class="ot">&lt;-</span> <span class="fu">aov</span>(V8 <span class="sc">~</span> V1, <span class="at">data =</span> df)</span>
-<span id="cb331-2"><a href="everyday-exploratory-data-analysis.html#cb331-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(aov_mod)</span></code></pre></div>
+<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="everyday-exploratory-data-analysis.html#cb315-1" tabindex="-1"></a>aov_mod <span class="ot">&lt;-</span> <span class="fu">aov</span>(V8 <span class="sc">~</span> V1, <span class="at">data =</span> df)</span>
+<span id="cb315-2"><a href="everyday-exploratory-data-analysis.html#cb315-2" tabindex="-1"></a><span class="fu">summary</span>(aov_mod)</span></code></pre></div>
 <pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)    
 ## V1           11  43504    3955   45.67 &lt;2e-16 ***
 ## Residuals   352  30483      87                   
 ## ---
-## Signif. codes:  
-## 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 2 observations deleted due to missingness</code></pre>
 <p>A nice way to visualize an ANOVA result is by using grouped boxplots; here I am adding the Kruskal-Wallis ANOVA result from <code>ggpubr()</code>:</p>
-<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="everyday-exploratory-data-analysis.html#cb333-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V8)) <span class="sc">+</span></span>
-<span id="cb333-2"><a href="everyday-exploratory-data-analysis.html#cb333-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> V1), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span></span>
-<span id="cb333-3"><a href="everyday-exploratory-data-analysis.html#cb333-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&#39;&#39;</span>) <span class="sc">+</span></span>
-<span id="cb333-4"><a href="everyday-exploratory-data-analysis.html#cb333-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
-<span id="cb333-5"><a href="everyday-exploratory-data-analysis.html#cb333-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;kruskal&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="everyday-exploratory-data-analysis.html#cb317-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V8)) <span class="sc">+</span></span>
+<span id="cb317-2"><a href="everyday-exploratory-data-analysis.html#cb317-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> V1), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb317-3"><a href="everyday-exploratory-data-analysis.html#cb317-3" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&#39;&#39;</span>) <span class="sc">+</span></span>
+<span id="cb317-4"><a href="everyday-exploratory-data-analysis.html#cb317-4" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
+<span id="cb317-5"><a href="everyday-exploratory-data-analysis.html#cb317-5" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;kruskal&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-172-1.png" width="672" /></p>
 <p>Instead of an ANOVA, I can also run pairwise Wilcoxon tests against a reference group. Here I will make January the reference group:</p>
-<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="everyday-exploratory-data-analysis.html#cb334-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V8)) <span class="sc">+</span></span>
-<span id="cb334-2"><a href="everyday-exploratory-data-analysis.html#cb334-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> V1), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span></span>
-<span id="cb334-3"><a href="everyday-exploratory-data-analysis.html#cb334-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&#39;&#39;</span>) <span class="sc">+</span></span>
-<span id="cb334-4"><a href="everyday-exploratory-data-analysis.html#cb334-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
-<span id="cb334-5"><a href="everyday-exploratory-data-analysis.html#cb334-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;wilcox&#39;</span>,</span>
-<span id="cb334-6"><a href="everyday-exploratory-data-analysis.html#cb334-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">ref.group =</span> <span class="st">&#39;Jan&#39;</span>,</span>
-<span id="cb334-7"><a href="everyday-exploratory-data-analysis.html#cb334-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">label =</span> <span class="st">&#39;p.signif&#39;</span>)</span></code></pre></div>
-<pre><code>## Warning: The dot-dot notation (`..p.signif..`) was
-## deprecated in ggplot2 3.4.0.
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="everyday-exploratory-data-analysis.html#cb318-1" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> V1, <span class="at">y =</span> V8)) <span class="sc">+</span></span>
+<span id="cb318-2"><a href="everyday-exploratory-data-analysis.html#cb318-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> V1), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb318-3"><a href="everyday-exploratory-data-analysis.html#cb318-3" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&#39;&#39;</span>) <span class="sc">+</span></span>
+<span id="cb318-4"><a href="everyday-exploratory-data-analysis.html#cb318-4" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span></span>
+<span id="cb318-5"><a href="everyday-exploratory-data-analysis.html#cb318-5" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">&#39;wilcox&#39;</span>,</span>
+<span id="cb318-6"><a href="everyday-exploratory-data-analysis.html#cb318-6" tabindex="-1"></a>                     <span class="at">ref.group =</span> <span class="st">&#39;Jan&#39;</span>,</span>
+<span id="cb318-7"><a href="everyday-exploratory-data-analysis.html#cb318-7" tabindex="-1"></a>                     <span class="at">label =</span> <span class="st">&#39;p.signif&#39;</span>)</span></code></pre></div>
+<pre><code>## Warning: The dot-dot notation (`..p.signif..`) was deprecated in ggplot2
+## 3.4.0.
 ## ℹ Please use `after_stat(p.signif)` instead.</code></pre>
 <pre><code>## Warning: Removed 2 rows containing non-finite values
 ## (`stat_boxplot()`).</code></pre>
@@ -599,31 +548,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## (`stat_compare_means()`).</code></pre>
 <p><img src="_main_files/figure-html/unnamed-chunk-173-1.png" width="672" /></p>
 <p>If we want to calculate values based on groups, <code>dplyr</code>’s <code>group_by()</code> is useful, as seen in Chapter 1:</p>
-<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="everyday-exploratory-data-analysis.html#cb338-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(V1) <span class="sc">%&gt;%</span></span>
-<span id="cb338-2"><a href="everyday-exploratory-data-analysis.html#cb338-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(V4<span class="sc">:</span>V13, <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
-<span id="cb338-3"><a href="everyday-exploratory-data-analysis.html#cb338-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">&#39;mean_{col}&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb322"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb322-1"><a href="everyday-exploratory-data-analysis.html#cb322-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(V1) <span class="sc">%&gt;%</span></span>
+<span id="cb322-2"><a href="everyday-exploratory-data-analysis.html#cb322-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(V4<span class="sc">:</span>V13, <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb322-3"><a href="everyday-exploratory-data-analysis.html#cb322-3" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">&#39;mean_{col}&#39;</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 12 × 11
-##    V1    mean_V4 mean_V5 mean_V6 mean_V7 mean_V8
-##    &lt;ord&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-##  1 Jan      5.45   5745.    4.23    37.4    53.7
-##  2 Feb      7.14   5659.    5.69    56.9    47.0
-##  3 Mar      8.84   5656.    5.03    49.8    49.5
-##  4 Apr     10      5637.    5.97    58.2    51.7
-##  5 May     15.8    5753.    5.48    70.9    68.4
-##  6 Jun     17.1    5792     5.2     63.3    73.6
-##  7 Jul     20.2    5862.    5.29    72.8    80.5
-##  8 Aug     17.5    5830.    5.23    67.6    74.4
-##  9 Sep     12.4    5797.    5.77    73.6    69.2
-## 10 Oct     12.6    5796.    4.90    62.7    64.5
-## 11 Nov      7.67   5790.    3.3     50.1    58.8
-## 12 Dec      4.06   5725     2.42    36.1    50.2
-## # … with 5 more variables: mean_V9 &lt;dbl&gt;,
-## #   mean_V10 &lt;dbl&gt;, mean_V11 &lt;dbl&gt;,
-## #   mean_V12 &lt;dbl&gt;, mean_V13 &lt;dbl&gt;</code></pre>
-<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="everyday-exploratory-data-analysis.html#cb340-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(V1, V3) <span class="sc">%&gt;%</span></span>
-<span id="cb340-2"><a href="everyday-exploratory-data-analysis.html#cb340-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_hum_LAX =</span> <span class="fu">mean</span>(V7, <span class="at">na.rm=</span>T))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;V1&#39;. You can
-## override using the `.groups` argument.</code></pre>
+##    V1    mean_V4 mean_V5 mean_V6 mean_V7 mean_V8 mean_V9 mean_V10
+##    &lt;ord&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Jan      5.45   5745.    4.23    37.4    53.7    54.6    2355.
+##  2 Feb      7.14   5659.    5.69    56.9    47.0    45.9    3339.
+##  3 Mar      8.84   5656.    5.03    49.8    49.5    45.3    2703.
+##  4 Apr     10      5637.    5.97    58.2    51.7    47.2    3101.
+##  5 May     15.8    5753.    5.48    70.9    68.4    56.9    2199.
+##  6 Jun     17.1    5792     5.2     63.3    73.6    62.8    1651.
+##  7 Jul     20.2    5862.    5.29    72.8    80.5    71.2    1824.
+##  8 Aug     17.5    5830.    5.23    67.6    74.4    66.7    2113.
+##  9 Sep     12.4    5797.    5.77    73.6    69.2    63.5    2794.
+## 10 Oct     12.6    5796.    4.90    62.7    64.5    62.4    2728.
+## 11 Nov      7.67   5790.    3.3     50.1    58.8    58.6    2834.
+## 12 Dec      4.06   5725     2.42    36.1    50.2    51.9    3487.
+## # … with 3 more variables: mean_V11 &lt;dbl&gt;, mean_V12 &lt;dbl&gt;,
+## #   mean_V13 &lt;dbl&gt;</code></pre>
+<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="everyday-exploratory-data-analysis.html#cb324-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(V1, V3) <span class="sc">%&gt;%</span></span>
+<span id="cb324-2"><a href="everyday-exploratory-data-analysis.html#cb324-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_hum_LAX =</span> <span class="fu">mean</span>(V7, <span class="at">na.rm=</span>T))</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;V1&#39;. You can override using
+## the `.groups` argument.</code></pre>
 <pre><code>## # A tibble: 84 × 3
 ## # Groups:   V1 [12]
 ##    V1    V3        mean_hum_LAX
@@ -643,61 +591,59 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="visualization-of-clusters" class="section level2 hasAnchor" number="5.3">
 <h2><span class="header-section-number">5.3</span> Visualization of clusters<a href="everyday-exploratory-data-analysis.html#visualization-of-clusters" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Clustering and dimensionality reduction tasks can give us a visual look at groupings in the data. The concept of unsupervised clustering and dimensionality reduction techniques will be covered in one of the future chapters, but this is a high-level glance that will be useful in quickly identifying clusters:</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="everyday-exploratory-data-analysis.html#cb343-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;iris&quot;</span>)</span>
-<span id="cb343-2"><a href="everyday-exploratory-data-analysis.html#cb343-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(iris)</span></code></pre></div>
+<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="everyday-exploratory-data-analysis.html#cb327-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;iris&quot;</span>)</span>
+<span id="cb327-2"><a href="everyday-exploratory-data-analysis.html#cb327-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(iris)</span></code></pre></div>
 <p>For PCA, I will use the useful <code>factoextra</code> package for visualization. The first step is to make sure that the input for PCA is numeric; this means that, for example, in the <code>iris</code> dataset, I need to exclude the column containing the target labels. Additionally, I am declaring the target label column as a factor, since I want to label the data points with these labels in the PCA plot.</p>
 <p>The <code>fviz_pca_ind()</code> function draws the PCA plot:</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="everyday-exploratory-data-analysis.html#cb344-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
-<span id="cb344-2"><a href="everyday-exploratory-data-analysis.html#cb344-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb344-3"><a href="everyday-exploratory-data-analysis.html#cb344-3" aria-hidden="true" tabindex="-1"></a>pc_res <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(</span>
-<span id="cb344-4"><a href="everyday-exploratory-data-analysis.html#cb344-4" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Species), <span class="at">scale =</span> <span class="cn">TRUE</span></span>
-<span id="cb344-5"><a href="everyday-exploratory-data-analysis.html#cb344-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb344-6"><a href="everyday-exploratory-data-analysis.html#cb344-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb344-7"><a href="everyday-exploratory-data-analysis.html#cb344-7" aria-hidden="true" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>Species)</span>
-<span id="cb344-8"><a href="everyday-exploratory-data-analysis.html#cb344-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb344-9"><a href="everyday-exploratory-data-analysis.html#cb344-9" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(pc_res, <span class="at">col.ind =</span> groups, </span>
-<span id="cb344-10"><a href="everyday-exploratory-data-analysis.html#cb344-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">addEllipses =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb344-11"><a href="everyday-exploratory-data-analysis.html#cb344-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.title =</span> <span class="st">&#39;Species&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="everyday-exploratory-data-analysis.html#cb328-1" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb328-2"><a href="everyday-exploratory-data-analysis.html#cb328-2" tabindex="-1"></a></span>
+<span id="cb328-3"><a href="everyday-exploratory-data-analysis.html#cb328-3" tabindex="-1"></a>pc_res <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(</span>
+<span id="cb328-4"><a href="everyday-exploratory-data-analysis.html#cb328-4" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Species), <span class="at">scale =</span> <span class="cn">TRUE</span></span>
+<span id="cb328-5"><a href="everyday-exploratory-data-analysis.html#cb328-5" tabindex="-1"></a>)</span>
+<span id="cb328-6"><a href="everyday-exploratory-data-analysis.html#cb328-6" tabindex="-1"></a></span>
+<span id="cb328-7"><a href="everyday-exploratory-data-analysis.html#cb328-7" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>Species)</span>
+<span id="cb328-8"><a href="everyday-exploratory-data-analysis.html#cb328-8" tabindex="-1"></a></span>
+<span id="cb328-9"><a href="everyday-exploratory-data-analysis.html#cb328-9" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(pc_res, <span class="at">col.ind =</span> groups, </span>
+<span id="cb328-10"><a href="everyday-exploratory-data-analysis.html#cb328-10" tabindex="-1"></a>             <span class="at">addEllipses =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb328-11"><a href="everyday-exploratory-data-analysis.html#cb328-11" tabindex="-1"></a>             <span class="at">legend.title =</span> <span class="st">&#39;Species&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-177-1.png" width="672" /></p>
 <p>Since this is a tiny and simple dataset frequently used in these types of tutorials, it’s no surprise that we get nice ellipses in the data. The data points separate well across the first PC (the x-axis).</p>
 <p>The <code>fviz_contrib()</code> plot shows the contribution of each variable. The horizontal red line here shows the expected level of contribution if the contributions were uniform. The <code>axes = 1</code> argument states that I want to check for the contribution in the first PC only.</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="everyday-exploratory-data-analysis.html#cb345-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_contrib</span>(pc_res, <span class="at">axes =</span> <span class="dv">1</span>, <span class="at">choice =</span> <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="everyday-exploratory-data-analysis.html#cb329-1" tabindex="-1"></a><span class="fu">fviz_contrib</span>(pc_res, <span class="at">axes =</span> <span class="dv">1</span>, <span class="at">choice =</span> <span class="st">&#39;var&#39;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-178-1.png" width="672" /></p>
 <p>Screeplot shows the level of covariance explained by each PC:</p>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="everyday-exploratory-data-analysis.html#cb346-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_screeplot</span>(pc_res)</span></code></pre></div>
+<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="everyday-exploratory-data-analysis.html#cb330-1" tabindex="-1"></a><span class="fu">fviz_screeplot</span>(pc_res)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
 <p>Alternatively, dendrograms are a commonly used tools to visualize hierarchical clustering in the data. Again, the concept behind the clustering method will be explained in greater detail in future chapters, but essentially we need to generate a distance matrix (using some sort of a distance metric, in this case Euclidean distance) and then calculate linkage between each instance. The <code>dist()</code> and <code>hclust()</code> from base R handles this nicely:</p>
-<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="everyday-exploratory-data-analysis.html#cb347-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
-<span id="cb347-2"><a href="everyday-exploratory-data-analysis.html#cb347-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb347-3"><a href="everyday-exploratory-data-analysis.html#cb347-3" aria-hidden="true" tabindex="-1"></a>dm <span class="ot">&lt;-</span> <span class="fu">dist</span>(mtcars, <span class="at">method =</span> <span class="st">&#39;euclidean&#39;</span>)</span>
-<span id="cb347-4"><a href="everyday-exploratory-data-analysis.html#cb347-4" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(dm, <span class="at">method =</span> <span class="st">&#39;complete&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="everyday-exploratory-data-analysis.html#cb331-1" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb331-2"><a href="everyday-exploratory-data-analysis.html#cb331-2" tabindex="-1"></a></span>
+<span id="cb331-3"><a href="everyday-exploratory-data-analysis.html#cb331-3" tabindex="-1"></a>dm <span class="ot">&lt;-</span> <span class="fu">dist</span>(mtcars, <span class="at">method =</span> <span class="st">&#39;euclidean&#39;</span>)</span>
+<span id="cb331-4"><a href="everyday-exploratory-data-analysis.html#cb331-4" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(dm, <span class="at">method =</span> <span class="st">&#39;complete&#39;</span>)</span></code></pre></div>
 <p>The <code>dendextend</code> package can accept the output from <code>hclust</code> to make customizable dendrograms:</p>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="everyday-exploratory-data-analysis.html#cb348-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dendextend)</span>
-<span id="cb348-2"><a href="everyday-exploratory-data-analysis.html#cb348-2" aria-hidden="true" tabindex="-1"></a>den <span class="ot">&lt;-</span> <span class="fu">as.dendrogram</span>(hc)</span>
-<span id="cb348-3"><a href="everyday-exploratory-data-analysis.html#cb348-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb348-4"><a href="everyday-exploratory-data-analysis.html#cb348-4" aria-hidden="true" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">plot</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb332-1"><a href="everyday-exploratory-data-analysis.html#cb332-1" tabindex="-1"></a><span class="fu">library</span>(dendextend)</span>
+<span id="cb332-2"><a href="everyday-exploratory-data-analysis.html#cb332-2" tabindex="-1"></a>den <span class="ot">&lt;-</span> <span class="fu">as.dendrogram</span>(hc)</span>
+<span id="cb332-3"><a href="everyday-exploratory-data-analysis.html#cb332-3" tabindex="-1"></a></span>
+<span id="cb332-4"><a href="everyday-exploratory-data-analysis.html#cb332-4" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">plot</span>()</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
 <p>When we know the number of clusters present, we can color them differently with <code>color_branches()</code>. For an alternative look at dendrograms, we can circlize them using <code>circlize_dendrogram()</code>:</p>
-<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="everyday-exploratory-data-analysis.html#cb349-1" aria-hidden="true" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">color_branches</span>(<span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb349-2"><a href="everyday-exploratory-data-analysis.html#cb349-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">circlize_dendrogram</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="everyday-exploratory-data-analysis.html#cb333-1" tabindex="-1"></a>den <span class="sc">%&gt;%</span> <span class="fu">color_branches</span>(<span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb333-2"><a href="everyday-exploratory-data-analysis.html#cb333-2" tabindex="-1"></a>  <span class="fu">circlize_dendrogram</span>()</span></code></pre></div>
 <pre><code>## Loading required namespace: circlize</code></pre>
 <p><img src="_main_files/figure-html/unnamed-chunk-182-1.png" width="672" /></p>
 <p>The <code>cutree()</code> function accepts the <code>hclust()</code> output and assigns a cluster label, depending on the number of clusters defined:</p>
-<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="everyday-exploratory-data-analysis.html#cb351-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cutree</span>(hc, <span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
-<pre><code>##         Mazda RX4     Mazda RX4 Wag 
-##                 1                 1 
-##        Datsun 710    Hornet 4 Drive 
-##                 1                 2 
-## Hornet Sportabout           Valiant 
-##                 3                 2</code></pre>
+<div class="sourceCode" id="cb335"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb335-1"><a href="everyday-exploratory-data-analysis.html#cb335-1" tabindex="-1"></a><span class="fu">cutree</span>(hc, <span class="at">k =</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>##         Mazda RX4     Mazda RX4 Wag        Datsun 710 
+##                 1                 1                 1 
+##    Hornet 4 Drive Hornet Sportabout           Valiant 
+##                 2                 3                 2</code></pre>
 <p>Finally, identifying the optimal number of clusters in the data can mainly be done using the silhouette method or the elbow (also called the wss) method:</p>
-<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="everyday-exploratory-data-analysis.html#cb353-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
-<span id="cb353-2"><a href="everyday-exploratory-data-analysis.html#cb353-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;silhouette&#39;</span>,</span>
-<span id="cb353-3"><a href="everyday-exploratory-data-analysis.html#cb353-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
+<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="everyday-exploratory-data-analysis.html#cb337-1" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
+<span id="cb337-2"><a href="everyday-exploratory-data-analysis.html#cb337-2" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;silhouette&#39;</span>,</span>
+<span id="cb337-3"><a href="everyday-exploratory-data-analysis.html#cb337-3" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-184-1.png" width="672" /></p>
-<div class="sourceCode" id="cb354"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb354-1"><a href="everyday-exploratory-data-analysis.html#cb354-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
-<span id="cb354-2"><a href="everyday-exploratory-data-analysis.html#cb354-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;wss&#39;</span>,</span>
-<span id="cb354-3"><a href="everyday-exploratory-data-analysis.html#cb354-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="everyday-exploratory-data-analysis.html#cb338-1" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(mtcars, <span class="at">FUNcluster =</span> hcut,</span>
+<span id="cb338-2"><a href="everyday-exploratory-data-analysis.html#cb338-2" tabindex="-1"></a>             <span class="at">method =</span> <span class="st">&#39;wss&#39;</span>,</span>
+<span id="cb338-3"><a href="everyday-exploratory-data-analysis.html#cb338-3" tabindex="-1"></a>             <span class="at">diss =</span> dm)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-185-1.png" width="672" /></p>
 
 </div>
