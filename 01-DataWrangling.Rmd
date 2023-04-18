@@ -9,14 +9,16 @@ library(tidyverse)
 
 ## Renaming column headers
 
-Suppose a `32 x 11` dataset `mtcars` where `rownames` correspond to the car model. 
+The first few steps in data analysis is to gain intuition around the data at hand - typically, a `m x n` dataset is structured in a way such that there are `m` records (also referred to as instances or samples) and `m` features (also referred to as predictors). Getting a good sense and understanding of the features we're working with often requires cleaning the data before jumping into things like feature selection and feature engineering. 
+
+Suppose we have a `32 x 11` dataset `mtcars` where `rownames` correspond to the car model: 
 
 ```{r}
 data(mtcars)
 mtcars <- mtcars %>% as_tibble(rownames = 'CAR')
 ```
 
-Renaming column headers with `dplyr::rename` is as simple as `rename(new_name = old_name)`, but with `rename_with()` there's more flexibility:
+There are 11 columns here and since this is a toy dataset, it is already neat and tidy. However, sometimes we may need to rename the columns to trim specific strings or to make downstream analysis easier. Renaming column headers with `dplyr::rename` is as simple as `rename(new_name = old_name)`, but with `rename_with()` there's more flexibility:
 
 ```{r}
 mtcars %>% rename_with(toupper)
@@ -76,7 +78,7 @@ mtcars %>% group_by(cyl) %>% filter(n() > 7) %>% ungroup()
 
 ## Data transformation
 
-Sometimes it's useful to transform numeric columns:
+Sometimes it's useful to transform numeric columns; this is particularly helpful when performing feature transformations (e.g., logarithmic, absolute value) or creating new columns entirely from preexisting columns.
 
 ```{r}
 mtcars %>% mutate(mpg = mpg*2)
@@ -101,7 +103,7 @@ Iterating across the columns using `purrr::modify` instead:
 mtcars %>% modify_if(is.numeric, ~ .x*3)
 ```
 
-Mutating columns of characters is also straightforward:
+Mutating columns of characters is also straightforward; this is helpful when working with messy columns that require cleaning.
 
 ```{r}
 mtcars %>% mutate(CAR = gsub('Merc', 'Mercedes', CAR))
@@ -120,7 +122,7 @@ For the `CAR` column comprised of strings, you can separate the individual strin
 mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge')
 ```
 
-Combining multiple `tidyverse` verbs using the pipe `%>%`:
+Chaining multiple `tidyverse` verbs can be done using the pipe `%>%`; this `%>%` symbol is part of the `magrittr` package, which is loaded with `tidyverse`.
 
 ```{r, warning=FALSE}
 mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge') %>%
@@ -128,7 +130,7 @@ mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge') %>%
   arrange(desc(count))
 ```
 
-Note that the pipe `%>%` is part of the `magrittr` package but there's no need to load it after loading `tidyverse`. The pipe notation is frequently used between `tidyverse` verbs but you can also use it in some base R operations as well.
+The pipe notation is frequently used between `tidyverse` verbs but you can also use it in some base R operations as well.
 
 Separation of columns by strings, using base R instead involves using `strsplit()` which outputs a list and therefore we need to unpack it afterwards:
 
@@ -190,7 +192,7 @@ Using `tolower()` to make sure we're on the same page in regards to case:
 mtcars[grepl(tolower('Mazda'), tolower(mtcars$CAR)),]
 ```
 
-Filtering rows based on a numeric column:
+Filtering rows based on a numeric column is also trivial:
 
 ```{r}
 mtcars %>% filter(between(mpg, 18, 20))
@@ -212,6 +214,8 @@ mtcars[which(mtcars$cyl %in% c(6,8)),] # not run
 
 Subsetting columns typically involves using square brackets `[ ]` in base R, but can be done easily with `dplyr::select`; `select()` supports multiple helper functions such as `starts_with()`, `ends_with()`, and `match()`.
 
+As a word of caution: sometimes it's good practice to explicitly state `select()` we're calling is from `dplyr` (i.e., `dplyr::select()`) to avoid confusion when working with many different packages at once that could potentially introduce conflicts.
+
 ```{r}
 mtcars %>% select(contains('m'))
 ```
@@ -222,7 +226,7 @@ You can use multiple helper functions at once:
 mtcars %>% select(starts_with('m'), ends_with('c'))
 ```
 
-Using regex, with the anchors `^` and `$`:
+Using regex allows more flexibility in terms of pattern matching, as well as with anchors `^` and `$`:
 
 ```{r}
 mtcars %>% select(matches('^m'), matches('c$'))
@@ -237,7 +241,7 @@ mtcars[,grepl('^m|c$', names(mtcars))]
 
 ## Long and wide data formats
 
-Transforming datasets into long/wide formats is a typical task in EDA, and this can be done using `tidyr`:
+Transforming datasets into long/wide formats is a typical task in exploratory data analysis and this can be done using `tidyr`:
 
 ```{r}
 mtcars_long <- mtcars %>% pivot_longer(-1, names_to = 'Metric', values_to = 'Values')
