@@ -444,20 +444,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb305-2"><a href="everyday-exploratory-data-analysis.html#cb305-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Ozone)</span>
 <span id="cb305-3"><a href="everyday-exploratory-data-analysis.html#cb305-3" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 366 × 13
-##    V1    V2    V3       V4    V5    V6    V7    V8    V9   V10
-##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 1     1     4         3  5480     8    20    NA  NA    5000
-##  2 1     2     5         3  5660     6    NA    38  NA      NA
-##  3 1     3     6         3  5710     4    28    40  NA    2693
-##  4 1     4     7         5  5700     3    37    45  NA     590
-##  5 1     5     1         5  5760     3    51    54  45.3  1450
-##  6 1     6     2         6  5720     4    69    35  49.6  1568
-##  7 1     7     3         4  5790     6    19    45  46.4  2631
-##  8 1     8     4         4  5790     3    25    55  52.7   554
-##  9 1     9     5         6  5700     3    73    41  48.0  2083
-## 10 1     10    6         7  5700     3    59    44  NA    2654
-## # … with 356 more rows, and 3 more variables: V11 &lt;dbl&gt;,
-## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
+##    V1    V2    V3       V4    V5    V6    V7    V8    V9   V10   V11
+##    &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 1     1     4         3  5480     8    20    NA  NA    5000   -15
+##  2 1     2     5         3  5660     6    NA    38  NA      NA   -14
+##  3 1     3     6         3  5710     4    28    40  NA    2693   -25
+##  4 1     4     7         5  5700     3    37    45  NA     590   -24
+##  5 1     5     1         5  5760     3    51    54  45.3  1450    25
+##  6 1     6     2         6  5720     4    69    35  49.6  1568    15
+##  7 1     7     3         4  5790     6    19    45  46.4  2631   -33
+##  8 1     8     4         4  5790     3    25    55  52.7   554   -28
+##  9 1     9     5         6  5700     3    73    41  48.0  2083    23
+## 10 1     10    6         7  5700     3    59    44  NA    2654    -2
+## # … with 356 more rows, and 2 more variables: V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
 <p>It’s not necessary in this case, but since we are working with dates let’s make the date labels easier to read. Using <code>lubridate</code> I will convert the month labels into a factor with character levels. Then using base R’s <code>weekdays()</code> I will convert the days of the week to characters as well.</p>
 <div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="everyday-exploratory-data-analysis.html#cb307-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
 <span id="cb307-2"><a href="everyday-exploratory-data-analysis.html#cb307-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
@@ -467,20 +466,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb307-6"><a href="everyday-exploratory-data-analysis.html#cb307-6" tabindex="-1"></a></span>
 <span id="cb307-7"><a href="everyday-exploratory-data-analysis.html#cb307-7" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 366 × 13
-##    V1    V2    V3           V4    V5    V6    V7    V8    V9   V10
-##    &lt;ord&gt; &lt;fct&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Jan   1     Thursday      3  5480     8    20    NA  NA    5000
-##  2 Jan   2     Friday        3  5660     6    NA    38  NA      NA
-##  3 Jan   3     Saturday      3  5710     4    28    40  NA    2693
-##  4 Jan   4     Sunday        5  5700     3    37    45  NA     590
-##  5 Jan   5     Monday        5  5760     3    51    54  45.3  1450
-##  6 Jan   6     Tuesday       6  5720     4    69    35  49.6  1568
-##  7 Jan   7     Wednesday     4  5790     6    19    45  46.4  2631
-##  8 Jan   8     Thursday      4  5790     3    25    55  52.7   554
-##  9 Jan   9     Friday        6  5700     3    73    41  48.0  2083
-## 10 Jan   10    Saturday      7  5700     3    59    44  NA    2654
-## # … with 356 more rows, and 3 more variables: V11 &lt;dbl&gt;,
-## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
+##    V1    V2    V3        V4    V5    V6    V7    V8    V9   V10   V11
+##    &lt;ord&gt; &lt;fct&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Jan   1     Thurs…     3  5480     8    20    NA  NA    5000   -15
+##  2 Jan   2     Friday     3  5660     6    NA    38  NA      NA   -14
+##  3 Jan   3     Satur…     3  5710     4    28    40  NA    2693   -25
+##  4 Jan   4     Sunday     5  5700     3    37    45  NA     590   -24
+##  5 Jan   5     Monday     5  5760     3    51    54  45.3  1450    25
+##  6 Jan   6     Tuesd…     6  5720     4    69    35  49.6  1568    15
+##  7 Jan   7     Wedne…     4  5790     6    19    45  46.4  2631   -33
+##  8 Jan   8     Thurs…     4  5790     3    25    55  52.7   554   -28
+##  9 Jan   9     Friday     6  5700     3    73    41  48.0  2083    23
+## 10 Jan   10    Satur…     7  5700     3    59    44  NA    2654    -2
+## # … with 356 more rows, and 2 more variables: V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="everyday-exploratory-data-analysis.html#cb309-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
 <span id="cb309-2"><a href="everyday-exploratory-data-analysis.html#cb309-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V3 =</span> <span class="fu">factor</span>(V3, <span class="at">levels=</span> </span>
 <span id="cb309-3"><a href="everyday-exploratory-data-analysis.html#cb309-3" tabindex="-1"></a>                       <span class="fu">weekdays</span>(<span class="fu">.Date</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>))))</span></code></pre></div>
@@ -570,8 +568,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## #   mean_V13 &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="everyday-exploratory-data-analysis.html#cb324-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(V1, V3) <span class="sc">%&gt;%</span></span>
 <span id="cb324-2"><a href="everyday-exploratory-data-analysis.html#cb324-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_hum_LAX =</span> <span class="fu">mean</span>(V7, <span class="at">na.rm=</span>T))</span></code></pre></div>
-<pre><code>## `summarise()` has grouped output by &#39;V1&#39;. You can override using
-## the `.groups` argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;V1&#39;. You can override using the
+## `.groups` argument.</code></pre>
 <pre><code>## # A tibble: 84 × 3
 ## # Groups:   V1 [12]
 ##    V1    V3        mean_hum_LAX
