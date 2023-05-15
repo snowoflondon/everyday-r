@@ -1,5 +1,5 @@
 # Everyday-R
-This repository contains a collection of Markdown files compiled with `bookdown`. Each chapter aims to help users learn the practical syntax and usage of R in context of data science tasks. The book can be accessed here: https://bookdown.org/brianjmpark/everydayR/
+This repository contains a collection of Markdown files compiled with `bookdown` for the open-source book `Everyday-R` hosted [here](https://bookdown.org/brianjmpark/everydayR/). Each chapter aims to help learners of R programming language learn the practical syntax and usage of R in context of data science tasks such as data wrangling, data exploration, and machine learning.  
 
 **This book is a work in progress and is not complete!**
 
