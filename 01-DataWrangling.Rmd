@@ -18,7 +18,7 @@ data(mtcars)
 mtcars <- mtcars %>% as_tibble(rownames = 'CAR')
 ```
 
-There are 11 columns here and since this is a toy dataset, it is already neat and tidy. However, sometimes we may need to rename the columns to trim specific strings or to make downstream analysis easier. Renaming column headers with `dplyr::rename` is as simple as `rename(new_name = old_name)`, but with `rename_with()` there's more flexibility:
+There are 11 columns here and since this is a toy dataset, it is already neat and tidy. However, sometimes we may need to rename the columns to trim specific strings or to make downstream analysis easier. Renaming column headers with `dplyr::rename()` is as simple as `rename(new_name = old_name)`, but with `rename_with()` there's more flexibility:
 
 ```{r}
 mtcars %>% rename_with(toupper)
@@ -39,7 +39,7 @@ names(mtcars)[-1] <- paste0(names(mtcars[-1]), '_1') # not run
 
 ## Grouped operations
 
-Grouped operations are most useful when you're working with data where there is a categorical variable. Grouped summaries are powerful tools easily done with `dplyr::summarise`:
+Grouped operations are most useful when you're working with data where there is a categorical variable. Grouped summaries are powerful tools easily done with `dplyr::summarise()`:
 
 ```{r}
 mtcars %>% group_by(cyl) %>% summarise(avg_mpg = mean(mpg))
@@ -69,7 +69,7 @@ When calculating the size of the groups, you can use `n()`:
 mtcars %>% group_by(cyl) %>% summarise(count = n())
 ```
 
-Filtering by groups of size greater than a certain value:
+The `n()` function is useful when filtering by groups of size greater than a certain value:
 
 ```{r}
 mtcars %>% group_by(cyl) %>% filter(n() > 7) %>% ungroup()
@@ -91,13 +91,15 @@ mtcars %>%
   mutate(across(where(is.numeric), function(x) x*2, .names = "double_{col}"))
 ```
 
+Conditional `mutate()` can also be done using `mutate_if()`, though the `_if()` functions, along with variants `_at()` and `_all()` have been effectively replaced by `across()`, as seen above. 
+
 You can overwrite the existing columns completely; also keep in mind that you can pass any function within `across()` as such:
 
 ```{r}
 mtcars %>% mutate(across(c(mpg, disp), function(x) x*3))
 ```
 
-Iterating across the columns using `purrr::modify` instead:
+Iterating across the columns using `purrr::modify()` instead:
 
 ```{r}
 mtcars %>% modify_if(is.numeric, ~ .x*3)
@@ -161,7 +163,7 @@ iris$Petal.Dimensions <- paste(iris$Petal.Length, iris$Petal.Width, sep = " x ")
 
 ## Filtering rows
 
-Typically, filtering involves a condition based on a column to select the corresponding rows. Here I am combining `stringr::str_detect` with `dplyr::filter` since the column I am filtering on is a character vector.
+Typically, filtering involves a condition based on a column to select the corresponding rows. Here I am combining `stringr::str_detect()` with `dplyr::filter()` since the column I am filtering on is a character vector.
 
 ```{r}
 mtcars %>% filter(str_detect(CAR, 'Mazda'))
@@ -212,7 +214,7 @@ mtcars[which(mtcars$cyl %in% c(6,8)),] # not run
 
 ## Subsetting columns based on strings
 
-Subsetting columns typically involves using square brackets `[ ]` in base R, but can be done easily with `dplyr::select`; `select()` supports multiple helper functions such as `starts_with()`, `ends_with()`, and `match()`.
+Subsetting columns typically involves using square brackets `[ ]` in base R, but can be done easily with `dplyr::select`; `select()` supports multiple selector functions such as `starts_with()`, `ends_with()`, `contains()`, and `match()`. The selector `everything()` also exists, which is used to - you guessed it - select every column. 
 
 As a word of caution: sometimes it's good practice to explicitly state `select()` we're calling is from `dplyr` (i.e., `dplyr::select()`) to avoid confusion when working with many different packages at once that could potentially introduce conflicts.
 
@@ -258,6 +260,8 @@ mtcars_wide <- mtcars_long %>%
 mtcars_wide
 ```
 
+Having the data in a wide format may be useful when plotting visualizations such as a heatmap, where row and column annotations correspond to the heatmap perimeter. 
+
 In base R, you can use `reshape()` with the argument `direction = ` but I don't find its syntax very intuitive. Alternatively, using `data.table` gets us the solution much easier:
 
 ```{r, warning=FALSE, message=FALSE}
@@ -265,7 +269,7 @@ library(data.table)
 melt(setDT(mtcars), id.vars = c('CAR'), variable.name = 'Metric')
 ```
 
-Note that using `data.table` returns a `data.table` object (due to the `setDT()` function), which differs from the `tibble` we've been using for packages within `tidyverse`. There are some advantages to using `data.table` instead, especially when working with very large datasets. For the sake of this book I will mostly use base R and `tidyverse`, other than exceptional cases. 
+Note that using `data.table` returns a `data.table` object (due to the `setDT()` function), which differs from the `tibble` we've been using for packages within `tidyverse`. There are some advantages to using `data.table` instead, especially when working with very large datasets. For the sake of this book I will mostly use base R and `tidyverse`, other than exceptional cases. However, for a brief discourse on `data.table`, refer to Chapter 4. 
 
 
 ## Trimming strings
@@ -277,7 +281,7 @@ iris %>% mutate(Species = strtrim(Species, 3)) %>%
   mutate(Species = factor(Species, levels = c('set', 'ver', 'vir')))
 ```
 
-Sometimes when you're importing datasets from external and/or untrustworthy sources (e.g., an Excel sheet) it's worth checking for any whitespaces. In that case you can use `stringr::str_trim` to remove all whitespaces prior to data analysis.
+Sometimes when you're importing datasets from external and/or untrustworthy sources (e.g., an Excel sheet) it's worth checking for any whitespaces. In that case you can use `stringr::str_trim()` to remove all whitespaces prior to data analysis.
 
 ```{r}
 iris %>% mutate(Species = str_trim(Species))
@@ -293,7 +297,7 @@ mtcars <- as_tibble(mtcars)
 mtcars_lst <- mtcars %>% group_split(cyl)
 ```
 
-Iteration will be covered in more detail in a future chapter, but using base R's `apply` family is straightforward. In this case since we're working with lists, we will use `lapply()` and pass a function (in this case, `rename_with()`):
+Iteration will be covered in more detail in a future chapter (see Chapter 3), but using base R's `apply` family is straightforward. In this case since we're working with lists, we will use `lapply()` and pass a function (in this case, `rename_with()`):
 
 ```{r}
 mtcars_lst <- lapply(mtcars_lst, function(x) 
@@ -301,7 +305,7 @@ mtcars_lst <- lapply(mtcars_lst, function(x)
 mtcars_lst[[1]]
 ```
 
-A `tidyverse` alternative to `apply` is `purrr::map` and its variations:
+A `tidyverse` alternative to `apply()` is `purrr::map()` and its variations:
 
 ```{r, warning=FALSE}
 mtcars_lst <- mtcars %>% group_split(cyl)
@@ -320,7 +324,7 @@ mtcars_lst %>%
   map(coef)
 ```
 
-Using `broom::tidy` to clean up modelling result and output the model estimates:
+Using `broom::tidy()` to clean up modelling result and output the model estimates:
 
 ```{r, warning=FALSE, message=FALSE}
 library(broom)
@@ -330,7 +334,7 @@ mtcars_lst %>%
   bind_rows()
 ```
 
-Using base R and the `apply` family instead:
+Using base R and the `apply()` family instead:
 
 ```{r}
 models <- lapply(mtcars_lst, function(x) lm(mpg ~ gear, data = x))
@@ -423,7 +427,7 @@ Remove columns with more than one missing value:
 mtcars_NA %>% select(where(function(x) sum(is.na(x)) < 1))
 ```
 
-Replace missing values with zero using `tidyr::replace_na`: 
+Replace missing values with zero using `tidyr::replace_na()`: 
 
 ```{r, eval = FALSE}
 mtcars_NA %>% map_dfc(~ replace_na(.x, 0))
