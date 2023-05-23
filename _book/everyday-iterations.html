@@ -249,7 +249,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 Merc … 12.2      2  73.4  31    1.84  1.60 10      0.5   0     2  
 ##  9 Merc … 11.4      2  70.4  47.5  1.96  1.58 11.4    0.5   0     2  
 ## 10 Merc …  9.6      3  83.8  61.5  1.96  1.72  9.15   0.5   0     2  
-## # … with 22 more rows, and 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 22 more rows
+## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
 <p>Note that instead of writing out <code>function(x) x/2</code> I’m using the <code>~ .x</code> notation which is often used in context of <code>purrr:map</code>. Either works.</p>
 <p>The <code>purrr:map</code> solution to this is:</p>
 <div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="everyday-iterations.html#cb126-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">map_if</span>(is.numeric, <span class="sc">~</span> .x<span class="sc">/</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span></code></pre></div>
@@ -266,7 +267,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 Merc … 12.2      2  73.4  31    1.84  1.60 10      0.5   0     2  
 ##  9 Merc … 11.4      2  70.4  47.5  1.96  1.58 11.4    0.5   0     2  
 ## 10 Merc …  9.6      3  83.8  61.5  1.96  1.72  9.15   0.5   0     2  
-## # … with 22 more rows, and 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 22 more rows
+## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
 <p>Writing a for loop for something like this would be less optimal:</p>
 <div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="everyday-iterations.html#cb128-1" tabindex="-1"></a>mtcars2 <span class="ot">&lt;-</span> mtcars</span>
 <span id="cb128-2"><a href="everyday-iterations.html#cb128-2" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">ncol</span>(mtcars2)){</span>
@@ -286,7 +288,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 Merc … 12.2      2  73.4  31    1.84  1.60 10      0.5   0     2  
 ##  9 Merc … 11.4      2  70.4  47.5  1.96  1.58 11.4    0.5   0     2  
 ## 10 Merc …  9.6      3  83.8  61.5  1.96  1.72  9.15   0.5   0     2  
-## # … with 22 more rows, and 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 22 more rows
+## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
 </div>
 <div id="iterating-over-lists" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Iterating over lists<a href="everyday-iterations.html#iterating-over-lists" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -358,26 +361,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb145-4"><a href="everyday-iterations.html#cb145-4" tabindex="-1"></a>  <span class="fu">map</span>(glance) <span class="sc">%&gt;%</span></span>
 <span id="cb145-5"><a href="everyday-iterations.html#cb145-5" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 12
-##   r.squared adj.r.sq…¹ sigma stati…² p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 0.115         0.0163  4.47 1.17e+0   0.308     1  -31.0  68.0  69.2
-## 2 0.0000902    -0.200   1.59 4.51e-4   0.984     1  -12.0  30.0  29.9
-## 3 0.00246      -0.0807  2.66 2.97e-2   0.866     1  -32.5  71.0  72.9
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
-## #   nobs &lt;int&gt;, and abbreviated variable names ¹​adj.r.squared,
-## #   ²​statistic</code></pre>
+##   r.squared adj.r.squared sigma statistic p.value    df logLik   AIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 0.115            0.0163  4.47  1.17       0.308     1  -31.0  68.0
+## 2 0.0000902       -0.200   1.59  0.000451   0.984     1  -12.0  30.0
+## 3 0.00246         -0.0807  2.66  0.0297     0.866     1  -32.5  71.0
+## # ℹ 4 more variables: BIC &lt;dbl&gt;, deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
+## #   nobs &lt;int&gt;</code></pre>
 <p>Using <code>lapply()</code> instead:</p>
 <div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="everyday-iterations.html#cb147-1" tabindex="-1"></a><span class="fu">lapply</span>(mtcars_lst, <span class="cf">function</span>(x) <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> x)) <span class="sc">%&gt;%</span></span>
 <span id="cb147-2"><a href="everyday-iterations.html#cb147-2" tabindex="-1"></a>  <span class="fu">lapply</span>(glance) <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 12
-##   r.squared adj.r.sq…¹ sigma stati…² p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 0.115         0.0163  4.47 1.17e+0   0.308     1  -31.0  68.0  69.2
-## 2 0.0000902    -0.200   1.59 4.51e-4   0.984     1  -12.0  30.0  29.9
-## 3 0.00246      -0.0807  2.66 2.97e-2   0.866     1  -32.5  71.0  72.9
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
-## #   nobs &lt;int&gt;, and abbreviated variable names ¹​adj.r.squared,
-## #   ²​statistic</code></pre>
+##   r.squared adj.r.squared sigma statistic p.value    df logLik   AIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 0.115            0.0163  4.47  1.17       0.308     1  -31.0  68.0
+## 2 0.0000902       -0.200   1.59  0.000451   0.984     1  -12.0  30.0
+## 3 0.00246         -0.0807  2.66  0.0297     0.866     1  -32.5  71.0
+## # ℹ 4 more variables: BIC &lt;dbl&gt;, deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
+## #   nobs &lt;int&gt;</code></pre>
 <p>The <code>map()</code> function can also be used to extract elements:</p>
 <div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="everyday-iterations.html#cb149-1" tabindex="-1"></a>mtcars_lst <span class="sc">%&gt;%</span> <span class="fu">map</span>(<span class="st">&#39;CAR&#39;</span>)</span></code></pre></div>
 <pre><code>## [[1]]
@@ -587,7 +588,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5 Merc 2…  19.2     6  168.   123  3.92  3.44  18.3     1     0    NA
 ## 6 Merc 2…  17.8     6  168.   123  3.92  3.44  18.9     1     0    NA
 ## 7 Ferrar…  19.7     6  145    175  3.62  2.77  15.5     0     1    NA
-## # … with 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
 <p>Now, if I were to try and fit a linear model using <code>lm(mpg ~ wt)</code> iteratively over the <code>mtcars_lst</code>, it will fail at the second element as the <code>wt</code> values are all missing.</p>
 <div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="everyday-iterations.html#cb202-1" tabindex="-1"></a>mtcars_lst <span class="sc">%&gt;%</span></span>
 <span id="cb202-2"><a href="everyday-iterations.html#cb202-2" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>

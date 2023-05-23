@@ -246,18 +246,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## )</code></pre>
 <div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="everyday-ml-classification.html#cb342-1" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 12
-##   fixed aci…¹ volat…² citri…³ resid…⁴ chlor…⁵ free …⁶ total…⁷ density
-##         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-## 1         7      0.27    0.36    20.7   0.045      45     170   1.00 
-## 2         6.3    0.3     0.34     1.6   0.049      14     132   0.994
-## 3         8.1    0.28    0.4      6.9   0.05       30      97   0.995
-## 4         7.2    0.23    0.32     8.5   0.058      47     186   0.996
-## 5         7.2    0.23    0.32     8.5   0.058      47     186   0.996
-## 6         8.1    0.28    0.4      6.9   0.05       30      97   0.995
-## # … with 4 more variables: pH &lt;dbl&gt;, sulphates &lt;dbl&gt;, alcohol &lt;dbl&gt;,
-## #   quality &lt;dbl&gt;, and abbreviated variable names ¹​`fixed acidity`,
-## #   ²​`volatile acidity`, ³​`citric acid`, ⁴​`residual sugar`,
-## #   ⁵​chlorides, ⁶​`free sulfur dioxide`, ⁷​`total sulfur dioxide`</code></pre>
+##   `fixed acidity` `volatile acidity` `citric acid` `residual sugar`
+##             &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
+## 1             7                 0.27          0.36             20.7
+## 2             6.3               0.3           0.34              1.6
+## 3             8.1               0.28          0.4               6.9
+## 4             7.2               0.23          0.32              8.5
+## 5             7.2               0.23          0.32              8.5
+## 6             8.1               0.28          0.4               6.9
+## # ℹ 8 more variables: chlorides &lt;dbl&gt;, `free sulfur dioxide` &lt;dbl&gt;,
+## #   `total sulfur dioxide` &lt;dbl&gt;, density &lt;dbl&gt;, pH &lt;dbl&gt;,
+## #   sulphates &lt;dbl&gt;, alcohol &lt;dbl&gt;, quality &lt;dbl&gt;</code></pre>
 <p>This dataset has 11 features and a target label column called <code>quality</code>. Firstly, I convert the <code>quality</code> column into factors to reiterate the fact that we are working with a categorical column with defined levels.</p>
 <div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="everyday-ml-classification.html#cb344-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">quality =</span> <span class="fu">factor</span>(quality)) <span class="sc">%&gt;%</span> <span class="fu">relocate</span>(quality)</span></code></pre></div>
 <p>A glimpse into the 11 features shows us that the values are heterogenous in scale:</p>
@@ -512,13 +511,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 0.0519 0.0548 0.0842 0.0319 0.116  0.0922 0.103  0.0613 0.146 
 ##  9 0.0223 0.0375 0.0484 0.0475 0.0647 0.0591 0.0753 0.0098 0.0684
 ## 10 0.0164 0.0173 0.0347 0.007  0.0187 0.0671 0.106  0.0697 0.0962
-## # … with 198 more rows, and 52 more variables: V10 &lt;dbl&gt;, V11 &lt;dbl&gt;,
-## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;, V14 &lt;dbl&gt;, V15 &lt;dbl&gt;, V16 &lt;dbl&gt;,
-## #   V17 &lt;dbl&gt;, V18 &lt;dbl&gt;, V19 &lt;dbl&gt;, V20 &lt;dbl&gt;, V21 &lt;dbl&gt;,
-## #   V22 &lt;dbl&gt;, V23 &lt;dbl&gt;, V24 &lt;dbl&gt;, V25 &lt;dbl&gt;, V26 &lt;dbl&gt;,
-## #   V27 &lt;dbl&gt;, V28 &lt;dbl&gt;, V29 &lt;dbl&gt;, V30 &lt;dbl&gt;, V31 &lt;dbl&gt;,
-## #   V32 &lt;dbl&gt;, V33 &lt;dbl&gt;, V34 &lt;dbl&gt;, V35 &lt;dbl&gt;, V36 &lt;dbl&gt;,
-## #   V37 &lt;dbl&gt;, V38 &lt;dbl&gt;, V39 &lt;dbl&gt;, V40 &lt;dbl&gt;, V41 &lt;dbl&gt;, …</code></pre>
+## # ℹ 198 more rows
+## # ℹ 52 more variables: V10 &lt;dbl&gt;, V11 &lt;dbl&gt;, V12 &lt;dbl&gt;, V13 &lt;dbl&gt;,
+## #   V14 &lt;dbl&gt;, V15 &lt;dbl&gt;, V16 &lt;dbl&gt;, V17 &lt;dbl&gt;, V18 &lt;dbl&gt;,
+## #   V19 &lt;dbl&gt;, V20 &lt;dbl&gt;, V21 &lt;dbl&gt;, V22 &lt;dbl&gt;, V23 &lt;dbl&gt;,
+## #   V24 &lt;dbl&gt;, V25 &lt;dbl&gt;, V26 &lt;dbl&gt;, V27 &lt;dbl&gt;, V28 &lt;dbl&gt;,
+## #   V29 &lt;dbl&gt;, V30 &lt;dbl&gt;, V31 &lt;dbl&gt;, V32 &lt;dbl&gt;, V33 &lt;dbl&gt;,
+## #   V34 &lt;dbl&gt;, V35 &lt;dbl&gt;, V36 &lt;dbl&gt;, V37 &lt;dbl&gt;, V38 &lt;dbl&gt;, …</code></pre>
 <p>The target labels in <code>Sonar</code> has two classes:</p>
 <div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="everyday-ml-classification.html#cb370-1" tabindex="-1"></a>Sonar<span class="sc">$</span>Class <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span></code></pre></div>
 <pre><code>##  Factor w/ 2 levels &quot;M&quot;,&quot;R&quot;: 2 2 2 2 2 2 2 2 2 2 ...</code></pre>
@@ -558,7 +557,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 V13   4.22e- 6
 ##  9 V46   7.16e- 6
 ## 10 V47   9.49e- 6
-## # … with 50 more rows</code></pre>
+## # ℹ 50 more rows</code></pre>
 </div>
 <div id="feature-selection-using-recursive-feature-elimination" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> Feature selection using recursive feature elimination<a href="everyday-ml-classification.html#feature-selection-using-recursive-feature-elimination" class="anchor-section" aria-label="Anchor link to header"></a></h2>

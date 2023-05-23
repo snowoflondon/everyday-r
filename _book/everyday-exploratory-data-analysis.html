@@ -294,7 +294,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 rad       1      
 ##  9 tax     296      
 ## 10 ptratio  15.3    
-## # … with 6,062 more rows</code></pre>
+## # ℹ 6,062 more rows</code></pre>
 <p>Now it’s trivial to use <code>ggplot()</code> to make the boxplot:</p>
 <div class="sourceCode" id="cb289"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb289-1"><a href="everyday-exploratory-data-analysis.html#cb289-1" tabindex="-1"></a><span class="fu">ggplot</span>(dfm, <span class="fu">aes</span>(<span class="at">x =</span> Feature, <span class="at">y =</span> Value)) <span class="sc">+</span> </span>
 <span id="cb289-2"><a href="everyday-exploratory-data-analysis.html#cb289-2" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> Feature), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
@@ -322,8 +322,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 -0.403  0.0487 -0.476 -0.265 -0.160  0.978  1.02  -0.522 -0.577
 ##  9 -0.396  0.0487 -0.476 -0.265 -0.930  1.12   1.09  -0.522 -0.577
 ## 10 -0.400  0.0487 -0.476 -0.265 -0.399  0.615  1.33  -0.522 -0.577
-## # … with 496 more rows, and 3 more variables: ptratio &lt;dbl&gt;,
-## #   b &lt;dbl&gt;, lstat &lt;dbl&gt;</code></pre>
+## # ℹ 496 more rows
+## # ℹ 3 more variables: ptratio &lt;dbl&gt;, b &lt;dbl&gt;, lstat &lt;dbl&gt;</code></pre>
 <p>Now the boxplots look more uniform:</p>
 <div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb292-1"><a href="everyday-exploratory-data-analysis.html#cb292-1" tabindex="-1"></a>df_sm <span class="ot">&lt;-</span> df_s <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), </span>
 <span id="cb292-2"><a href="everyday-exploratory-data-analysis.html#cb292-2" tabindex="-1"></a>                               <span class="at">names_to =</span> <span class="st">&#39;Feature&#39;</span>, </span>
@@ -456,7 +456,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 1     8     4         4  5790     3    25    55  52.7   554   -28
 ##  9 1     9     5         6  5700     3    73    41  48.0  2083    23
 ## 10 1     10    6         7  5700     3    59    44  NA    2654    -2
-## # … with 356 more rows, and 2 more variables: V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
+## # ℹ 356 more rows
+## # ℹ 2 more variables: V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
 <p>It’s not necessary in this case, but since we are working with dates let’s make the date labels easier to read. Using <code>lubridate</code> I will convert the month labels into a factor with character levels. Then using base R’s <code>weekdays()</code> I will convert the days of the week to characters as well.</p>
 <div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="everyday-exploratory-data-analysis.html#cb307-1" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
 <span id="cb307-2"><a href="everyday-exploratory-data-analysis.html#cb307-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
@@ -478,7 +479,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 Jan   8     Thurs…     4  5790     3    25    55  52.7   554   -28
 ##  9 Jan   9     Friday     6  5700     3    73    41  48.0  2083    23
 ## 10 Jan   10    Satur…     7  5700     3    59    44  NA    2654    -2
-## # … with 356 more rows, and 2 more variables: V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
+## # ℹ 356 more rows
+## # ℹ 2 more variables: V12 &lt;dbl&gt;, V13 &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="everyday-exploratory-data-analysis.html#cb309-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
 <span id="cb309-2"><a href="everyday-exploratory-data-analysis.html#cb309-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">V3 =</span> <span class="fu">factor</span>(V3, <span class="at">levels=</span> </span>
 <span id="cb309-3"><a href="everyday-exploratory-data-analysis.html#cb309-3" tabindex="-1"></a>                       <span class="fu">weekdays</span>(<span class="fu">.Date</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">10</span>))))</span></code></pre></div>
@@ -539,7 +541,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb318-7"><a href="everyday-exploratory-data-analysis.html#cb318-7" tabindex="-1"></a>                     <span class="at">label =</span> <span class="st">&#39;p.signif&#39;</span>)</span></code></pre></div>
 <pre><code>## Warning: The dot-dot notation (`..p.signif..`) was deprecated in ggplot2
 ## 3.4.0.
-## ℹ Please use `after_stat(p.signif)` instead.</code></pre>
+## ℹ Please use `after_stat(p.signif)` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this
+## warning was generated.</code></pre>
 <pre><code>## Warning: Removed 2 rows containing non-finite values
 ## (`stat_boxplot()`).</code></pre>
 <pre><code>## Warning: Removed 2 rows containing non-finite values
@@ -564,8 +569,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 10 Oct     12.6    5796.    4.90    62.7    64.5    62.4    2728.
 ## 11 Nov      7.67   5790.    3.3     50.1    58.8    58.6    2834.
 ## 12 Dec      4.06   5725     2.42    36.1    50.2    51.9    3487.
-## # … with 3 more variables: mean_V11 &lt;dbl&gt;, mean_V12 &lt;dbl&gt;,
-## #   mean_V13 &lt;dbl&gt;</code></pre>
+## # ℹ 3 more variables: mean_V11 &lt;dbl&gt;, mean_V12 &lt;dbl&gt;, mean_V13 &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="everyday-exploratory-data-analysis.html#cb324-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(V1, V3) <span class="sc">%&gt;%</span></span>
 <span id="cb324-2"><a href="everyday-exploratory-data-analysis.html#cb324-2" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_hum_LAX =</span> <span class="fu">mean</span>(V7, <span class="at">na.rm=</span>T))</span></code></pre></div>
 <pre><code>## `summarise()` has grouped output by &#39;V1&#39;. You can override using the
@@ -584,7 +588,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 Feb   Monday            58.2
 ##  9 Feb   Tuesday           69.2
 ## 10 Feb   Wednesday         63.2
-## # … with 74 more rows</code></pre>
+## # ℹ 74 more rows</code></pre>
 </div>
 <div id="visualization-of-clusters" class="section level2 hasAnchor" number="5.3">
 <h2><span class="header-section-number">5.3</span> Visualization of clusters<a href="everyday-exploratory-data-analysis.html#visualization-of-clusters" class="anchor-section" aria-label="Anchor link to header"></a></h2>
