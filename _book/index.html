@@ -167,7 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="3" data-path="everyday-iterations.html"><a href="everyday-iterations.html"><i class="fa fa-check"></i><b>3</b> Everyday iterations</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-multiple-columns-using-apply-dplyr-and-purrr"><i class="fa fa-check"></i><b>3.1</b> Iterating over multiple columns using <code>apply</code>, <code>dplyr</code>, and <code>purrr</code></a></li>
+<li class="chapter" data-level="3.1" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-multiple-columns-using-apply-dplyr-and-purrr"><i class="fa fa-check"></i><b>3.1</b> Iterating over multiple columns using <code>apply()</code>, <code>dplyr</code>, and <code>purrr</code></a></li>
 <li class="chapter" data-level="3.2" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-lists"><i class="fa fa-check"></i><b>3.2</b> Iterating over lists</a></li>
 <li class="chapter" data-level="3.3" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-vectors"><i class="fa fa-check"></i><b>3.3</b> Iterating over vectors</a></li>
 <li class="chapter" data-level="3.4" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-with-two-inputs"><i class="fa fa-check"></i><b>3.4</b> Iterating with two inputs</a></li>
@@ -227,18 +227,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 40.383137 32.740610 37.520870 96.847502 42.883321 65.659996
-##  [7] 46.666170 11.570270 47.526999 50.201888 15.576391  4.536931
-## [13] 97.802414 50.545405 61.033465 84.183197 85.912920 38.481773
-## [19] 35.860707 44.738346</code></pre>
+<pre><code>##  [1] 49.373572 23.222964 95.070895 60.969897 41.634265
+##  [6] 30.616840 74.379870 64.107834 45.481334 76.038498
+## [11] 38.570758 94.412510  8.346366 80.178881 20.494120
+## [16] 17.820507 91.486980 28.969602 28.632624 36.248070</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##                               expr   min     lq   mean median   uq
-##  runif(n = 20, min = 0, max = 100) 1.459 1.5635 1.7998  1.626 1.75
-##    max neval
-##  7.792   100</code></pre>
+##                               expr  min     lq    mean
+##  runif(n = 20, min = 0, max = 100) 1.25 1.2925 1.62108
+##  median    uq    max neval
+##  1.4385 1.626 13.042   100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" tabindex="-1"></a>version</span></code></pre></div>
