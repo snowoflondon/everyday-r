@@ -1,15 +1,15 @@
 # Everyday iterations
 
-In the previous chapter, I briefly covered writing an iterative function using `purrr::map`. In an everyday practical setting, iterations are the most useful when we've split our dataset based on some sort of a variable of interest. For example, say we have a dataset containing patient outcome after a treatment with a therapeutic. We could split the data based on the type of the therapeutic and iterate a model to compare and contrast treatment effects. On the other hand, we could simply want to apply some sort of a function over multiple columns of a dataset to save the trouble of writing the same function over and over.
+In the previous chapter, I briefly covered writing an iterative function using `purrr::map()`. In a practical setting, iterations are most useful when we've split our data based on some sort of a variable of interest. For example, say we have a dataset containing patient outcome after a treatment with a novel therapeutic. We could split the data based on the type of the therapeutic and iterate a model to compare and contrast treatment effects. On the other hand, we could simply want to apply some sort of a function over multiple columns of a dataset to save the trouble of writing the same function over and over.
 
-A traditional iterative function involves explicitly writing a for loop. Though for loops are often misconstrued as being slower than the functional counterparts (e.g., the `apply` family of functions), the real down-side of for loops, as Hadley argues in [his book, 'Advanced R'](https://adv-r.hadley.nz/functionals.html), is that for loops do a poor job in conveying what should be done with the results. 
+A traditional iterative function involves explicitly writing a `for loop`. Though `for loops` are often misconstrued as being slower than the functional counterparts (e.g., the `apply()` family of base R functions), the real down-side of `for loops`, as Hadley argues in [his book, 'Advanced R'](https://adv-r.hadley.nz/functionals.html), is that `for loops` do a poor job in conveying what should be done with the results. 
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
 ```
 
 
-## Iterating over multiple columns using `apply`, `dplyr`, and `purrr`
+## Iterating over multiple columns using `apply()`, `dplyr`, and `purrr`
 
 Returning to the familiar dataset `mtcars`, composed of 32 rows and 12 columns:
 
@@ -18,27 +18,27 @@ data(mtcars)
 mtcars <- as_tibble(mtcars, rownames = 'CAR')
 ```
 
-The basic `apply` function needs to know whether you're iterating over columns or over rows using the `MARGIN = ` argument:
+The basic `apply()` function needs to know whether you're iterating over columns or over rows using the `MARGIN = ` argument:
 
 ```{r}
 apply(mtcars[-1], MARGIN = 2, function(x) x/2) %>% head()
 ```
 
-This returns a matrix, as `apply` is typically used for an array or a matrix. The one downside with `apply` is that the user cannot define what form the output will be in. The side effect of this is that I've had to exclude the first column because it contains characters. Running `cbind` afterwards to concatenate `mtcars[1,]` can do the job, though it's cumbersome. Therefore, it's often not advisable to run `apply` on a dataframe or a tibble. A better method is the `dplyr::mutate` solution:
+This returns a matrix, as `apply()` is typically used for an array or a matrix. The one downside with `apply()` is that the user cannot define what form the output will be in. The side effect of this is that I've had to exclude the first column because it contains characters. Running `cbind()` afterwards to concatenate `mtcars[1,]` can do the job, though it's cumbersome. Therefore, it's often not advisable to run `apply()` on a dataframe or a tibble. A better method is the `dplyr::mutate()` solution:
 
 ```{r}
 mtcars %>% mutate(across(where(is.numeric), ~ .x/2))
 ```
 
-Note that instead of writing out `function(x) x/2` I'm using the `~ .x` notation which is often used in context of `purrr:map`. Either works.
+Note that instead of writing out `function(x) x/2` I'm using the `~ .x` notation which is often used in context of `purrr:map()`. Either works.
 
-The `purrr:map` solution to this is:
+The `purrr:map()` solution to this is:
 
 ```{r}
 mtcars %>% map_if(is.numeric, ~ .x/2) %>% as_tibble()
 ```
 
-Writing a for loop for something like this would be less optimal:
+Writing a for loop for something like this would have been less elegant:
 
 ```{r}
 mtcars2 <- mtcars
@@ -51,13 +51,13 @@ mtcars2
 
 ## Iterating over lists
 
-The usefulness of iteration is more apparent when we're working with grouped data. I've covered a bit of this in the previous chapter, but this is when we've split the data based on some sort of a categorical variable.
+The usefulness of iteration is more apparent when we're working with grouped data. I've covered a bit of this in the previous chapter, but this is when we've split the data based on some sort of a categorical or a grouping variable.
 
 ```{r}
 mtcars_lst <- mtcars %>% group_split(cyl)
 ```
 
-The member of the `apply` family suited for this task is `lapply()` which returns a list:
+The member of the `apply()` family suited for this task is `lapply()` which returns a list:
 
 ```{r}
 lapply(mtcars_lst, function(x) cor(x$mpg, x$wt))
@@ -79,13 +79,13 @@ get_pval <- function(x){
 
 lapply(mtcars_lst, get_pval)
 ```
-Using `vapply()` instead allows you to define the class of what the expected output would be:
+Using `vapply()` instead allows you to define the class of what the expected output would be; in this case we obtain a logical vector rather than a list:
 
 ```{r}
 vapply(mtcars_lst, get_pval, FUN.VALUE = logical(1))
 ```
 
-`purrr::map` solution to iterating over list is as such:
+`purrr::map()` solution to iterating over list is as such:
 
 ```{r}
 mtcars_lst %>% map(~ cor(.x$mpg, .x$wt))
@@ -97,7 +97,7 @@ If we want the output to be a flat numeric vector instead of a list:
 mtcars_lst %>% map_dbl(~ cor(.x$mpg, .x$wt))
 ```
 
-Similarly, using `map_lgl` instead would return a logical vector:
+Similarly, using `map_lgl()` instead would return a logical vector:
 
 ```{r}
 mtcars_lst %>% map_lgl(get_pval)
@@ -154,7 +154,7 @@ x <- c(3, 2, NA, 2, 1, 4, 2, NA, 2, NA)
 x
 ```
 
-Filling the missing values is easy with iteration over the length of the vector:
+Imputing the missing values is easy with iteration over the length of the vector:
 
 ```{r}
 x %>% map_dbl(~ replace(., is.na(.x), 0))
@@ -202,7 +202,7 @@ walk(z, ~ print(paste0(.x, '_NAME')))
 
 ## Iterating with two inputs
 
-In contrast to every solution so far, there's a case to be made about iterating over multiple inputs. For that purpose, `purrr:map2` does the job.
+In contrast to every solution so far, there's a case to be made about iterating over multiple inputs. For that purpose, `purrr:map2()` does the job.
 
 ```{r}
 x <- c(2, 4, 2, 5)
@@ -229,7 +229,7 @@ One quirk with `map2()` is that it recycles the input:
 map2_chr('My name is ', c('Brian', 'Connor'), str_c)
 ```
 
-Suppose a dataset such as this:
+Suppose a dataset like this one:
 
 ```{r}
 z <- tibble(A = x, B = y)
@@ -298,7 +298,7 @@ for (i in seq_along(x)){
 out
 ```
 
-`imap` also works with names instead of indices, if required:
+`imap()` also works with names instead of indices, if required:
 
 ```{r}
 names(x) <- c('A', 'B', 'C', 'D')
