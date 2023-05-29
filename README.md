@@ -37,4 +37,4 @@ version.string - R version 4.0.5 (2021-03-31
 * [Data science blog covering fundamental concepts with R & Python code](https://brianjmpark.github.io/)
 
 ## Footnote
-All source code used to compile the book, including all code chunks and original markdown files are stored in this repository. The book is hosted on the `shinyapps.io` server and compiled using the R package `bookdown`. 
+All source code used to compile the book, including all code chunks and original markdown files are stored in this repository. The book is hosted on the `shinyapps.io` server and compiled using the R package `bookdown`. For more information on `bookdown`, check their [documentations](https://bookdown.org/yihui/bookdown/get-started.html)
