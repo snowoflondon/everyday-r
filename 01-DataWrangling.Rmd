@@ -75,6 +75,19 @@ The `n()` function is useful when filtering by groups of size greater than a cer
 mtcars %>% group_by(cyl) %>% filter(n() > 7) %>% ungroup()
 ```
 
+Using `n()` gives us access to finding the group sizes using `tally()` or `count()`:
+
+```{r}
+mtcars %>% group_by(cyl) %>% tally()
+```
+
+We can label encode (i.e., give a unique integer identifier for the current groups) using `cur_group_id()`:
+
+```{r}
+mtcars %>% group_by(cyl) %>%
+  mutate(ID = cur_group_id()) %>% select(ID, cyl)
+```
+
 
 ## Data transformation
 
@@ -169,7 +182,7 @@ Typically, filtering involves a condition based on a column to select the corres
 mtcars %>% filter(str_detect(CAR, 'Mazda'))
 ```
 
-Combining `filter()` with `grepl()`:
+This function accepts logical operators and regex as well:
 
 ```{r}
 mtcars %>% filter(str_detect(CAR, 'Mazda | Merc'))
@@ -214,7 +227,7 @@ mtcars[which(mtcars$cyl %in% c(6,8)),] # not run
 
 ## Subsetting columns based on strings
 
-Subsetting columns typically involves using square brackets `[ ]` in base R, but can be done easily with `dplyr::select`; `select()` supports multiple selector functions such as `starts_with()`, `ends_with()`, `contains()`, and `match()`. The selector `everything()` also exists, which is used to - you guessed it - select every column. 
+Subsetting columns typically involves using square brackets `[ ]` in base R, but can be done easily with `dplyr::select()`; `select()` supports multiple selector functions such as `starts_with()`, `ends_with()`, `contains()`, and `match()`. The selector `everything()` also exists, which is used to - you guessed it - select every column. 
 
 As a word of caution: sometimes it's good practice to explicitly state `select()` we're calling is from `dplyr` (i.e., `dplyr::select()`) to avoid confusion when working with many different packages at once that could potentially introduce conflicts.
 
@@ -290,7 +303,7 @@ iris %>% mutate(Species = str_trim(Species))
 
 ## Iterating over list of dataframes
 
-Analogously to base R's `split`, using `group_split()` allows us to convert the dataset to a list based on a column; the length of this output list would correspond to the unique number of column entries:
+Analogously to base R's `split()`, using `group_split()` allows us to convert the dataset to a list based on a column; the length of this output list would correspond to the unique number of column entries:
 
 ```{r}
 mtcars <- as_tibble(mtcars)
