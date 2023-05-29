@@ -167,7 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="3" data-path="everyday-iterations.html"><a href="everyday-iterations.html"><i class="fa fa-check"></i><b>3</b> Everyday iterations</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-multiple-columns-using-apply-dplyr-and-purrr"><i class="fa fa-check"></i><b>3.1</b> Iterating over multiple columns using <code>apply</code>, <code>dplyr</code>, and <code>purrr</code></a></li>
+<li class="chapter" data-level="3.1" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-multiple-columns-using-apply-dplyr-and-purrr"><i class="fa fa-check"></i><b>3.1</b> Iterating over multiple columns using <code>apply()</code>, <code>dplyr</code>, and <code>purrr</code></a></li>
 <li class="chapter" data-level="3.2" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-lists"><i class="fa fa-check"></i><b>3.2</b> Iterating over lists</a></li>
 <li class="chapter" data-level="3.3" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-over-vectors"><i class="fa fa-check"></i><b>3.3</b> Iterating over vectors</a></li>
 <li class="chapter" data-level="3.4" data-path="everyday-iterations.html"><a href="everyday-iterations.html#iterating-with-two-inputs"><i class="fa fa-check"></i><b>3.4</b> Iterating with two inputs</a></li>
@@ -221,15 +221,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In the simplest sense, fitting a linear model using ordinary least squares using <code>lm()</code> in R provide us with two parameters: the coefficient and the intercept. We can use these parameters to predict the housing price of a property based on the input <em>feature</em> - or <em>features</em> most likely - of that particular instance. This is the fundamental concept at the core of supervised learning. This example is a type of a <em>regression</em> as the target variable (i.e., the housing price) is a continuous variable. However, if the variable we were trying to predict is categorical (e.g., bins based on the bracket of housing price) the task would be <em>classification</em>.</p>
 <p>The digression into concepts in ML and the details into each algorithm is beyond the scope of this book, but more details around specific topics are available on my <a href="https://brianjmpark.github.io/">blog</a> as well as documentation for popular ML packages such as Python’s <a href="https://scikit-learn.org/stable/">Scikit-Learn</a>.</p>
 <p>In R, the workhorse of supervised learning models, whether it’s classification or regression, is the <code>caret</code> package.</p>
-<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="everyday-ml-classification.html#cb339-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb339-2"><a href="everyday-ml-classification.html#cb339-2" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code></pre></div>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="everyday-ml-classification.html#cb343-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb343-2"><a href="everyday-ml-classification.html#cb343-2" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code></pre></div>
 <div id="model-training-and-predictions" class="section level2 hasAnchor" number="6.1">
 <h2><span class="header-section-number">6.1</span> Model training and predictions<a href="everyday-ml-classification.html#model-training-and-predictions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For the first exercise I will use a dataset from Kaggle <a href="https://www.kaggle.com/datasets/kkhandekar/all-datasets-for-practicing-ml">here</a> which I also uploaded onto my GitHub for reference:</p>
-<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="everyday-ml-classification.html#cb340-1" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&#39;https://raw.githubusercontent.com/snowoflondon/everyday-r/main/datasets/Class_Winequality.csv&#39;</span></span>
-<span id="cb340-2"><a href="everyday-ml-classification.html#cb340-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(url, <span class="at">delim =</span> <span class="st">&#39;;&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="everyday-ml-classification.html#cb344-1" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&#39;https://raw.githubusercontent.com/snowoflondon/everyday-r/main/datasets/Class_Winequality.csv&#39;</span></span>
+<span id="cb344-2"><a href="everyday-ml-classification.html#cb344-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(url, <span class="at">delim =</span> <span class="st">&#39;;&#39;</span>)</span></code></pre></div>
 <pre><code>## 
-## ── Column specification ──────────────────────────────────────────────
+## ── Column specification ───────────────────────────
 ## cols(
 ##   `fixed acidity` = col_double(),
 ##   `volatile acidity` = col_double(),
@@ -244,70 +244,85 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   alcohol = col_double(),
 ##   quality = col_double()
 ## )</code></pre>
-<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="everyday-ml-classification.html#cb342-1" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="everyday-ml-classification.html#cb346-1" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 12
-##   fixed acid…¹ volat…² citri…³ resid…⁴ chlor…⁵ free …⁶ total…⁷ density
-##          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-## 1          7      0.27    0.36    20.7   0.045      45     170   1.00 
-## 2          6.3    0.3     0.34     1.6   0.049      14     132   0.994
-## 3          8.1    0.28    0.4      6.9   0.05       30      97   0.995
-## 4          7.2    0.23    0.32     8.5   0.058      47     186   0.996
-## 5          7.2    0.23    0.32     8.5   0.058      47     186   0.996
-## 6          8.1    0.28    0.4      6.9   0.05       30      97   0.995
-## # … with 4 more variables: pH &lt;dbl&gt;, sulphates &lt;dbl&gt;, alcohol &lt;dbl&gt;,
-## #   quality &lt;dbl&gt;, and abbreviated variable names ¹​`fixed acidity`,
-## #   ²​`volatile acidity`, ³​`citric acid`, ⁴​`residual sugar`,
-## #   ⁵​chlorides, ⁶​`free sulfur dioxide`, ⁷​`total sulfur dioxide`</code></pre>
+##   `fixed acidity` `volatile acidity` `citric acid`
+##             &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;
+## 1             7                 0.27          0.36
+## 2             6.3               0.3           0.34
+## 3             8.1               0.28          0.4 
+## 4             7.2               0.23          0.32
+## 5             7.2               0.23          0.32
+## 6             8.1               0.28          0.4 
+## # ℹ 9 more variables: `residual sugar` &lt;dbl&gt;,
+## #   chlorides &lt;dbl&gt;, `free sulfur dioxide` &lt;dbl&gt;,
+## #   `total sulfur dioxide` &lt;dbl&gt;, density &lt;dbl&gt;,
+## #   pH &lt;dbl&gt;, sulphates &lt;dbl&gt;, alcohol &lt;dbl&gt;,
+## #   quality &lt;dbl&gt;</code></pre>
 <p>This dataset has 11 features and a target label column called <code>quality</code>. Firstly, I convert the <code>quality</code> column into factors to reiterate the fact that we are working with a categorical column with defined levels.</p>
-<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="everyday-ml-classification.html#cb344-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">quality =</span> <span class="fu">factor</span>(quality)) <span class="sc">%&gt;%</span> <span class="fu">relocate</span>(quality)</span></code></pre></div>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="everyday-ml-classification.html#cb348-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">quality =</span> <span class="fu">factor</span>(quality)) <span class="sc">%&gt;%</span> <span class="fu">relocate</span>(quality)</span></code></pre></div>
 <p>A glimpse into the 11 features shows us that the values are heterogenous in scale:</p>
-<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="everyday-ml-classification.html#cb345-1" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>quality))</span></code></pre></div>
-<pre><code>##  fixed acidity    volatile acidity  citric acid     residual sugar  
-##  Min.   : 3.800   Min.   :0.0800   Min.   :0.0000   Min.   : 0.600  
-##  1st Qu.: 6.300   1st Qu.:0.2100   1st Qu.:0.2700   1st Qu.: 1.700  
-##  Median : 6.800   Median :0.2600   Median :0.3200   Median : 5.200  
-##  Mean   : 6.855   Mean   :0.2782   Mean   :0.3342   Mean   : 6.391  
-##  3rd Qu.: 7.300   3rd Qu.:0.3200   3rd Qu.:0.3900   3rd Qu.: 9.900  
-##  Max.   :14.200   Max.   :1.1000   Max.   :1.6600   Max.   :65.800  
-##    chlorides       free sulfur dioxide total sulfur dioxide
-##  Min.   :0.00900   Min.   :  2.00      Min.   :  9.0       
-##  1st Qu.:0.03600   1st Qu.: 23.00      1st Qu.:108.0       
-##  Median :0.04300   Median : 34.00      Median :134.0       
-##  Mean   :0.04577   Mean   : 35.31      Mean   :138.4       
-##  3rd Qu.:0.05000   3rd Qu.: 46.00      3rd Qu.:167.0       
-##  Max.   :0.34600   Max.   :289.00      Max.   :440.0       
-##     density             pH          sulphates         alcohol     
-##  Min.   :0.9871   Min.   :2.720   Min.   :0.2200   Min.   : 8.00  
-##  1st Qu.:0.9917   1st Qu.:3.090   1st Qu.:0.4100   1st Qu.: 9.50  
-##  Median :0.9937   Median :3.180   Median :0.4700   Median :10.40  
-##  Mean   :0.9940   Mean   :3.188   Mean   :0.4898   Mean   :10.51  
-##  3rd Qu.:0.9961   3rd Qu.:3.280   3rd Qu.:0.5500   3rd Qu.:11.40  
-##  Max.   :1.0390   Max.   :3.820   Max.   :1.0800   Max.   :14.20</code></pre>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="everyday-ml-classification.html#cb349-1" tabindex="-1"></a><span class="fu">summary</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>quality))</span></code></pre></div>
+<pre><code>##  fixed acidity    volatile acidity
+##  Min.   : 3.800   Min.   :0.0800  
+##  1st Qu.: 6.300   1st Qu.:0.2100  
+##  Median : 6.800   Median :0.2600  
+##  Mean   : 6.855   Mean   :0.2782  
+##  3rd Qu.: 7.300   3rd Qu.:0.3200  
+##  Max.   :14.200   Max.   :1.1000  
+##   citric acid     residual sugar  
+##  Min.   :0.0000   Min.   : 0.600  
+##  1st Qu.:0.2700   1st Qu.: 1.700  
+##  Median :0.3200   Median : 5.200  
+##  Mean   :0.3342   Mean   : 6.391  
+##  3rd Qu.:0.3900   3rd Qu.: 9.900  
+##  Max.   :1.6600   Max.   :65.800  
+##    chlorides       free sulfur dioxide
+##  Min.   :0.00900   Min.   :  2.00     
+##  1st Qu.:0.03600   1st Qu.: 23.00     
+##  Median :0.04300   Median : 34.00     
+##  Mean   :0.04577   Mean   : 35.31     
+##  3rd Qu.:0.05000   3rd Qu.: 46.00     
+##  Max.   :0.34600   Max.   :289.00     
+##  total sulfur dioxide    density      
+##  Min.   :  9.0        Min.   :0.9871  
+##  1st Qu.:108.0        1st Qu.:0.9917  
+##  Median :134.0        Median :0.9937  
+##  Mean   :138.4        Mean   :0.9940  
+##  3rd Qu.:167.0        3rd Qu.:0.9961  
+##  Max.   :440.0        Max.   :1.0390  
+##        pH          sulphates         alcohol     
+##  Min.   :2.720   Min.   :0.2200   Min.   : 8.00  
+##  1st Qu.:3.090   1st Qu.:0.4100   1st Qu.: 9.50  
+##  Median :3.180   Median :0.4700   Median :10.40  
+##  Mean   :3.188   Mean   :0.4898   Mean   :10.51  
+##  3rd Qu.:3.280   3rd Qu.:0.5500   3rd Qu.:11.40  
+##  Max.   :3.820   Max.   :1.0800   Max.   :14.20</code></pre>
 <p>For a quick exploratory analysis, take a look at the distribution of the features and their scales (i.e., y-axis). Typically in ML tasks, the scales need to be preprocessed prior to model training. This isn’t necessarily the case in models like the random forest, for example, but it is good practice regardless. I will circle back to this in a bit.</p>
-<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="everyday-ml-classification.html#cb347-1" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
-<span id="cb347-2"><a href="everyday-ml-classification.html#cb347-2" tabindex="-1"></a>dfm <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>quality, <span class="at">names_to =</span> <span class="st">&#39;feature&#39;</span>, </span>
-<span id="cb347-3"><a href="everyday-ml-classification.html#cb347-3" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&#39;values&#39;</span>)</span>
-<span id="cb347-4"><a href="everyday-ml-classification.html#cb347-4" tabindex="-1"></a></span>
-<span id="cb347-5"><a href="everyday-ml-classification.html#cb347-5" tabindex="-1"></a>dfm <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> quality, <span class="at">y =</span> values)) <span class="sc">+</span> </span>
-<span id="cb347-6"><a href="everyday-ml-classification.html#cb347-6" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> quality), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
-<span id="cb347-7"><a href="everyday-ml-classification.html#cb347-7" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> feature, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb347-8"><a href="everyday-ml-classification.html#cb347-8" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span> </span>
-<span id="cb347-9"><a href="everyday-ml-classification.html#cb347-9" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&#39;Set1&#39;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-190-1.png" width="672" /></p>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="everyday-ml-classification.html#cb351-1" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb351-2"><a href="everyday-ml-classification.html#cb351-2" tabindex="-1"></a>dfm <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>quality, <span class="at">names_to =</span> <span class="st">&#39;feature&#39;</span>, </span>
+<span id="cb351-3"><a href="everyday-ml-classification.html#cb351-3" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&#39;values&#39;</span>)</span>
+<span id="cb351-4"><a href="everyday-ml-classification.html#cb351-4" tabindex="-1"></a></span>
+<span id="cb351-5"><a href="everyday-ml-classification.html#cb351-5" tabindex="-1"></a>dfm <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> quality, <span class="at">y =</span> values)) <span class="sc">+</span> </span>
+<span id="cb351-6"><a href="everyday-ml-classification.html#cb351-6" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> quality), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> </span>
+<span id="cb351-7"><a href="everyday-ml-classification.html#cb351-7" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> feature, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb351-8"><a href="everyday-ml-classification.html#cb351-8" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb351-9"><a href="everyday-ml-classification.html#cb351-9" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&#39;Set1&#39;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-192-1.png" width="672" /></p>
 <p>Before doing any kind of preprocessing or normalization, it is imperative to split the data into training and testing to prevent information leak. The <code>createDataPartition()</code> function accepts the <code>p =</code> argument which defines the split fraction. Here I use 80/20 split.</p>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="everyday-ml-classification.html#cb348-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb348-2"><a href="everyday-ml-classification.html#cb348-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">quality =</span> <span class="fu">paste0</span>(<span class="st">&#39;Group_&#39;</span>, quality)) <span class="sc">%&gt;%</span></span>
-<span id="cb348-3"><a href="everyday-ml-classification.html#cb348-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quality =</span> <span class="fu">factor</span>(quality))</span>
-<span id="cb348-4"><a href="everyday-ml-classification.html#cb348-4" tabindex="-1"></a></span>
-<span id="cb348-5"><a href="everyday-ml-classification.html#cb348-5" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(<span class="at">y =</span> df<span class="sc">$</span>quality, <span class="at">p =</span> .<span class="dv">8</span>,</span>
-<span id="cb348-6"><a href="everyday-ml-classification.html#cb348-6" tabindex="-1"></a>                           <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
-<span id="cb348-7"><a href="everyday-ml-classification.html#cb348-7" tabindex="-1"></a></span>
-<span id="cb348-8"><a href="everyday-ml-classification.html#cb348-8" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> df[idx,]</span>
-<span id="cb348-9"><a href="everyday-ml-classification.html#cb348-9" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> df[<span class="sc">-</span>idx,]</span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="everyday-ml-classification.html#cb352-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb352-2"><a href="everyday-ml-classification.html#cb352-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">quality =</span> <span class="fu">paste0</span>(<span class="st">&#39;Group_&#39;</span>, quality)) <span class="sc">%&gt;%</span></span>
+<span id="cb352-3"><a href="everyday-ml-classification.html#cb352-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quality =</span> <span class="fu">factor</span>(quality))</span>
+<span id="cb352-4"><a href="everyday-ml-classification.html#cb352-4" tabindex="-1"></a></span>
+<span id="cb352-5"><a href="everyday-ml-classification.html#cb352-5" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(<span class="at">y =</span> df<span class="sc">$</span>quality, <span class="at">p =</span> .<span class="dv">8</span>,</span>
+<span id="cb352-6"><a href="everyday-ml-classification.html#cb352-6" tabindex="-1"></a>                           <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb352-7"><a href="everyday-ml-classification.html#cb352-7" tabindex="-1"></a></span>
+<span id="cb352-8"><a href="everyday-ml-classification.html#cb352-8" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> df[idx,]</span>
+<span id="cb352-9"><a href="everyday-ml-classification.html#cb352-9" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> df[<span class="sc">-</span>idx,]</span></code></pre></div>
 <p>The <code>createDataPartition()</code> outputs an array of indices which can be used to split the original data.</p>
 <p>Going back to the talk of scaling and preprocessing the data: a common procedure is to <code>center</code> and <code>scale</code>, that is - subtract the mean and divide by the standard deviation. If you’re familiar with <code>scikit-learn</code> in Python, this is analogous to running <code>StandardScaler()</code>.</p>
-<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="everyday-ml-classification.html#cb349-1" tabindex="-1"></a>preProcObj <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(df_train, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">&#39;center&#39;</span>, <span class="st">&#39;scale&#39;</span>))</span>
-<span id="cb349-2"><a href="everyday-ml-classification.html#cb349-2" tabindex="-1"></a>preProcObj</span></code></pre></div>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="everyday-ml-classification.html#cb353-1" tabindex="-1"></a>preProcObj <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(df_train, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">&#39;center&#39;</span>, <span class="st">&#39;scale&#39;</span>))</span>
+<span id="cb353-2"><a href="everyday-ml-classification.html#cb353-2" tabindex="-1"></a>preProcObj</span></code></pre></div>
 <pre><code>## Created from 3920 samples and 12 variables
 ## 
 ## Pre-processing:
@@ -316,58 +331,72 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   - scaled (11)</code></pre>
 <p>Evidently, the <code>preProcess()</code> function recognized the column containing the target labels and ignored it for preprocessing.</p>
 <p>Preprocessing is done on the training data and the learned object is applied to both the training and testing data:</p>
-<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb351-1"><a href="everyday-ml-classification.html#cb351-1" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_train)</span>
-<span id="cb351-2"><a href="everyday-ml-classification.html#cb351-2" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_test)</span></code></pre></div>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="everyday-ml-classification.html#cb355-1" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_train)</span>
+<span id="cb355-2"><a href="everyday-ml-classification.html#cb355-2" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_test)</span></code></pre></div>
 <p>Revisiting the features now shows the effect of the preprocessing step:</p>
-<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="everyday-ml-classification.html#cb352-1" tabindex="-1"></a><span class="fu">summary</span>(df_train <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>quality))</span></code></pre></div>
-<pre><code>##  fixed acidity      volatile acidity   citric acid     
-##  Min.   :-3.63462   Min.   :-1.9812   Min.   :-2.7409  
-##  1st Qu.:-0.66724   1st Qu.:-0.6815   1st Qu.:-0.5247  
-##  Median :-0.07376   Median :-0.1816   Median :-0.1143  
-##  Mean   : 0.00000   Mean   : 0.0000   Mean   : 0.0000  
-##  3rd Qu.: 0.63841   3rd Qu.: 0.4182   3rd Qu.: 0.4602  
-##  Max.   : 8.70968   Max.   : 7.2663   Max.   :10.8844  
-##  residual sugar      chlorides       free sulfur dioxide
-##  Min.   :-1.1408   Min.   :-1.6600   Min.   :-1.89691   
-##  1st Qu.:-0.9250   1st Qu.:-0.4457   1st Qu.:-0.72325   
-##  Median :-0.2384   Median :-0.1309   Median :-0.07773   
-##  Mean   : 0.0000   Mean   : 0.0000   Mean   : 0.00000   
-##  3rd Qu.: 0.6835   3rd Qu.: 0.1840   3rd Qu.: 0.62647   
-##  Max.   :11.6490   Max.   :13.4966   Max.   :14.88647   
-##  total sulfur dioxide    density              pH          
-##  Min.   :-3.0417      Min.   :-2.2943   Min.   :-2.99893  
-##  1st Qu.:-0.6983      1st Qu.:-0.7665   1st Qu.:-0.65873  
-##  Median :-0.1065      Median :-0.1122   Median :-0.05697  
-##  Mean   : 0.0000      Mean   : 0.0000   Mean   : 0.00000  
-##  3rd Qu.: 0.6746      3rd Qu.: 0.7082   3rd Qu.: 0.61166  
-##  Max.   : 7.1367      Max.   :14.9270   Max.   : 4.22224  
-##    sulphates          alcohol        
-##  Min.   :-2.4096   Min.   :-2.05259  
-##  1st Qu.:-0.7084   1st Qu.:-0.83024  
-##  Median :-0.1711   Median :-0.09683  
-##  Mean   : 0.0000   Mean   : 0.00000  
-##  3rd Qu.: 0.5452   3rd Qu.: 0.71807  
-##  Max.   : 4.4850   Max.   : 2.99978</code></pre>
+<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="everyday-ml-classification.html#cb356-1" tabindex="-1"></a><span class="fu">summary</span>(df_train <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>quality))</span></code></pre></div>
+<pre><code>##  fixed acidity      volatile acidity 
+##  Min.   :-3.63462   Min.   :-1.9812  
+##  1st Qu.:-0.66724   1st Qu.:-0.6815  
+##  Median :-0.07376   Median :-0.1816  
+##  Mean   : 0.00000   Mean   : 0.0000  
+##  3rd Qu.: 0.63841   3rd Qu.: 0.4182  
+##  Max.   : 8.70968   Max.   : 7.2663  
+##   citric acid      residual sugar   
+##  Min.   :-2.7409   Min.   :-1.1408  
+##  1st Qu.:-0.5247   1st Qu.:-0.9250  
+##  Median :-0.1143   Median :-0.2384  
+##  Mean   : 0.0000   Mean   : 0.0000  
+##  3rd Qu.: 0.4602   3rd Qu.: 0.6835  
+##  Max.   :10.8844   Max.   :11.6490  
+##    chlorides       free sulfur dioxide
+##  Min.   :-1.6600   Min.   :-1.89691   
+##  1st Qu.:-0.4457   1st Qu.:-0.72325   
+##  Median :-0.1309   Median :-0.07773   
+##  Mean   : 0.0000   Mean   : 0.00000   
+##  3rd Qu.: 0.1840   3rd Qu.: 0.62647   
+##  Max.   :13.4966   Max.   :14.88647   
+##  total sulfur dioxide    density       
+##  Min.   :-3.0417      Min.   :-2.2943  
+##  1st Qu.:-0.6983      1st Qu.:-0.7665  
+##  Median :-0.1065      Median :-0.1122  
+##  Mean   : 0.0000      Mean   : 0.0000  
+##  3rd Qu.: 0.6746      3rd Qu.: 0.7082  
+##  Max.   : 7.1367      Max.   :14.9270  
+##        pH             sulphates      
+##  Min.   :-2.99893   Min.   :-2.4096  
+##  1st Qu.:-0.65873   1st Qu.:-0.7084  
+##  Median :-0.05697   Median :-0.1711  
+##  Mean   : 0.00000   Mean   : 0.0000  
+##  3rd Qu.: 0.61166   3rd Qu.: 0.5452  
+##  Max.   : 4.22224   Max.   : 4.4850  
+##     alcohol        
+##  Min.   :-2.05259  
+##  1st Qu.:-0.83024  
+##  Median :-0.09683  
+##  Mean   : 0.00000  
+##  3rd Qu.: 0.71807  
+##  Max.   : 2.99978</code></pre>
 <p>The scales have been normalized, as evident here:</p>
-<div class="sourceCode" id="cb354"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb354-1"><a href="everyday-ml-classification.html#cb354-1" tabindex="-1"></a>df_train <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>quality, <span class="at">names_to =</span> <span class="st">&#39;feature&#39;</span>,</span>
-<span id="cb354-2"><a href="everyday-ml-classification.html#cb354-2" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&#39;values&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb354-3"><a href="everyday-ml-classification.html#cb354-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> quality, <span class="at">y =</span> values)) <span class="sc">+</span></span>
-<span id="cb354-4"><a href="everyday-ml-classification.html#cb354-4" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> quality), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span></span>
-<span id="cb354-5"><a href="everyday-ml-classification.html#cb354-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> feature, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb354-6"><a href="everyday-ml-classification.html#cb354-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span> </span>
-<span id="cb354-7"><a href="everyday-ml-classification.html#cb354-7" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&#39;Set1&#39;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-195-1.png" width="672" /></p>
+<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="everyday-ml-classification.html#cb358-1" tabindex="-1"></a>df_train <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>quality, <span class="at">names_to =</span> <span class="st">&#39;feature&#39;</span>,</span>
+<span id="cb358-2"><a href="everyday-ml-classification.html#cb358-2" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&#39;values&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb358-3"><a href="everyday-ml-classification.html#cb358-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> quality, <span class="at">y =</span> values)) <span class="sc">+</span></span>
+<span id="cb358-4"><a href="everyday-ml-classification.html#cb358-4" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> quality), <span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb358-5"><a href="everyday-ml-classification.html#cb358-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> feature, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb358-6"><a href="everyday-ml-classification.html#cb358-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb358-7"><a href="everyday-ml-classification.html#cb358-7" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&#39;Set1&#39;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-197-1.png" width="672" /></p>
 <p>Once we’re ready to train the model, an important function is <code>trainControl()</code>. Here, typically we define the sampling method for the model training. I am using <code>method = cv</code> with <code>number = 5</code> for k-fold cross-validation with 5 folds. Alternatively, I could use <code>method = repeatedcv</code> with <code>number = 5</code> and <code>repeats = 5</code> for repeated cross-validation with 5 iterations, but for this exercise I will settle with the simple 5-fold cross validation.</p>
-<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="everyday-ml-classification.html#cb355-1" tabindex="-1"></a>tr <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
-<span id="cb355-2"><a href="everyday-ml-classification.html#cb355-2" tabindex="-1"></a>                   <span class="at">number =</span> <span class="dv">5</span>,</span>
-<span id="cb355-3"><a href="everyday-ml-classification.html#cb355-3" tabindex="-1"></a>                   <span class="at">classProbs =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb355-4"><a href="everyday-ml-classification.html#cb355-4" tabindex="-1"></a></span>
-<span id="cb355-5"><a href="everyday-ml-classification.html#cb355-5" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(quality <span class="sc">~</span> ., <span class="at">data =</span> df_train,</span>
-<span id="cb355-6"><a href="everyday-ml-classification.html#cb355-6" tabindex="-1"></a>               <span class="at">method =</span> <span class="st">&#39;ranger&#39;</span>, <span class="at">importance =</span> <span class="st">&#39;impurity&#39;</span>,</span>
-<span id="cb355-7"><a href="everyday-ml-classification.html#cb355-7" tabindex="-1"></a>               <span class="at">trControl =</span> tr)</span></code></pre></div>
+<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="everyday-ml-classification.html#cb359-1" tabindex="-1"></a>tr <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
+<span id="cb359-2"><a href="everyday-ml-classification.html#cb359-2" tabindex="-1"></a>                   <span class="at">number =</span> <span class="dv">5</span>,</span>
+<span id="cb359-3"><a href="everyday-ml-classification.html#cb359-3" tabindex="-1"></a>                   <span class="at">classProbs =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb359-4"><a href="everyday-ml-classification.html#cb359-4" tabindex="-1"></a></span>
+<span id="cb359-5"><a href="everyday-ml-classification.html#cb359-5" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(quality <span class="sc">~</span> ., <span class="at">data =</span> df_train,</span>
+<span id="cb359-6"><a href="everyday-ml-classification.html#cb359-6" tabindex="-1"></a>               <span class="at">method =</span> <span class="st">&#39;ranger&#39;</span>, <span class="at">importance =</span> <span class="st">&#39;impurity&#39;</span>,</span>
+<span id="cb359-7"><a href="everyday-ml-classification.html#cb359-7" tabindex="-1"></a>               <span class="at">trControl =</span> tr)</span></code></pre></div>
 <p>Above, I defined <code>method = ranger</code> within <code>train()</code>, which is a wrapper for training a random forest model. For all available methods for <code>train()</code>, see <code>caret</code>’s documentation <a href="https://topepo.github.io/caret/train-models-by-tag.html">here</a>. The <code>importance = 'impurity'</code> asks the model to use the Gini impurity method to rank variable importance. This will be useful later.</p>
 <p>Calling the model object summarizes the model’s performance on the validation set (i.e., hold-out sets during k-fold cross validation).</p>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="everyday-ml-classification.html#cb356-1" tabindex="-1"></a>model</span></code></pre></div>
+<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="everyday-ml-classification.html#cb360-1" tabindex="-1"></a>model</span></code></pre></div>
 <pre><code>## Random Forest 
 ## 
 ## 3920 samples
@@ -387,17 +416,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   11    gini        0.6571260  0.4668996
 ##   11    extratrees  0.6647859  0.4756944
 ## 
-## Tuning parameter &#39;min.node.size&#39; was held constant at a value of 1
-## Accuracy was used to select the optimal model using the
-##  largest value.
-## The final values used for the model were mtry = 2, splitrule
-##  = extratrees and min.node.size = 1.</code></pre>
+## Tuning parameter &#39;min.node.size&#39; was held
+##  constant at a value of 1
+## Accuracy was used to select the optimal
+##  model using the largest value.
+## The final values used for the model were mtry =
+##  2, splitrule = extratrees and min.node.size = 1.</code></pre>
 <p>Various hyperparametes were tested and the combination with the highest validation accuracy was chosen:</p>
-<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="everyday-ml-classification.html#cb358-1" tabindex="-1"></a>model<span class="sc">$</span>bestTune</span></code></pre></div>
+<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="everyday-ml-classification.html#cb362-1" tabindex="-1"></a>model<span class="sc">$</span>bestTune</span></code></pre></div>
 <pre><code>##   mtry  splitrule min.node.size
 ## 2    2 extratrees             1</code></pre>
 <p>The performance on the resamples during the cross validation process can be found here:</p>
-<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="everyday-ml-classification.html#cb360-1" tabindex="-1"></a>model<span class="sc">$</span>resample</span></code></pre></div>
+<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="everyday-ml-classification.html#cb364-1" tabindex="-1"></a>model<span class="sc">$</span>resample</span></code></pre></div>
 <pre><code>##    Accuracy     Kappa Resample
 ## 1 0.6530612 0.4487323    Fold1
 ## 2 0.6811224 0.4989916    Fold3
@@ -405,21 +435,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 4 0.6683673 0.4796363    Fold5
 ## 5 0.6487867 0.4448126    Fold4</code></pre>
 <p>The testing dataset has not been touched at all during model training. For model evaluation, above model is tested on this hold-out set using <code>predict()</code>:</p>
-<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="everyday-ml-classification.html#cb362-1" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, df_test)</span></code></pre></div>
+<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="everyday-ml-classification.html#cb366-1" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, df_test)</span></code></pre></div>
 <p>For a clean summary of model evaluation, use <code>confusionMatrix()</code>:</p>
-<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb363-1"><a href="everyday-ml-classification.html#cb363-1" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> pred, <span class="at">reference =</span> df_test<span class="sc">$</span>quality, </span>
-<span id="cb363-2"><a href="everyday-ml-classification.html#cb363-2" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&#39;prec_recall&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb367"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb367-1"><a href="everyday-ml-classification.html#cb367-1" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> pred, <span class="at">reference =</span> df_test<span class="sc">$</span>quality, </span>
+<span id="cb367-2"><a href="everyday-ml-classification.html#cb367-2" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&#39;prec_recall&#39;</span>)</span></code></pre></div>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
-## Prediction Group_3 Group_4 Group_5 Group_6 Group_7 Group_8 Group_9
-##    Group_3       0       0       0       0       0       0       0
-##    Group_4       0       7       1       0       0       0       0
-##    Group_5       3      14     217      55       3       1       0
-##    Group_6       1      11      71     360      82      15       1
-##    Group_7       0       0       2      23      90       7       0
-##    Group_8       0       0       0       1       1      12       0
-##    Group_9       0       0       0       0       0       0       0
+## Prediction Group_3 Group_4 Group_5 Group_6 Group_7
+##    Group_3       0       0       0       0       0
+##    Group_4       0       7       1       0       0
+##    Group_5       3      14     217      55       3
+##    Group_6       1      11      71     360      82
+##    Group_7       0       0       2      23      90
+##    Group_8       0       0       0       1       1
+##    Group_9       0       0       0       0       0
+##           Reference
+## Prediction Group_8 Group_9
+##    Group_3       0       0
+##    Group_4       0       0
+##    Group_5       1       0
+##    Group_6      15       1
+##    Group_7       7       0
+##    Group_8      12       0
+##    Group_9       0       0
 ## 
 ## Overall Statistics
 ##                                         
@@ -434,22 +473,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## Statistics by Class:
 ## 
-##                      Class: Group_3 Class: Group_4 Class: Group_5
-## Precision                        NA       0.875000         0.7406
-## Recall                      0.00000       0.218750         0.7457
-## F1                               NA       0.350000         0.7432
-## Prevalence                  0.00409       0.032720         0.2975
-## Detection Rate              0.00000       0.007157         0.2219
-## Detection Prevalence        0.00000       0.008180         0.2996
-## Balanced Accuracy           0.50000       0.608846         0.8175
-##                      Class: Group_6 Class: Group_7 Class: Group_8
-## Precision                    0.6654        0.73770        0.85714
-## Recall                       0.8200        0.51136        0.34286
-## F1                           0.7347        0.60403        0.48980
-## Prevalence                   0.4489        0.17996        0.03579
-## Detection Rate               0.3681        0.09202        0.01227
-## Detection Prevalence         0.5532        0.12474        0.01431
-## Balanced Accuracy            0.7421        0.73573        0.67037
+##                      Class: Group_3 Class: Group_4
+## Precision                        NA       0.875000
+## Recall                      0.00000       0.218750
+## F1                               NA       0.350000
+## Prevalence                  0.00409       0.032720
+## Detection Rate              0.00000       0.007157
+## Detection Prevalence        0.00000       0.008180
+## Balanced Accuracy           0.50000       0.608846
+##                      Class: Group_5 Class: Group_6
+## Precision                    0.7406         0.6654
+## Recall                       0.7457         0.8200
+## F1                           0.7432         0.7347
+## Prevalence                   0.2975         0.4489
+## Detection Rate               0.2219         0.3681
+## Detection Prevalence         0.2996         0.5532
+## Balanced Accuracy            0.8175         0.7421
+##                      Class: Group_7 Class: Group_8
+## Precision                   0.73770        0.85714
+## Recall                      0.51136        0.34286
+## F1                          0.60403        0.48980
+## Prevalence                  0.17996        0.03579
+## Detection Rate              0.09202        0.01227
+## Detection Prevalence        0.12474        0.01431
+## Balanced Accuracy           0.73573        0.67037
 ##                      Class: Group_9
 ## Precision                        NA
 ## Recall                     0.000000
@@ -459,7 +506,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Detection Prevalence       0.000000
 ## Balanced Accuracy          0.500000</code></pre>
 <p>Certain models such as the random forest have built-in feature importance. During model training, I defined <code>importance = 'impurity'</code>, which means that the feature importance is calculated using the mean decrease in impurity after permutation of a given feature. Accessing this information is useful when we want to know which variables have the greatest influence on model performance and conversely, which ones have the least.</p>
-<div class="sourceCode" id="cb365"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb365-1"><a href="everyday-ml-classification.html#cb365-1" tabindex="-1"></a><span class="fu">varImp</span>(model)<span class="sc">$</span>importance</span></code></pre></div>
+<div class="sourceCode" id="cb369"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb369-1"><a href="everyday-ml-classification.html#cb369-1" tabindex="-1"></a><span class="fu">varImp</span>(model)<span class="sc">$</span>importance</span></code></pre></div>
 <pre><code>##                           Overall
 ## `fixed acidity`          0.000000
 ## `volatile acidity`      35.165026
@@ -474,19 +521,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## alcohol                100.000000</code></pre>
 <p>The variable importance score is automatically scaled so that the highest score is set to 100. This can be turned off using <code>scale = FALSE</code> within <code>varImp()</code>.</p>
 <p>A quick visualization of variable importance is useful:</p>
-<div class="sourceCode" id="cb367"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb367-1"><a href="everyday-ml-classification.html#cb367-1" tabindex="-1"></a>df_imp <span class="ot">&lt;-</span> <span class="fu">varImp</span>(model)<span class="sc">$</span>importance <span class="sc">%&gt;%</span> </span>
-<span id="cb367-2"><a href="everyday-ml-classification.html#cb367-2" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&#39;Var&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb367-3"><a href="everyday-ml-classification.html#cb367-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(Overall))</span>
-<span id="cb367-4"><a href="everyday-ml-classification.html#cb367-4" tabindex="-1"></a></span>
-<span id="cb367-5"><a href="everyday-ml-classification.html#cb367-5" tabindex="-1"></a><span class="fu">ggplot</span>(df_imp, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Var, Overall), <span class="at">y =</span> Overall)) <span class="sc">+</span> </span>
-<span id="cb367-6"><a href="everyday-ml-classification.html#cb367-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="at">color =</span> <span class="st">&#39;red&#39;</span>) <span class="sc">+</span> </span>
-<span id="cb367-7"><a href="everyday-ml-classification.html#cb367-7" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Var, Overall), </span>
-<span id="cb367-8"><a href="everyday-ml-classification.html#cb367-8" tabindex="-1"></a>                   <span class="at">xend =</span> <span class="fu">reorder</span>(Var, Overall),</span>
-<span id="cb367-9"><a href="everyday-ml-classification.html#cb367-9" tabindex="-1"></a>                   <span class="at">y =</span> <span class="dv">0</span>,</span>
-<span id="cb367-10"><a href="everyday-ml-classification.html#cb367-10" tabindex="-1"></a>                   <span class="at">yend =</span> Overall)) <span class="sc">+</span> </span>
-<span id="cb367-11"><a href="everyday-ml-classification.html#cb367-11" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&#39;&#39;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&#39;Var. Imp.&#39;</span>) <span class="sc">+</span></span>
-<span id="cb367-12"><a href="everyday-ml-classification.html#cb367-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-203-1.png" width="672" /></p>
+<div class="sourceCode" id="cb371"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb371-1"><a href="everyday-ml-classification.html#cb371-1" tabindex="-1"></a>df_imp <span class="ot">&lt;-</span> <span class="fu">varImp</span>(model)<span class="sc">$</span>importance <span class="sc">%&gt;%</span> </span>
+<span id="cb371-2"><a href="everyday-ml-classification.html#cb371-2" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&#39;Var&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb371-3"><a href="everyday-ml-classification.html#cb371-3" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(Overall))</span>
+<span id="cb371-4"><a href="everyday-ml-classification.html#cb371-4" tabindex="-1"></a></span>
+<span id="cb371-5"><a href="everyday-ml-classification.html#cb371-5" tabindex="-1"></a><span class="fu">ggplot</span>(df_imp, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Var, Overall), <span class="at">y =</span> Overall)) <span class="sc">+</span> </span>
+<span id="cb371-6"><a href="everyday-ml-classification.html#cb371-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="at">color =</span> <span class="st">&#39;red&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb371-7"><a href="everyday-ml-classification.html#cb371-7" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Var, Overall), </span>
+<span id="cb371-8"><a href="everyday-ml-classification.html#cb371-8" tabindex="-1"></a>                   <span class="at">xend =</span> <span class="fu">reorder</span>(Var, Overall),</span>
+<span id="cb371-9"><a href="everyday-ml-classification.html#cb371-9" tabindex="-1"></a>                   <span class="at">y =</span> <span class="dv">0</span>,</span>
+<span id="cb371-10"><a href="everyday-ml-classification.html#cb371-10" tabindex="-1"></a>                   <span class="at">yend =</span> Overall)) <span class="sc">+</span> </span>
+<span id="cb371-11"><a href="everyday-ml-classification.html#cb371-11" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&#39;&#39;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&#39;Var. Imp.&#39;</span>) <span class="sc">+</span></span>
+<span id="cb371-12"><a href="everyday-ml-classification.html#cb371-12" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-205-1.png" width="672" /></p>
 </div>
 <div id="feature-selection-using-univariate-filters" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> Feature selection using univariate filters<a href="everyday-ml-classification.html#feature-selection-using-univariate-filters" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -495,44 +542,44 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><code>caret</code> offers a simple way to rank features when built-in feature importance measures are not available. This is by using univariate filters, which are essentially fitting <em>n</em> individual models (where <em>n</em> is the number of features) against the target label and ranking them based on their statistical significance.</p>
 <p><code>anoveScores()</code> is used for classification models and fits an ANOVA for each feature against the label. The null hypothesis here assumes the mean values for each feature is equal for all labels. <code>gamScores()</code> is used for regression models and uses a generalized additive model to look for functional relationships between the features and the label. In both cases, each feature in the predictor set is passed individually.</p>
 <p>For this part I will use the <code>Sonar</code> dataset from <code>mlbench</code>.</p>
-<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="everyday-ml-classification.html#cb368-1" tabindex="-1"></a><span class="fu">library</span>(mlbench)</span>
-<span id="cb368-2"><a href="everyday-ml-classification.html#cb368-2" tabindex="-1"></a><span class="fu">data</span>(Sonar)</span>
-<span id="cb368-3"><a href="everyday-ml-classification.html#cb368-3" tabindex="-1"></a>Sonar <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Sonar)</span>
-<span id="cb368-4"><a href="everyday-ml-classification.html#cb368-4" tabindex="-1"></a>Sonar</span></code></pre></div>
+<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="everyday-ml-classification.html#cb372-1" tabindex="-1"></a><span class="fu">library</span>(mlbench)</span>
+<span id="cb372-2"><a href="everyday-ml-classification.html#cb372-2" tabindex="-1"></a><span class="fu">data</span>(Sonar)</span>
+<span id="cb372-3"><a href="everyday-ml-classification.html#cb372-3" tabindex="-1"></a>Sonar <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Sonar)</span>
+<span id="cb372-4"><a href="everyday-ml-classification.html#cb372-4" tabindex="-1"></a>Sonar</span></code></pre></div>
 <pre><code>## # A tibble: 208 × 61
-##        V1     V2     V3     V4     V5     V6     V7     V8     V9
-##     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1 0.02   0.0371 0.0428 0.0207 0.0954 0.0986 0.154  0.160  0.311 
-##  2 0.0453 0.0523 0.0843 0.0689 0.118  0.258  0.216  0.348  0.334 
-##  3 0.0262 0.0582 0.110  0.108  0.0974 0.228  0.243  0.377  0.560 
-##  4 0.01   0.0171 0.0623 0.0205 0.0205 0.0368 0.110  0.128  0.0598
-##  5 0.0762 0.0666 0.0481 0.0394 0.059  0.0649 0.121  0.247  0.356 
-##  6 0.0286 0.0453 0.0277 0.0174 0.0384 0.099  0.120  0.183  0.210 
-##  7 0.0317 0.0956 0.132  0.141  0.167  0.171  0.0731 0.140  0.208 
-##  8 0.0519 0.0548 0.0842 0.0319 0.116  0.0922 0.103  0.0613 0.146 
-##  9 0.0223 0.0375 0.0484 0.0475 0.0647 0.0591 0.0753 0.0098 0.0684
-## 10 0.0164 0.0173 0.0347 0.007  0.0187 0.0671 0.106  0.0697 0.0962
-## # … with 198 more rows, and 52 more variables: V10 &lt;dbl&gt;, V11 &lt;dbl&gt;,
-## #   V12 &lt;dbl&gt;, V13 &lt;dbl&gt;, V14 &lt;dbl&gt;, V15 &lt;dbl&gt;, V16 &lt;dbl&gt;, V17 &lt;dbl&gt;,
-## #   V18 &lt;dbl&gt;, V19 &lt;dbl&gt;, V20 &lt;dbl&gt;, V21 &lt;dbl&gt;, V22 &lt;dbl&gt;, V23 &lt;dbl&gt;,
-## #   V24 &lt;dbl&gt;, V25 &lt;dbl&gt;, V26 &lt;dbl&gt;, V27 &lt;dbl&gt;, V28 &lt;dbl&gt;, V29 &lt;dbl&gt;,
-## #   V30 &lt;dbl&gt;, V31 &lt;dbl&gt;, V32 &lt;dbl&gt;, V33 &lt;dbl&gt;, V34 &lt;dbl&gt;, V35 &lt;dbl&gt;,
-## #   V36 &lt;dbl&gt;, V37 &lt;dbl&gt;, V38 &lt;dbl&gt;, V39 &lt;dbl&gt;, V40 &lt;dbl&gt;, V41 &lt;dbl&gt;,
-## #   V42 &lt;dbl&gt;, V43 &lt;dbl&gt;, V44 &lt;dbl&gt;, V45 &lt;dbl&gt;, V46 &lt;dbl&gt;, …</code></pre>
+##        V1     V2     V3     V4     V5     V6     V7
+##     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 0.02   0.0371 0.0428 0.0207 0.0954 0.0986 0.154 
+##  2 0.0453 0.0523 0.0843 0.0689 0.118  0.258  0.216 
+##  3 0.0262 0.0582 0.110  0.108  0.0974 0.228  0.243 
+##  4 0.01   0.0171 0.0623 0.0205 0.0205 0.0368 0.110 
+##  5 0.0762 0.0666 0.0481 0.0394 0.059  0.0649 0.121 
+##  6 0.0286 0.0453 0.0277 0.0174 0.0384 0.099  0.120 
+##  7 0.0317 0.0956 0.132  0.141  0.167  0.171  0.0731
+##  8 0.0519 0.0548 0.0842 0.0319 0.116  0.0922 0.103 
+##  9 0.0223 0.0375 0.0484 0.0475 0.0647 0.0591 0.0753
+## 10 0.0164 0.0173 0.0347 0.007  0.0187 0.0671 0.106 
+## # ℹ 198 more rows
+## # ℹ 54 more variables: V8 &lt;dbl&gt;, V9 &lt;dbl&gt;,
+## #   V10 &lt;dbl&gt;, V11 &lt;dbl&gt;, V12 &lt;dbl&gt;, V13 &lt;dbl&gt;,
+## #   V14 &lt;dbl&gt;, V15 &lt;dbl&gt;, V16 &lt;dbl&gt;, V17 &lt;dbl&gt;,
+## #   V18 &lt;dbl&gt;, V19 &lt;dbl&gt;, V20 &lt;dbl&gt;, V21 &lt;dbl&gt;,
+## #   V22 &lt;dbl&gt;, V23 &lt;dbl&gt;, V24 &lt;dbl&gt;, V25 &lt;dbl&gt;,
+## #   V26 &lt;dbl&gt;, V27 &lt;dbl&gt;, V28 &lt;dbl&gt;, V29 &lt;dbl&gt;, …</code></pre>
 <p>The target labels in <code>Sonar</code> has two classes:</p>
-<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb370-1"><a href="everyday-ml-classification.html#cb370-1" tabindex="-1"></a>Sonar<span class="sc">$</span>Class <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="everyday-ml-classification.html#cb374-1" tabindex="-1"></a>Sonar<span class="sc">$</span>Class <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span></code></pre></div>
 <pre><code>##  Factor w/ 2 levels &quot;M&quot;,&quot;R&quot;: 2 2 2 2 2 2 2 2 2 2 ...</code></pre>
 <p>Since this is a classification task, I will use <code>anovaScores()</code> to output a score for each feature.</p>
-<div class="sourceCode" id="cb372"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb372-1"><a href="everyday-ml-classification.html#cb372-1" tabindex="-1"></a>fit_anova <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
-<span id="cb372-2"><a href="everyday-ml-classification.html#cb372-2" tabindex="-1"></a>    anova_res <span class="ot">&lt;-</span> <span class="fu">apply</span>(x, <span class="dv">2</span>, <span class="cf">function</span>(f) {<span class="fu">anovaScores</span>(f, y)})</span>
-<span id="cb372-3"><a href="everyday-ml-classification.html#cb372-3" tabindex="-1"></a>    <span class="fu">return</span>(anova_res)</span>
-<span id="cb372-4"><a href="everyday-ml-classification.html#cb372-4" tabindex="-1"></a>}</span>
-<span id="cb372-5"><a href="everyday-ml-classification.html#cb372-5" tabindex="-1"></a></span>
-<span id="cb372-6"><a href="everyday-ml-classification.html#cb372-6" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> <span class="fu">fit_anova</span>(<span class="at">x =</span> <span class="fu">select</span>(Sonar, <span class="sc">-</span>Class), </span>
-<span id="cb372-7"><a href="everyday-ml-classification.html#cb372-7" tabindex="-1"></a>                     <span class="at">y =</span> Sonar<span class="sc">$</span>Class)</span>
-<span id="cb372-8"><a href="everyday-ml-classification.html#cb372-8" tabindex="-1"></a></span>
-<span id="cb372-9"><a href="everyday-ml-classification.html#cb372-9" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(aov_res)</span>
-<span id="cb372-10"><a href="everyday-ml-classification.html#cb372-10" tabindex="-1"></a><span class="fu">head</span>(aov_res)</span></code></pre></div>
+<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="everyday-ml-classification.html#cb376-1" tabindex="-1"></a>fit_anova <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb376-2"><a href="everyday-ml-classification.html#cb376-2" tabindex="-1"></a>    anova_res <span class="ot">&lt;-</span> <span class="fu">apply</span>(x, <span class="dv">2</span>, <span class="cf">function</span>(f) {<span class="fu">anovaScores</span>(f, y)})</span>
+<span id="cb376-3"><a href="everyday-ml-classification.html#cb376-3" tabindex="-1"></a>    <span class="fu">return</span>(anova_res)</span>
+<span id="cb376-4"><a href="everyday-ml-classification.html#cb376-4" tabindex="-1"></a>}</span>
+<span id="cb376-5"><a href="everyday-ml-classification.html#cb376-5" tabindex="-1"></a></span>
+<span id="cb376-6"><a href="everyday-ml-classification.html#cb376-6" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> <span class="fu">fit_anova</span>(<span class="at">x =</span> <span class="fu">select</span>(Sonar, <span class="sc">-</span>Class), </span>
+<span id="cb376-7"><a href="everyday-ml-classification.html#cb376-7" tabindex="-1"></a>                     <span class="at">y =</span> Sonar<span class="sc">$</span>Class)</span>
+<span id="cb376-8"><a href="everyday-ml-classification.html#cb376-8" tabindex="-1"></a></span>
+<span id="cb376-9"><a href="everyday-ml-classification.html#cb376-9" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(aov_res)</span>
+<span id="cb376-10"><a href="everyday-ml-classification.html#cb376-10" tabindex="-1"></a><span class="fu">head</span>(aov_res)</span></code></pre></div>
 <pre><code>##         aov_res
 ## V1 0.0000719490
 ## V2 0.0007779402
@@ -541,10 +588,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## V5 0.0012544689
 ## V6 0.0567376774</code></pre>
 <p>The output for each feature is the p-value for the whole model F-test. These can be ranked to find the features with the greatest degree of relationship with the target labels:</p>
-<div class="sourceCode" id="cb374"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb374-1"><a href="everyday-ml-classification.html#cb374-1" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> aov_res <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&#39;Var&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb374-2"><a href="everyday-ml-classification.html#cb374-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">pVal =</span> aov_res) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(aov_res)</span>
-<span id="cb374-3"><a href="everyday-ml-classification.html#cb374-3" tabindex="-1"></a></span>
-<span id="cb374-4"><a href="everyday-ml-classification.html#cb374-4" tabindex="-1"></a>aov_res</span></code></pre></div>
+<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="everyday-ml-classification.html#cb378-1" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> aov_res <span class="sc">%&gt;%</span> <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">&#39;Var&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb378-2"><a href="everyday-ml-classification.html#cb378-2" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">pVal =</span> aov_res) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(aov_res)</span>
+<span id="cb378-3"><a href="everyday-ml-classification.html#cb378-3" tabindex="-1"></a></span>
+<span id="cb378-4"><a href="everyday-ml-classification.html#cb378-4" tabindex="-1"></a>aov_res</span></code></pre></div>
 <pre><code>## # A tibble: 60 × 2
 ##    Var       pVal
 ##    &lt;chr&gt;    &lt;dbl&gt;
@@ -558,20 +605,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 V13   4.22e- 6
 ##  9 V46   7.16e- 6
 ## 10 V47   9.49e- 6
-## # … with 50 more rows</code></pre>
+## # ℹ 50 more rows</code></pre>
 </div>
 <div id="feature-selection-using-recursive-feature-elimination" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> Feature selection using recursive feature elimination<a href="everyday-ml-classification.html#feature-selection-using-recursive-feature-elimination" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>An alternative method for feature selection is recursive feature elimination (RFE). RFE is a wrapper method that uses another model to rank features based on variable importance. This model does not have to be the same model used in the downstream model prediction task.</p>
 <p>The feature importance ranking method depends which model the RFE wrapper uses. Tree models such as the random forest, as previous mentioned, can use impurity scores or mean accuracy decrease to calculate this.</p>
 <p>The <code>rfeControl()</code> function specifies the RFE model as well as the resampling method. Then <code>rfe()</code> runs the algorithm to identify important features as well as the model accuracy as the RFE recursively removes the less important features and trains the model.</p>
-<div class="sourceCode" id="cb376"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb376-1"><a href="everyday-ml-classification.html#cb376-1" tabindex="-1"></a>rfec <span class="ot">&lt;-</span> <span class="fu">rfeControl</span>(<span class="at">functions =</span> rfFuncs, <span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
-<span id="cb376-2"><a href="everyday-ml-classification.html#cb376-2" tabindex="-1"></a>                  <span class="at">number =</span> <span class="dv">5</span>)</span>
-<span id="cb376-3"><a href="everyday-ml-classification.html#cb376-3" tabindex="-1"></a></span>
-<span id="cb376-4"><a href="everyday-ml-classification.html#cb376-4" tabindex="-1"></a>rfeObj <span class="ot">&lt;-</span> <span class="fu">rfe</span>(<span class="at">x =</span> <span class="fu">select</span>(Sonar, <span class="sc">-</span>Class), <span class="at">y =</span> Sonar<span class="sc">$</span>Class,</span>
-<span id="cb376-5"><a href="everyday-ml-classification.html#cb376-5" tabindex="-1"></a>              <span class="at">rfeControl =</span> rfec)</span></code></pre></div>
+<div class="sourceCode" id="cb380"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb380-1"><a href="everyday-ml-classification.html#cb380-1" tabindex="-1"></a>rfec <span class="ot">&lt;-</span> <span class="fu">rfeControl</span>(<span class="at">functions =</span> rfFuncs, <span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
+<span id="cb380-2"><a href="everyday-ml-classification.html#cb380-2" tabindex="-1"></a>                  <span class="at">number =</span> <span class="dv">5</span>)</span>
+<span id="cb380-3"><a href="everyday-ml-classification.html#cb380-3" tabindex="-1"></a></span>
+<span id="cb380-4"><a href="everyday-ml-classification.html#cb380-4" tabindex="-1"></a>rfeObj <span class="ot">&lt;-</span> <span class="fu">rfe</span>(<span class="at">x =</span> <span class="fu">select</span>(Sonar, <span class="sc">-</span>Class), <span class="at">y =</span> Sonar<span class="sc">$</span>Class,</span>
+<span id="cb380-5"><a href="everyday-ml-classification.html#cb380-5" tabindex="-1"></a>              <span class="at">rfeControl =</span> rfec)</span></code></pre></div>
 <p>Calling the output shows that the top 5 most important features show overlap with the result from <code>anovaScores()</code> from the previous section, which is good. It also shows that keeping the original 60 features here shows the best model accuracy, which is fine. This won’t always be the case with increasing number of dimensions in the data.</p>
-<div class="sourceCode" id="cb377"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb377-1"><a href="everyday-ml-classification.html#cb377-1" tabindex="-1"></a>rfeObj</span></code></pre></div>
+<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb381-1"><a href="everyday-ml-classification.html#cb381-1" tabindex="-1"></a>rfeObj</span></code></pre></div>
 <pre><code>## 
 ## Recursive feature selection
 ## 
@@ -579,16 +626,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## Resampling performance over subset size:
 ## 
-##  Variables Accuracy  Kappa AccuracySD KappaSD Selected
-##          4   0.7212 0.4398    0.05514 0.11064         
-##          8   0.7308 0.4557    0.04581 0.09426         
-##         16   0.7790 0.5539    0.05389 0.10782         
-##         60   0.8176 0.6290    0.06359 0.12886        *
+##  Variables Accuracy  Kappa AccuracySD KappaSD
+##          4   0.7212 0.4398    0.05514 0.11064
+##          8   0.7308 0.4557    0.04581 0.09426
+##         16   0.7790 0.5539    0.05389 0.10782
+##         60   0.8176 0.6290    0.06359 0.12886
+##  Selected
+##          
+##          
+##          
+##         *
 ## 
 ## The top 5 variables (out of 60):
 ##    V11, V12, V9, V10, V48</code></pre>
 <p>The fitted model and its performance can be retrieved as such:</p>
-<div class="sourceCode" id="cb379"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb379-1"><a href="everyday-ml-classification.html#cb379-1" tabindex="-1"></a>rfeObj<span class="sc">$</span>fit</span></code></pre></div>
+<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb383-1"><a href="everyday-ml-classification.html#cb383-1" tabindex="-1"></a>rfeObj<span class="sc">$</span>fit</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ##  randomForest(x = x, y = y, importance = TRUE) 
@@ -602,40 +654,43 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## M 101 10  0.09009009
 ## R  23 74  0.23711340</code></pre>
 <p>The ranking of the features can be retreived here, which is useful if we were to select the first few and subset our original dataset:</p>
-<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb381-1"><a href="everyday-ml-classification.html#cb381-1" tabindex="-1"></a>rfeObj<span class="sc">$</span>optVariables</span></code></pre></div>
-<pre><code>##  [1] &quot;V11&quot; &quot;V12&quot; &quot;V9&quot;  &quot;V10&quot; &quot;V48&quot; &quot;V47&quot; &quot;V36&quot; &quot;V49&quot; &quot;V28&quot; &quot;V45&quot; &quot;V37&quot;
-## [12] &quot;V21&quot; &quot;V46&quot; &quot;V16&quot; &quot;V13&quot; &quot;V17&quot; &quot;V51&quot; &quot;V27&quot; &quot;V4&quot;  &quot;V15&quot; &quot;V20&quot; &quot;V18&quot;
-## [23] &quot;V52&quot; &quot;V5&quot;  &quot;V44&quot; &quot;V23&quot; &quot;V1&quot;  &quot;V31&quot; &quot;V43&quot; &quot;V26&quot; &quot;V22&quot; &quot;V35&quot; &quot;V19&quot;
-## [34] &quot;V30&quot; &quot;V14&quot; &quot;V8&quot;  &quot;V39&quot; &quot;V34&quot; &quot;V32&quot; &quot;V24&quot; &quot;V54&quot; &quot;V42&quot; &quot;V29&quot; &quot;V59&quot;
-## [45] &quot;V55&quot; &quot;V25&quot; &quot;V2&quot;  &quot;V6&quot;  &quot;V41&quot; &quot;V58&quot; &quot;V38&quot; &quot;V3&quot;  &quot;V33&quot; &quot;V40&quot; &quot;V50&quot;
-## [56] &quot;V7&quot;  &quot;V53&quot; &quot;V57&quot; &quot;V60&quot; &quot;V56&quot;</code></pre>
+<div class="sourceCode" id="cb385"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb385-1"><a href="everyday-ml-classification.html#cb385-1" tabindex="-1"></a>rfeObj<span class="sc">$</span>optVariables</span></code></pre></div>
+<pre><code>##  [1] &quot;V11&quot; &quot;V12&quot; &quot;V9&quot;  &quot;V10&quot; &quot;V48&quot; &quot;V47&quot; &quot;V36&quot;
+##  [8] &quot;V49&quot; &quot;V28&quot; &quot;V45&quot; &quot;V37&quot; &quot;V21&quot; &quot;V46&quot; &quot;V16&quot;
+## [15] &quot;V13&quot; &quot;V17&quot; &quot;V51&quot; &quot;V27&quot; &quot;V4&quot;  &quot;V15&quot; &quot;V20&quot;
+## [22] &quot;V18&quot; &quot;V52&quot; &quot;V5&quot;  &quot;V44&quot; &quot;V23&quot; &quot;V1&quot;  &quot;V31&quot;
+## [29] &quot;V43&quot; &quot;V26&quot; &quot;V22&quot; &quot;V35&quot; &quot;V19&quot; &quot;V30&quot; &quot;V14&quot;
+## [36] &quot;V8&quot;  &quot;V39&quot; &quot;V34&quot; &quot;V32&quot; &quot;V24&quot; &quot;V54&quot; &quot;V42&quot;
+## [43] &quot;V29&quot; &quot;V59&quot; &quot;V55&quot; &quot;V25&quot; &quot;V2&quot;  &quot;V6&quot;  &quot;V41&quot;
+## [50] &quot;V58&quot; &quot;V38&quot; &quot;V3&quot;  &quot;V33&quot; &quot;V40&quot; &quot;V50&quot; &quot;V7&quot; 
+## [57] &quot;V53&quot; &quot;V57&quot; &quot;V60&quot; &quot;V56&quot;</code></pre>
 <p>Calling <code>ggplot()</code> on the RFE result provides a visual look:</p>
-<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb383-1"><a href="everyday-ml-classification.html#cb383-1" tabindex="-1"></a><span class="fu">ggplot</span>(rfeObj) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-212-1.png" width="672" /></p>
+<div class="sourceCode" id="cb387"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb387-1"><a href="everyday-ml-classification.html#cb387-1" tabindex="-1"></a><span class="fu">ggplot</span>(rfeObj) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-214-1.png" width="672" /></p>
 </div>
 <div id="hyperparameter-tuning" class="section level2 hasAnchor" number="6.4">
 <h2><span class="header-section-number">6.4</span> Hyperparameter tuning<a href="everyday-ml-classification.html#hyperparameter-tuning" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Previously when we trained the random forest model using <code>train()</code>, it automatically deduced the optimal values for the model hyperparameters. Under the hood, <code>train()</code> ran a grid search to find these values, but we can define our own grid as well.</p>
 <p>Hyperparameter tuning should of course be done on the training set, so I will use the <code>Sonar</code> dataset to arrive at the training and testing sets:</p>
-<div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb384-1"><a href="everyday-ml-classification.html#cb384-1" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(<span class="at">y =</span> Sonar<span class="sc">$</span>Class, <span class="at">p =</span> .<span class="dv">8</span>,</span>
-<span id="cb384-2"><a href="everyday-ml-classification.html#cb384-2" tabindex="-1"></a>                           <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
-<span id="cb384-3"><a href="everyday-ml-classification.html#cb384-3" tabindex="-1"></a></span>
-<span id="cb384-4"><a href="everyday-ml-classification.html#cb384-4" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> Sonar[idx,]</span>
-<span id="cb384-5"><a href="everyday-ml-classification.html#cb384-5" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> Sonar[<span class="sc">-</span>idx,]</span>
-<span id="cb384-6"><a href="everyday-ml-classification.html#cb384-6" tabindex="-1"></a></span>
-<span id="cb384-7"><a href="everyday-ml-classification.html#cb384-7" tabindex="-1"></a>preProcObj <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(df_train, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">&#39;center&#39;</span>, <span class="st">&#39;scale&#39;</span>))</span>
-<span id="cb384-8"><a href="everyday-ml-classification.html#cb384-8" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_train)</span>
-<span id="cb384-9"><a href="everyday-ml-classification.html#cb384-9" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_test)</span></code></pre></div>
+<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb388-1"><a href="everyday-ml-classification.html#cb388-1" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(<span class="at">y =</span> Sonar<span class="sc">$</span>Class, <span class="at">p =</span> .<span class="dv">8</span>,</span>
+<span id="cb388-2"><a href="everyday-ml-classification.html#cb388-2" tabindex="-1"></a>                           <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb388-3"><a href="everyday-ml-classification.html#cb388-3" tabindex="-1"></a></span>
+<span id="cb388-4"><a href="everyday-ml-classification.html#cb388-4" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> Sonar[idx,]</span>
+<span id="cb388-5"><a href="everyday-ml-classification.html#cb388-5" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> Sonar[<span class="sc">-</span>idx,]</span>
+<span id="cb388-6"><a href="everyday-ml-classification.html#cb388-6" tabindex="-1"></a></span>
+<span id="cb388-7"><a href="everyday-ml-classification.html#cb388-7" tabindex="-1"></a>preProcObj <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(df_train, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">&#39;center&#39;</span>, <span class="st">&#39;scale&#39;</span>))</span>
+<span id="cb388-8"><a href="everyday-ml-classification.html#cb388-8" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_train)</span>
+<span id="cb388-9"><a href="everyday-ml-classification.html#cb388-9" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcObj, df_test)</span></code></pre></div>
 <p>For the random forest model, I define the possible values for the three hyperparameters as such, and then train by providing an input for <code>tuneGrid =</code>.</p>
-<div class="sourceCode" id="cb385"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb385-1"><a href="everyday-ml-classification.html#cb385-1" tabindex="-1"></a>rf_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">10</span>), </span>
-<span id="cb385-2"><a href="everyday-ml-classification.html#cb385-2" tabindex="-1"></a>                       <span class="at">splitrule =</span> <span class="fu">c</span>(<span class="st">&quot;gini&quot;</span>, <span class="st">&quot;extratrees&quot;</span>), </span>
-<span id="cb385-3"><a href="everyday-ml-classification.html#cb385-3" tabindex="-1"></a>                       <span class="at">min.node.size =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>))</span>
-<span id="cb385-4"><a href="everyday-ml-classification.html#cb385-4" tabindex="-1"></a></span>
-<span id="cb385-5"><a href="everyday-ml-classification.html#cb385-5" tabindex="-1"></a>model_rf <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span> ., <span class="at">data =</span> df_train, <span class="at">method =</span> <span class="st">&#39;ranger&#39;</span>,</span>
-<span id="cb385-6"><a href="everyday-ml-classification.html#cb385-6" tabindex="-1"></a>                    <span class="at">importance =</span> <span class="st">&#39;impurity&#39;</span>, <span class="at">trControl =</span> tr,</span>
-<span id="cb385-7"><a href="everyday-ml-classification.html#cb385-7" tabindex="-1"></a>                    <span class="at">tuneGrid =</span> rf_grid)</span></code></pre></div>
+<div class="sourceCode" id="cb389"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb389-1"><a href="everyday-ml-classification.html#cb389-1" tabindex="-1"></a>rf_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">10</span>), </span>
+<span id="cb389-2"><a href="everyday-ml-classification.html#cb389-2" tabindex="-1"></a>                       <span class="at">splitrule =</span> <span class="fu">c</span>(<span class="st">&quot;gini&quot;</span>, <span class="st">&quot;extratrees&quot;</span>), </span>
+<span id="cb389-3"><a href="everyday-ml-classification.html#cb389-3" tabindex="-1"></a>                       <span class="at">min.node.size =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>))</span>
+<span id="cb389-4"><a href="everyday-ml-classification.html#cb389-4" tabindex="-1"></a></span>
+<span id="cb389-5"><a href="everyday-ml-classification.html#cb389-5" tabindex="-1"></a>model_rf <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span> ., <span class="at">data =</span> df_train, <span class="at">method =</span> <span class="st">&#39;ranger&#39;</span>,</span>
+<span id="cb389-6"><a href="everyday-ml-classification.html#cb389-6" tabindex="-1"></a>                    <span class="at">importance =</span> <span class="st">&#39;impurity&#39;</span>, <span class="at">trControl =</span> tr,</span>
+<span id="cb389-7"><a href="everyday-ml-classification.html#cb389-7" tabindex="-1"></a>                    <span class="at">tuneGrid =</span> rf_grid)</span></code></pre></div>
 <p>Calling the model then shows the model performance (with the specified resampling method) for each combination of the grid search:</p>
-<div class="sourceCode" id="cb386"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb386-1"><a href="everyday-ml-classification.html#cb386-1" tabindex="-1"></a>model_rf</span></code></pre></div>
+<div class="sourceCode" id="cb390"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb390-1"><a href="everyday-ml-classification.html#cb390-1" tabindex="-1"></a>model_rf</span></code></pre></div>
 <pre><code>## Random Forest 
 ## 
 ## 167 samples
@@ -647,53 +702,78 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Summary of sample sizes: 133, 133, 134, 133, 135 
 ## Resampling results across tuning parameters:
 ## 
-##   mtry  splitrule   min.node.size  Accuracy   Kappa    
-##    2    gini        1              0.8151181  0.6228532
-##    2    gini        3              0.8327540  0.6590288
-##    2    gini        5              0.8090463  0.6096000
-##    2    extratrees  1              0.8207999  0.6350424
-##    2    extratrees  3              0.8211676  0.6358619
-##    2    extratrees  5              0.8022504  0.5957834
-##    4    gini        1              0.8329434  0.6587746
-##    4    gini        3              0.8210004  0.6353605
-##    4    gini        5              0.8268828  0.6467128
-##    4    extratrees  1              0.8206217  0.6332840
-##    4    extratrees  3              0.8325758  0.6576618
-##    4    extratrees  5              0.8450646  0.6844312
-##    8    gini        1              0.8208222  0.6363709
-##    8    gini        3              0.8268828  0.6495138
-##    8    gini        5              0.8208222  0.6357195
-##    8    extratrees  1              0.8445187  0.6823220
-##    8    extratrees  3              0.8388146  0.6720493
-##    8    extratrees  5              0.8272282  0.6488559
-##   10    gini        1              0.8329434  0.6599363
-##   10    gini        3              0.8388369  0.6717421
-##   10    gini        5              0.8267045  0.6480589
-##   10    extratrees  1              0.8206217  0.6339633
-##   10    extratrees  3              0.8441511  0.6816926
-##   10    extratrees  5              0.8265040  0.6457295
+##   mtry  splitrule   min.node.size  Accuracy 
+##    2    gini        1              0.8151181
+##    2    gini        3              0.8327540
+##    2    gini        5              0.8090463
+##    2    extratrees  1              0.8207999
+##    2    extratrees  3              0.8211676
+##    2    extratrees  5              0.8022504
+##    4    gini        1              0.8329434
+##    4    gini        3              0.8210004
+##    4    gini        5              0.8268828
+##    4    extratrees  1              0.8206217
+##    4    extratrees  3              0.8325758
+##    4    extratrees  5              0.8450646
+##    8    gini        1              0.8208222
+##    8    gini        3              0.8268828
+##    8    gini        5              0.8208222
+##    8    extratrees  1              0.8445187
+##    8    extratrees  3              0.8388146
+##    8    extratrees  5              0.8272282
+##   10    gini        1              0.8329434
+##   10    gini        3              0.8388369
+##   10    gini        5              0.8267045
+##   10    extratrees  1              0.8206217
+##   10    extratrees  3              0.8441511
+##   10    extratrees  5              0.8265040
+##   Kappa    
+##   0.6228532
+##   0.6590288
+##   0.6096000
+##   0.6350424
+##   0.6358619
+##   0.5957834
+##   0.6587746
+##   0.6353605
+##   0.6467128
+##   0.6332840
+##   0.6576618
+##   0.6844312
+##   0.6363709
+##   0.6495138
+##   0.6357195
+##   0.6823220
+##   0.6720493
+##   0.6488559
+##   0.6599363
+##   0.6717421
+##   0.6480589
+##   0.6339633
+##   0.6816926
+##   0.6457295
 ## 
-## Accuracy was used to select the optimal model using the
-##  largest value.
-## The final values used for the model were mtry = 4, splitrule
-##  = extratrees and min.node.size = 5.</code></pre>
+## Accuracy was used to select the optimal
+##  model using the largest value.
+## The final values used for the model were mtry =
+##  4, splitrule = extratrees and min.node.size = 5.</code></pre>
 <p>As before, the best set of hyperparameters can be retrieved:</p>
-<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb388-1"><a href="everyday-ml-classification.html#cb388-1" tabindex="-1"></a>model_rf<span class="sc">$</span>bestTune</span></code></pre></div>
+<div class="sourceCode" id="cb392"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb392-1"><a href="everyday-ml-classification.html#cb392-1" tabindex="-1"></a>model_rf<span class="sc">$</span>bestTune</span></code></pre></div>
 <pre><code>##    mtry  splitrule min.node.size
 ## 12    4 extratrees             5</code></pre>
 <p>Instead of a predefined grid search, we can do a randomized search instead. This can be done by setting <code>search = 'random'</code> within <code>trainControl()</code> first and then specifying <code>tuneLength =</code> in <code>train()</code>.</p>
 <p>Since we’ve only used random forest models so far, here I will do a similar grid search but using a support vector machine (SVM) with the radial basis function kernel instead:</p>
-<div class="sourceCode" id="cb390"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb390-1"><a href="everyday-ml-classification.html#cb390-1" tabindex="-1"></a>tr_svm <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
-<span id="cb390-2"><a href="everyday-ml-classification.html#cb390-2" tabindex="-1"></a>                   <span class="at">number =</span> <span class="dv">5</span>,</span>
-<span id="cb390-3"><a href="everyday-ml-classification.html#cb390-3" tabindex="-1"></a>                   <span class="at">classProbs =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb390-4"><a href="everyday-ml-classification.html#cb390-4" tabindex="-1"></a>                   <span class="at">search =</span> <span class="st">&#39;random&#39;</span>)</span>
-<span id="cb390-5"><a href="everyday-ml-classification.html#cb390-5" tabindex="-1"></a></span>
-<span id="cb390-6"><a href="everyday-ml-classification.html#cb390-6" tabindex="-1"></a>model_svm <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span> ., <span class="at">data =</span> df_train, </span>
-<span id="cb390-7"><a href="everyday-ml-classification.html#cb390-7" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">&#39;svmRadial&#39;</span>,</span>
-<span id="cb390-8"><a href="everyday-ml-classification.html#cb390-8" tabindex="-1"></a>                   <span class="at">trControl =</span> tr_svm, </span>
-<span id="cb390-9"><a href="everyday-ml-classification.html#cb390-9" tabindex="-1"></a>                   <span class="at">tunelength =</span> <span class="dv">8</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb394"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb394-1"><a href="everyday-ml-classification.html#cb394-1" tabindex="-1"></a>tr_svm <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
+<span id="cb394-2"><a href="everyday-ml-classification.html#cb394-2" tabindex="-1"></a>                   <span class="at">number =</span> <span class="dv">5</span>,</span>
+<span id="cb394-3"><a href="everyday-ml-classification.html#cb394-3" tabindex="-1"></a>                   <span class="at">classProbs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb394-4"><a href="everyday-ml-classification.html#cb394-4" tabindex="-1"></a>                   <span class="at">search =</span> <span class="st">&#39;random&#39;</span>)</span>
+<span id="cb394-5"><a href="everyday-ml-classification.html#cb394-5" tabindex="-1"></a></span>
+<span id="cb394-6"><a href="everyday-ml-classification.html#cb394-6" tabindex="-1"></a>model_svm <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span> ., <span class="at">data =</span> df_train, </span>
+<span id="cb394-7"><a href="everyday-ml-classification.html#cb394-7" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">&#39;svmRadial&#39;</span>,</span>
+<span id="cb394-8"><a href="everyday-ml-classification.html#cb394-8" tabindex="-1"></a>                   <span class="at">trControl =</span> tr_svm, </span>
+<span id="cb394-9"><a href="everyday-ml-classification.html#cb394-9" tabindex="-1"></a>                   <span class="at">tunelength =</span> <span class="dv">8</span>)</span></code></pre></div>
 <p>Calling the model shows the best combination for <code>C</code> (cost) and <code>sigma</code> based on the model accuracy:</p>
-<div class="sourceCode" id="cb391"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb391-1"><a href="everyday-ml-classification.html#cb391-1" tabindex="-1"></a>model_svm</span></code></pre></div>
+<div class="sourceCode" id="cb395"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb395-1"><a href="everyday-ml-classification.html#cb395-1" tabindex="-1"></a>model_svm</span></code></pre></div>
 <pre><code>## Support Vector Machines with Radial Basis Function Kernel 
 ## 
 ## 167 samples
@@ -710,17 +790,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   0.024781262  563.129570  0.8680481  0.7316302
 ##   0.033519260    2.093291  0.8564617  0.7081256
 ## 
-## Accuracy was used to select the optimal model using the
-##  largest value.
-## The final values used for the model were sigma = 0.02478126 and C
-##  = 563.1296.</code></pre>
+## Accuracy was used to select the optimal
+##  model using the largest value.
+## The final values used for the model were sigma
+##  = 0.02478126 and C = 563.1296.</code></pre>
 </div>
 <div id="roc-and-precision-recall-curves" class="section level2 hasAnchor" number="6.5">
 <h2><span class="header-section-number">6.5</span> ROC and precision-recall curves<a href="everyday-ml-classification.html#roc-and-precision-recall-curves" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>A nice way to visualize model evaluation is by using ROC curves, which uses metrics that were already calculated previously - precision and recall.</p>
 <p>For this I will generate predictions for the random forest model using <code>Sonar</code>. Setting <code>type = 'prob'</code> yields probabilities for each label classification instead of the label itself:</p>
-<div class="sourceCode" id="cb393"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb393-1"><a href="everyday-ml-classification.html#cb393-1" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_rf, df_test, <span class="at">type =</span> <span class="st">&#39;prob&#39;</span>)</span>
-<span id="cb393-2"><a href="everyday-ml-classification.html#cb393-2" tabindex="-1"></a><span class="fu">head</span>(pred)</span></code></pre></div>
+<div class="sourceCode" id="cb397"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb397-1"><a href="everyday-ml-classification.html#cb397-1" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_rf, df_test, <span class="at">type =</span> <span class="st">&#39;prob&#39;</span>)</span>
+<span id="cb397-2"><a href="everyday-ml-classification.html#cb397-2" tabindex="-1"></a><span class="fu">head</span>(pred)</span></code></pre></div>
 <pre><code>##           M         R
 ## 1 0.5870667 0.4129333
 ## 2 0.6210333 0.3789667
@@ -729,16 +809,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5 0.6803667 0.3196333
 ## 6 0.1867333 0.8132667</code></pre>
 <p>The package <code>MLeval</code> can be used to generate ROC curves as such; here we achieve the ROC area under the curve of 0.96.</p>
-<div class="sourceCode" id="cb395"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb395-1"><a href="everyday-ml-classification.html#cb395-1" tabindex="-1"></a><span class="fu">library</span>(MLeval)</span>
-<span id="cb395-2"><a href="everyday-ml-classification.html#cb395-2" tabindex="-1"></a>roc_rf <span class="ot">&lt;-</span> <span class="fu">evalm</span>(<span class="fu">data.frame</span>(pred, df_test<span class="sc">$</span>Class, <span class="at">Group =</span> <span class="st">&#39;RF&#39;</span>), </span>
-<span id="cb395-3"><a href="everyday-ml-classification.html#cb395-3" tabindex="-1"></a>                <span class="at">showplots =</span> <span class="cn">FALSE</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb395-4"><a href="everyday-ml-classification.html#cb395-4" tabindex="-1"></a>roc_rf<span class="sc">$</span>roc</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-220-1.png" width="672" /></p>
+<div class="sourceCode" id="cb399"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb399-1"><a href="everyday-ml-classification.html#cb399-1" tabindex="-1"></a><span class="fu">library</span>(MLeval)</span>
+<span id="cb399-2"><a href="everyday-ml-classification.html#cb399-2" tabindex="-1"></a>roc_rf <span class="ot">&lt;-</span> <span class="fu">evalm</span>(<span class="fu">data.frame</span>(pred, df_test<span class="sc">$</span>Class, <span class="at">Group =</span> <span class="st">&#39;RF&#39;</span>), </span>
+<span id="cb399-3"><a href="everyday-ml-classification.html#cb399-3" tabindex="-1"></a>                <span class="at">showplots =</span> <span class="cn">FALSE</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb399-4"><a href="everyday-ml-classification.html#cb399-4" tabindex="-1"></a>roc_rf<span class="sc">$</span>roc</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-222-1.png" width="672" /></p>
 <p>Similarly, a precision-recall curve can also be visualized. This curve shows the tradeoff between the two metrics for each threshold.</p>
-<div class="sourceCode" id="cb396"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb396-1"><a href="everyday-ml-classification.html#cb396-1" tabindex="-1"></a>roc_rf<span class="sc">$</span>proc</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-221-1.png" width="672" /></p>
+<div class="sourceCode" id="cb400"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb400-1"><a href="everyday-ml-classification.html#cb400-1" tabindex="-1"></a>roc_rf<span class="sc">$</span>proc</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-223-1.png" width="672" /></p>
 <p>The values can be retrieved here:</p>
-<div class="sourceCode" id="cb397"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb397-1"><a href="everyday-ml-classification.html#cb397-1" tabindex="-1"></a>roc_rf<span class="sc">$</span>optres</span></code></pre></div>
+<div class="sourceCode" id="cb401"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb401-1"><a href="everyday-ml-classification.html#cb401-1" tabindex="-1"></a>roc_rf<span class="sc">$</span>optres</span></code></pre></div>
 <pre><code>## $RF
 ##               Score        CI
 ## SENS          0.842 0.62-0.94
@@ -757,27 +837,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## AUC-PR        0.880      &lt;NA&gt;
 ## AUC-PRG       0.610      &lt;NA&gt;</code></pre>
 <p>For completeness I will make these figures for the SVM model as well:</p>
-<div class="sourceCode" id="cb399"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb399-1"><a href="everyday-ml-classification.html#cb399-1" tabindex="-1"></a>pred2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_svm, df_test, <span class="at">type =</span> <span class="st">&#39;prob&#39;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb400"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb400-1"><a href="everyday-ml-classification.html#cb400-1" tabindex="-1"></a>roc_svm <span class="ot">&lt;-</span> <span class="fu">evalm</span>(<span class="fu">data.frame</span>(pred2, df_test<span class="sc">$</span>Class, <span class="at">Group =</span> <span class="st">&#39;SVM&#39;</span>), </span>
-<span id="cb400-2"><a href="everyday-ml-classification.html#cb400-2" tabindex="-1"></a>                <span class="at">showplots =</span> <span class="cn">FALSE</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb400-3"><a href="everyday-ml-classification.html#cb400-3" tabindex="-1"></a>roc_svm<span class="sc">$</span>roc</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-224-1.png" width="672" /></p>
-<div class="sourceCode" id="cb401"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb401-1"><a href="everyday-ml-classification.html#cb401-1" tabindex="-1"></a>roc_svm<span class="sc">$</span>proc</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-225-1.png" width="672" /></p>
+<div class="sourceCode" id="cb403"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb403-1"><a href="everyday-ml-classification.html#cb403-1" tabindex="-1"></a>pred2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_svm, df_test, <span class="at">type =</span> <span class="st">&#39;prob&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb404"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb404-1"><a href="everyday-ml-classification.html#cb404-1" tabindex="-1"></a>roc_svm <span class="ot">&lt;-</span> <span class="fu">evalm</span>(<span class="fu">data.frame</span>(pred2, df_test<span class="sc">$</span>Class, <span class="at">Group =</span> <span class="st">&#39;SVM&#39;</span>), </span>
+<span id="cb404-2"><a href="everyday-ml-classification.html#cb404-2" tabindex="-1"></a>                <span class="at">showplots =</span> <span class="cn">FALSE</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb404-3"><a href="everyday-ml-classification.html#cb404-3" tabindex="-1"></a>roc_svm<span class="sc">$</span>roc</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-226-1.png" width="672" /></p>
+<div class="sourceCode" id="cb405"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb405-1"><a href="everyday-ml-classification.html#cb405-1" tabindex="-1"></a>roc_svm<span class="sc">$</span>proc</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-227-1.png" width="672" /></p>
 </div>
 <div id="model-comparisons" class="section level2 hasAnchor" number="6.6">
 <h2><span class="header-section-number">6.6</span> Model comparisons<a href="everyday-ml-classification.html#model-comparisons" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p><code>caret</code> provides an elegant way to compare the performance of multiple models for model selection. We have two models trained on <code>Sonar</code> dataset already, so I will train two more.</p>
 <p>Here I am using a gradient boosted machine (<code>gbm</code>) and a k-nearest neighbors (<code>knn</code>).</p>
-<div class="sourceCode" id="cb402"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb402-1"><a href="everyday-ml-classification.html#cb402-1" tabindex="-1"></a><span class="co"># model_rf</span></span>
-<span id="cb402-2"><a href="everyday-ml-classification.html#cb402-2" tabindex="-1"></a><span class="co"># model_svm</span></span>
-<span id="cb402-3"><a href="everyday-ml-classification.html#cb402-3" tabindex="-1"></a>model_gbm <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span>., <span class="at">data =</span> df_train, </span>
-<span id="cb402-4"><a href="everyday-ml-classification.html#cb402-4" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">&#39;gbm&#39;</span>, <span class="at">trControl =</span> tr, </span>
-<span id="cb402-5"><a href="everyday-ml-classification.html#cb402-5" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb402-6"><a href="everyday-ml-classification.html#cb402-6" tabindex="-1"></a></span>
-<span id="cb402-7"><a href="everyday-ml-classification.html#cb402-7" tabindex="-1"></a>model_knn <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span> ., <span class="at">data =</span> df_train,</span>
-<span id="cb402-8"><a href="everyday-ml-classification.html#cb402-8" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">&#39;knn&#39;</span>, <span class="at">trControl =</span> tr)</span></code></pre></div>
-<div class="sourceCode" id="cb403"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb403-1"><a href="everyday-ml-classification.html#cb403-1" tabindex="-1"></a>model_gbm</span></code></pre></div>
+<div class="sourceCode" id="cb406"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb406-1"><a href="everyday-ml-classification.html#cb406-1" tabindex="-1"></a><span class="co"># model_rf</span></span>
+<span id="cb406-2"><a href="everyday-ml-classification.html#cb406-2" tabindex="-1"></a><span class="co"># model_svm</span></span>
+<span id="cb406-3"><a href="everyday-ml-classification.html#cb406-3" tabindex="-1"></a>model_gbm <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span>., <span class="at">data =</span> df_train, </span>
+<span id="cb406-4"><a href="everyday-ml-classification.html#cb406-4" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">&#39;gbm&#39;</span>, <span class="at">trControl =</span> tr, </span>
+<span id="cb406-5"><a href="everyday-ml-classification.html#cb406-5" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb406-6"><a href="everyday-ml-classification.html#cb406-6" tabindex="-1"></a></span>
+<span id="cb406-7"><a href="everyday-ml-classification.html#cb406-7" tabindex="-1"></a>model_knn <span class="ot">&lt;-</span> <span class="fu">train</span>(Class <span class="sc">~</span> ., <span class="at">data =</span> df_train,</span>
+<span id="cb406-8"><a href="everyday-ml-classification.html#cb406-8" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">&#39;knn&#39;</span>, <span class="at">trControl =</span> tr)</span></code></pre></div>
+<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="everyday-ml-classification.html#cb407-1" tabindex="-1"></a>model_gbm</span></code></pre></div>
 <pre><code>## Stochastic Gradient Boosting 
 ## 
 ## 167 samples
@@ -800,15 +880,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   3                  100      0.8436720  0.6837614
 ##   3                  150      0.8557932  0.7087382
 ## 
-## Tuning parameter &#39;shrinkage&#39; was held constant at a value of
-##  0.1
-## Tuning parameter &#39;n.minobsinnode&#39; was held constant at a
-##  value of 10
-## Accuracy was used to select the optimal model using the
-##  largest value.
-## The final values used for the model were n.trees =
-##  150, interaction.depth = 3, shrinkage = 0.1 and n.minobsinnode = 10.</code></pre>
-<div class="sourceCode" id="cb405"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb405-1"><a href="everyday-ml-classification.html#cb405-1" tabindex="-1"></a>model_knn</span></code></pre></div>
+## Tuning parameter &#39;shrinkage&#39; was held constant
+##  parameter &#39;n.minobsinnode&#39; was held constant at
+##  a value of 10
+## Accuracy was used to select the optimal
+##  model using the largest value.
+## The final values used for the model were n.trees
+##  = 150, interaction.depth = 3, shrinkage = 0.1
+##  and n.minobsinnode = 10.</code></pre>
+<div class="sourceCode" id="cb409"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb409-1"><a href="everyday-ml-classification.html#cb409-1" tabindex="-1"></a>model_knn</span></code></pre></div>
 <pre><code>## k-Nearest Neighbors 
 ## 
 ## 167 samples
@@ -825,16 +905,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##   7  0.7672014  0.5278251
 ##   9  0.7433155  0.4775343
 ## 
-## Accuracy was used to select the optimal model using the
-##  largest value.
+## Accuracy was used to select the optimal
+##  model using the largest value.
 ## The final value used for the model was k = 5.</code></pre>
 <p>Both accuracy and kappa are then used to compare the model performance across the four models:</p>
-<div class="sourceCode" id="cb407"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb407-1"><a href="everyday-ml-classification.html#cb407-1" tabindex="-1"></a>comps <span class="ot">&lt;-</span> <span class="fu">resamples</span>(</span>
-<span id="cb407-2"><a href="everyday-ml-classification.html#cb407-2" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">RF =</span> model_rf, <span class="at">SVM =</span> model_svm, <span class="at">GBM =</span> model_gbm, </span>
-<span id="cb407-3"><a href="everyday-ml-classification.html#cb407-3" tabindex="-1"></a>       <span class="at">KNN =</span> model_knn)</span>
-<span id="cb407-4"><a href="everyday-ml-classification.html#cb407-4" tabindex="-1"></a>  )</span>
-<span id="cb407-5"><a href="everyday-ml-classification.html#cb407-5" tabindex="-1"></a></span>
-<span id="cb407-6"><a href="everyday-ml-classification.html#cb407-6" tabindex="-1"></a><span class="fu">summary</span>(comps)</span></code></pre></div>
+<div class="sourceCode" id="cb411"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb411-1"><a href="everyday-ml-classification.html#cb411-1" tabindex="-1"></a>comps <span class="ot">&lt;-</span> <span class="fu">resamples</span>(</span>
+<span id="cb411-2"><a href="everyday-ml-classification.html#cb411-2" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">RF =</span> model_rf, <span class="at">SVM =</span> model_svm, <span class="at">GBM =</span> model_gbm, </span>
+<span id="cb411-3"><a href="everyday-ml-classification.html#cb411-3" tabindex="-1"></a>       <span class="at">KNN =</span> model_knn)</span>
+<span id="cb411-4"><a href="everyday-ml-classification.html#cb411-4" tabindex="-1"></a>  )</span>
+<span id="cb411-5"><a href="everyday-ml-classification.html#cb411-5" tabindex="-1"></a></span>
+<span id="cb411-6"><a href="everyday-ml-classification.html#cb411-6" tabindex="-1"></a><span class="fu">summary</span>(comps)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## summary.resamples(object = comps)
@@ -843,21 +923,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## Number of resamples: 5 
 ## 
 ## Accuracy 
-##          Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA&#39;s
-## RF  0.7941176 0.8235294 0.8484848 0.8450646 0.8529412 0.9062500    0
-## SVM 0.8181818 0.8235294 0.8750000 0.8680481 0.8823529 0.9411765    0
-## GBM 0.7575758 0.8484848 0.8529412 0.8557932 0.8787879 0.9411765    0
-## KNN 0.7058824 0.7272727 0.7352941 0.7852050 0.8484848 0.9090909    0
+##          Min.   1st Qu.    Median      Mean
+## RF  0.7941176 0.8235294 0.8484848 0.8450646
+## SVM 0.8181818 0.8235294 0.8750000 0.8680481
+## GBM 0.7575758 0.8484848 0.8529412 0.8557932
+## KNN 0.7058824 0.7272727 0.7352941 0.7852050
+##       3rd Qu.      Max. NA&#39;s
+## RF  0.8529412 0.9062500    0
+## SVM 0.8823529 0.9411765    0
+## GBM 0.8787879 0.9411765    0
+## KNN 0.8484848 0.9090909    0
 ## 
 ## Kappa 
-##          Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA&#39;s
-## RF  0.5853659 0.6382979 0.6857143 0.6844312 0.7017544 0.8110236    0
-## SVM 0.6250000 0.6382979 0.7490196 0.7316302 0.7638889 0.8819444    0
-## GBM 0.5056180 0.6961326 0.7017544 0.7087382 0.7582418 0.8819444    0
-## KNN 0.4055944 0.4469274 0.4593640 0.5633587 0.6892655 0.8156425    0</code></pre>
+##          Min.   1st Qu.    Median      Mean
+## RF  0.5853659 0.6382979 0.6857143 0.6844312
+## SVM 0.6250000 0.6382979 0.7490196 0.7316302
+## GBM 0.5056180 0.6961326 0.7017544 0.7087382
+## KNN 0.4055944 0.4469274 0.4593640 0.5633587
+##       3rd Qu.      Max. NA&#39;s
+## RF  0.7017544 0.8110236    0
+## SVM 0.7638889 0.8819444    0
+## GBM 0.7582418 0.8819444    0
+## KNN 0.6892655 0.8156425    0</code></pre>
 <p>And finally, a quick visualization at the model performance comparisons:</p>
-<div class="sourceCode" id="cb409"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb409-1"><a href="everyday-ml-classification.html#cb409-1" tabindex="-1"></a><span class="fu">dotplot</span>(comps)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-230-1.png" width="672" /></p>
+<div class="sourceCode" id="cb413"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb413-1"><a href="everyday-ml-classification.html#cb413-1" tabindex="-1"></a><span class="fu">dotplot</span>(comps)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-232-1.png" width="672" /></p>
 
 </div>
 </div>
