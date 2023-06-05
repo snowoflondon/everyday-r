@@ -5,6 +5,7 @@ Before diving straight into complex modeling tasks, many downstream failures and
 ```{r,warning=FALSE, message=FALSE}
 library(tidyverse)
 library(mlbench)
+library(skimr)
 ```
 
 
@@ -21,6 +22,12 @@ The function `str()` conveniently returns the structure of the dataset and as we
 
 ```{r}
 str(df)
+```
+
+For a neat summary of a dataset, we can also use `skim()` from the package `skimr`, which behaves nicely in a typical `tidyverse` pipe style:
+
+```{r}
+skim(df) %>% summary()
 ```
 
 Immediately we see that the column `chas` is a factor. As previously iterated, this column contains a dummy variable which indicates `1` if tract bounds river and `0` if otherwise. As expected, `vapply()` output says this is the only non-numerical column. We will have to be aware of this.
@@ -141,6 +148,12 @@ ggplot(df_chas, aes(x = chas, y = medv)) +
   geom_boxplot(aes(fill = chas), alpha = .6) + 
   theme_bw() + theme(legend.position = 'none') +
   stat_compare_means(method = 'wilcox')
+```
+
+A quick summary table can be accessed using `skimr::skim()` on the grouped data:
+
+```{r}
+df_chas %>% group_by(chas) %>% skim()
 ```
 
 Boxplots are nice but violin plots give us a further look at the shape of the distributions: this way we can actually see that `medv` values are capped at 50.
