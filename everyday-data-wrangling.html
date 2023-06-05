@@ -874,8 +874,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## # A tibble: 2 × 4
 ##   name   coffee  wine juice
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;
-## 1 Brian       6     3     1
-## 2 Connor      9     4     2</code></pre>
+## 1 Brian       3     2     1
+## 2 Connor      1     3     5</code></pre>
 <p>Sometimes it’s useful to run calculations in a row-wise fashion; for example using <code>mutate()</code> with the helper function <code>c_across()</code>:</p>
 <div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="everyday-data-wrangling.html#cb95-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)),</span>
 <span id="cb95-2"><a href="everyday-data-wrangling.html#cb95-2" tabindex="-1"></a>                            <span class="at">avg =</span> <span class="fu">mean</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)))</span></code></pre></div>
@@ -883,8 +883,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## # Rowwise: 
 ##   name   coffee  wine juice total   avg
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
-## 1 Brian       6     3     1    10  3.33
-## 2 Connor      9     4     2    15  5</code></pre>
+## 1 Brian       3     2     1     6     2
+## 2 Connor      1     3     5     9     3</code></pre>
 <p>Calculating the proportions using a combination of row-wise and column-wise operations with <code>c_across()</code> and <code>across()</code>:</p>
 <div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="everyday-data-wrangling.html#cb97-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice))) <span class="sc">%&gt;%</span></span>
 <span id="cb97-2"><a href="everyday-data-wrangling.html#cb97-2" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
@@ -893,8 +893,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## # A tibble: 2 × 8
 ##   name   coffee  wine juice total coffee_prop.
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;        &lt;dbl&gt;
-## 1 Brian       6     3     1    10          0.6
-## 2 Connor      9     4     2    15          0.6
+## 1 Brian       3     2     1     6        0.5  
+## 2 Connor      1     3     5     9        0.111
 ## # ℹ 2 more variables: wine_prop. &lt;dbl&gt;,
 ## #   juice_prop. &lt;dbl&gt;</code></pre>
 </div>
@@ -973,35 +973,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## # A tibble: 32 × 13
 ##    CAR      mpg   cyl  disp    hp  drat    wt  qsec
 ##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda…  21       6  160    110  3.9  NA     16.5
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5
 ##  2 Mazda…  21       6  160    110  3.9   2.88  17.0
-##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6
+##  3 Datsu…  22.8     4   NA     93  3.85  2.32  18.6
 ##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4
-##  5 &lt;NA&gt;    18.7     8  360    175  3.15  3.44  17.0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0
 ##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2
 ##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8
 ##  8 Merc …  24.4     4  147.    62  3.69  3.19  20  
 ##  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9
-## 10 Merc …  19.2     6  168.   123  3.92  3.44  NA  
+## 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3
 ## # ℹ 22 more rows
 ## # ℹ 5 more variables: vs &lt;dbl&gt;, am &lt;dbl&gt;,
 ## #   gear &lt;dbl&gt;, carb &lt;dbl&gt;, mileage_class &lt;chr&gt;</code></pre>
 <p>Remove rows where any NA occurs:</p>
 <div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="everyday-data-wrangling.html#cb107-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span></code></pre></div>
-<pre><code>## # A tibble: 25 × 13
+<pre><code>## # A tibble: 26 × 13
 ##    CAR      mpg   cyl  disp    hp  drat    wt  qsec
 ##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda…  21       6  160    110  3.9   2.88  17.0
-##  2 Datsu…  22.8     4  108     93  3.85  2.32  18.6
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0
 ##  3 Horne…  21.4     6  258    110  3.08  3.22  19.4
-##  4 Valia…  18.1     6  225    105  2.76  3.46  20.2
-##  5 Duste…  14.3     8  360    245  3.21  3.57  15.8
-##  6 Merc …  24.4     4  147.    62  3.69  3.19  20  
-##  7 Merc …  22.8     4  141.    95  3.92  3.15  22.9
-##  8 Merc …  17.8     6  168.   123  3.92  3.44  18.9
-##  9 Merc …  16.4     8  276.   180  3.07  4.07  17.4
-## 10 Merc …  17.3     8  276.   180  3.07  3.73  17.6
-## # ℹ 15 more rows
+##  4 Horne…  18.7     8  360    175  3.15  3.44  17.0
+##  5 Valia…  18.1     6  225    105  2.76  3.46  20.2
+##  6 Duste…  14.3     8  360    245  3.21  3.57  15.8
+##  7 Merc …  24.4     4  147.    62  3.69  3.19  20  
+##  8 Merc …  19.2     6  168.   123  3.92  3.44  18.3
+##  9 Merc …  17.8     6  168.   123  3.92  3.44  18.9
+## 10 Merc …  16.4     8  276.   180  3.07  4.07  17.4
+## # ℹ 16 more rows
 ## # ℹ 5 more variables: vs &lt;dbl&gt;, am &lt;dbl&gt;,
 ## #   gear &lt;dbl&gt;, carb &lt;dbl&gt;, mileage_class &lt;chr&gt;</code></pre>
 <p>Identify columns with NAs and the number of occurrences:</p>
@@ -1011,26 +1011,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##          disp            hp          drat 
 ##             2             0             0 
 ##            wt          qsec            vs 
-##             1             2             0 
+##             0             1             0 
 ##            am          gear          carb 
-##             0             0             0 
+##             1             0             0 
 ## mileage_class 
 ##             0</code></pre>
 <p>Remove columns with more than one missing value:</p>
 <div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="everyday-data-wrangling.html#cb111-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">where</span>(<span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)) <span class="sc">&lt;</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 8
-##      cyl    hp  drat    vs    am  gear  carb
+##      cyl    hp  drat    wt    vs  gear  carb
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1     6   110  3.9      0     1     4     4
-##  2     6   110  3.9      0     1     4     4
-##  3     4    93  3.85     1     1     4     1
-##  4     6   110  3.08     1     0     3     1
-##  5     8   175  3.15     0     0     3     2
-##  6     6   105  2.76     1     0     3     1
-##  7     8   245  3.21     0     0     3     4
-##  8     4    62  3.69     1     0     4     2
-##  9     4    95  3.92     1     0     4     2
-## 10     6   123  3.92     1     0     4     4
+##  1     6   110  3.9   2.62     0     4     4
+##  2     6   110  3.9   2.88     0     4     4
+##  3     4    93  3.85  2.32     1     4     1
+##  4     6   110  3.08  3.22     1     3     1
+##  5     8   175  3.15  3.44     0     3     2
+##  6     6   105  2.76  3.46     1     3     1
+##  7     8   245  3.21  3.57     0     3     4
+##  8     4    62  3.69  3.19     1     4     2
+##  9     4    95  3.92  3.15     1     4     2
+## 10     6   123  3.92  3.44     1     4     4
 ## # ℹ 22 more rows
 ## # ℹ 1 more variable: mileage_class &lt;chr&gt;</code></pre>
 <p>Replace missing values with zero using <code>tidyr::replace_na()</code>:</p>
