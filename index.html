@@ -8,7 +8,7 @@
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
-  <meta name="generator" content="bookdown 0.32.1 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Everyday-R: Practical R for Data Science" />
   <meta property="og:type" content="book" />
@@ -124,6 +124,10 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -227,37 +231,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 25.838395 74.149098 91.103098 26.274868
-##  [5] 93.918668 36.215789 41.114540 72.740122
-##  [9] 82.532441 24.044701 60.458526 72.356750
-## [13] 99.025265 30.247533  6.437233 95.889601
-## [17] 11.905974 87.413042 36.428103 13.286609</code></pre>
+<pre><code>##  [1] 32.553033 68.524571 49.153739 29.040630 38.117121 92.782634
+##  [7] 41.281878 52.214408  4.094402 69.817484  9.163354 32.107790
+## [13] 38.283158 60.332755 27.527097 53.097232 40.109023 25.491680
+## [19] 22.650717 85.058747</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##                               expr   min    lq
-##  runif(n = 20, min = 0, max = 100) 1.251 1.417
-##     mean median     uq   max neval
-##  1.60448  1.501 1.6675 7.584   100</code></pre>
+##                               expr   min    lq    mean median
+##  runif(n = 20, min = 0, max = 100) 1.025 1.107 1.22016  1.148
+##    uq   max neval
+##  1.23 5.084   100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" tabindex="-1"></a>version</span></code></pre></div>
 <pre><code>##                _                           
-## platform       x86_64-apple-darwin17.0     
-## arch           x86_64                      
-## os             darwin17.0                  
-## system         x86_64, darwin17.0          
+## platform       aarch64-apple-darwin20      
+## arch           aarch64                     
+## os             darwin20                    
+## system         aarch64, darwin20           
 ## status                                     
 ## major          4                           
-## minor          0.5                         
-## year           2021                        
-## month          03                          
-## day            31                          
-## svn rev        80133                       
+## minor          3.1                         
+## year           2023                        
+## month          06                          
+## day            16                          
+## svn rev        84548                       
 ## language       R                           
-## version.string R version 4.0.5 (2021-03-31)
-## nickname       Shake and Throw</code></pre>
+## version.string R version 4.3.1 (2023-06-16)
+## nickname       Beagle Scouts</code></pre>
 </div>
 <div id="r-packages-commonly-used-in-this-book" class="section level2 hasAnchor" number="1.2">
 <h2><span class="header-section-number">1.2</span> R packages commonly used in this book<a href="index.html#r-packages-commonly-used-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
