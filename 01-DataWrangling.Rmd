@@ -1,6 +1,6 @@
 # Everyday data wrangling
 
-Suppose there exists a test dataset and the user is tasked with proving their proficiency in exploratory data analysis (EDA). Alternatively, the user may be handed a piece of data (e.g., maybe an Excel sheet) and is asked to run some preliminary analysis. Prior to jumping straight into EDA and statistical modeling, the user must be able to transform the original data into a desirable format. This includes, but is not limited to, missing data imputation, scalar transformation, feature selection, group aggregation, and data filtering. The following notebook outlines the fundamentals of data wrangling, using practical base R and `tidyverse` solutions interchangeably. 
+Suppose there exists a test dataset and the user is tasked with proving their proficiency in exploratory data analysis (EDA). Alternatively, the user may be handed a piece of data (e.g., maybe an Excel sheet) and is asked to run some preliminary analysis. Prior to jumping straight into EDA and statistical modeling, it's a good idea to transform the original data into a desirable format. This includes, but is not limited to, missing data imputation, scalar transformation, feature selection, group aggregation, and data filtering. The following notebook outlines the fundamentals of data wrangling, using practical base R and `tidyverse` solutions interchangeably. 
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -61,6 +61,12 @@ Alternatively, in base R, you can use `aggregate()` with the `~`; you can read t
 
 ```{r}
 aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+```
+
+Since `aggregate()` uses the formula syntax (`~`), using the `.` placeholder on the LHS calls all variables not called in the RHS:
+
+```{r, eval=FALSE}
+aggregate(. ~ cyl, data = mtcars, FUN = mean)
 ```
 
 When calculating the size of the groups, you can use `n()`:
@@ -137,7 +143,7 @@ For the `CAR` column comprised of strings, you can separate the individual strin
 mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge')
 ```
 
-Chaining multiple `tidyverse` verbs can be done using the pipe `%>%`; this `%>%` symbol is part of the `magrittr` package, which is loaded with `tidyverse`.
+Chaining multiple `tidyverse` verbs can be done using the pipe `%>%`; this `%>%` symbol is part of the `magrittr` package, which is loaded with `tidyverse`. Recently as of R version 4.1.0, the native pipe `|>` was introduced, which behaves in mostly a similar manner as the `magrittr` pipe (though there are a few important differences). Here, I will stick to the `%>%` notation. 
 
 ```{r, warning=FALSE}
 mtcars %>% separate(CAR, c('Brand', 'Model'), sep = " ", extra = 'merge') %>%
