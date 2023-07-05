@@ -12,12 +12,21 @@ This repository contains a collection of Markdown files compiled with `bookdown`
 #### 6. [Everyday ML with caret: Classification](https://bookdown.org/brianjmpark/everydayR/everyday-ml-classification.html)
 
 ## R version
-```{r}
-platform       - x86_64-apple-darwin17.0     
-arch           - x86_64                      
-os             - darwin17.0                  
-system         - x86_64, darwin17.0   
-version.string - R version 4.0.5 (2021-03-31
+```{r}                     
+## platform       aarch64-apple-darwin20      
+## arch           aarch64                     
+## os             darwin20                    
+## system         aarch64, darwin20           
+## status                                     
+## major          4                           
+## minor          3.1                         
+## year           2023                        
+## month          06                          
+## day            16                          
+## svn rev        84548                       
+## language       R                           
+## version.string R version 4.3.1 (2023-06-16)
+## nickname       Beagle Scouts
 ```
 
 ## Resources
