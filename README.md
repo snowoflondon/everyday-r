@@ -41,7 +41,6 @@ This repository contains a collection of Markdown files compiled with `bookdown`
 * [Visualizing stats from the Premier League using Shiny and web scraping](https://github.com/snowoflondon/PL_Visualizer)
 * [Calculation of drug synergy using linear models and Shiny](https://github.com/snowoflondon/CIComputeR_WEB)
 * [Dose-response model estimate analysis using drc on Shiny](https://github.com/snowoflondon/LL4R)
-* [Visualizing disease outbreaks in Toronto using Shiny](https://github.com/snowoflondon/yyz_outbreak)
 
 ## Companion blog
 * [Data science blog covering fundamental concepts with R & Python code](https://brianjmpark.github.io/)
