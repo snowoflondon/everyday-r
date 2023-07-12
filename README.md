@@ -9,7 +9,7 @@ This repository contains a collection of Markdown files compiled with `bookdown`
 #### 3. [Everyday Iterations](https://bookdown.org/brianjmpark/everydayR/everyday-iterations.html)
 #### 4. [Interlude I: A brief glimpse into `data.table`](https://bookdown.org/brianjmpark/everydayR/interlude-i-a-brief-glimpse-into-data.html)
 #### 5. [Everyday exploratory data analysis](https://bookdown.org/brianjmpark/everydayR/everyday-exploratory-data-analysis.html)
-#### 6. [Everyday ML with caret: Classification](https://bookdown.org/brianjmpark/everydayR/everyday-ml-classification.html)
+#### 6. [Everyday ML: Classification](https://bookdown.org/brianjmpark/everydayR/everyday-ml-classification.html)
 
 ## R version
 ```{r}                     
