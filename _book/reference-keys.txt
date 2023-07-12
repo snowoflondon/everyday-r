@@ -1,3 +1,5 @@
+tab:unnamed-chunk-152
+tab:unnamed-chunk-167
 introduction
 r-syntax-in-this-book
 r-packages-commonly-used-in-this-book
@@ -37,6 +39,7 @@ everyday-ml-classification
 model-training-and-predictions
 feature-selection-using-univariate-filters
 feature-selection-using-recursive-feature-elimination
+feature-selection-for-correlated-and-low-variance-predictors
 hyperparameter-tuning
 roc-and-precision-recall-curves
 model-comparisons
