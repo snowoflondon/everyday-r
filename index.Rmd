@@ -15,13 +15,19 @@ link-citations: yes
 github-repo: rstudio/bookdown-demo
 ---
 
-
-
 # Introduction
 
 *Note: this book is a work in progress. All source code for this project are available on my GitHub, which is linked in 1.4.*
 
-This book serves as a collection of R Markdown files that aims to assist users in learning the practical syntax and usage of R. Mainly, code snippets and workflow aimed at tackling everyday tasks in data science will be covered, including data cleaning, data wrangling, iterations, machine learning with `caret`, data visualization, and web app design using `Shiny`. Each broad topic will be split into chapters, though there will be some overlap.
+This book serves as a collection of R Markdown files helps users in learning the practical syntax and usage of R for data science. Mainly, code snippets and workflow aimed at tackling everyday tasks in data science will be covered, which includes data cleaning, data wrangling, iterations, machine learning with `caret`, data visualization, and web app design using `Shiny`. Each broad topic will be split into chapters, though there will be some overlap.
+
+## Preface
+
+This book assumes readers have a basic grasp of R programming language. There are tons of useful resources that provides the first few steps into programming with R and I hope this book can serve as a useful complement to using R - a pocket reference of sorts! 
+
+It depends on who you ask, but many users emphasize the importance of learning the syntax of base R before diving into commonly used packages like `dplyr` and `data.table`. It is definitely a good idea to get the hang of base R if you're developing an app or a package for example - this would lessen the number of dependencies your program has! 
+
+However, similarly to `pandas` in Python, the popularity of `dplyr` and associated packages within the `tidyverse` suite has soared and you wouldn't be surprised to see `tidyverse` solutions as the top answers in forums like Stack Overflow (this can be frustrating if you're a base R purist). Using `tidyverse` for data science can definitely make your life easy - I find their syntax more pretty intuitive - but I'd like to sit on the fence on the base R vs. `tidyverse` debate; you should know both! For that reason, in this book I will try to use both interchangeably.
 
 ## R syntax in this book
 
@@ -38,7 +44,7 @@ library(microbenchmark)
 microbenchmark::microbenchmark(runif(n = 20, min = 0, max = 100))
 ```
 
-Typically in longer chains of code, I will use `%>%` from `magrittr` as a pipe. This is usually standard practice in code using packages from the `tidyverse` so it's a good habit to start using it.
+Typically in longer chains of code, I will use `%>%` from `magrittr` as a pipe. This is usually standard practice in code using packages from the `tidyverse` so it's a good habit to start using it. However, keep in mind - as of the recent R version (shown below), there is a native R pipe `|>` which behave almost - but not always - in a similar fashion. 
 
 Finally, here is the R version I am currently using:
 
