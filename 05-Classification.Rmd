@@ -50,7 +50,7 @@ dfm %>% ggplot(aes(x = quality, y = values)) +
   scale_fill_brewer(palette = 'Set1')
 ```
 
-Before doing any kind of preprocessing or normalization, it is imperative to split the data into training and testing to prevent information leak. The `createDataPartition()` function accepts the `p = ` argument which defines the split fraction. Here I use 80/20 split.
+Before doing any kind of pre-processing or normalization, it is imperative to split the data into training and testing to prevent information leak. The `createDataPartition()` function accepts the `p = ` argument which defines the split fraction. Here I use 80/20 split.
 
 ```{r}
 set.seed(42)
@@ -66,16 +66,16 @@ df_test <- df[-idx,]
 
 The `createDataPartition()` outputs an array of indices which can be used to split the original data.
 
-Going back to the talk of scaling and preprocessing the data: a common procedure is to `center` and `scale`, that is - subtract the mean and divide by the standard deviation. If you're familiar with `scikit-learn` in Python, this is analogous to running `StandardScaler()`. 
+Going back to the talk of scaling and pre-processing the data: a common procedure is to `center` and `scale`, that is - subtract the mean and divide by the standard deviation. If you're familiar with `scikit-learn` in Python, this is analogous to running `StandardScaler()`. 
 
 ```{r}
 preProcObj <- preProcess(df_train, method = c('center', 'scale'))
 preProcObj
 ```
 
-Evidently, the `preProcess()` function recognized the column containing the target labels and ignored it for preprocessing. 
+Evidently, the `preProcess()` function recognized the column containing the target labels and ignored it for pre-processing. 
 
-Preprocessing is done on the training data and the learned object is applied to both the training and testing data:
+Pre-processing is done on the training data and the learned object is applied to both the training and testing data:
 
 ```{r}
 df_train <- predict(preProcObj, df_train)
