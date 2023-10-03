@@ -223,7 +223,15 @@ mtcars %>% filter(between(mpg, 18, 20))
 mtcars %>% filter(cyl %in% c(6, 8))
 ```
 
-Alternatively, in base R, using `which()`:
+A useful function is the negation of `%in%`, which we can define manually:
+
+```{r}
+`%nin%` <- Negate(`%in%`)
+
+mtcars %>% filter(cyl %nin% c(6, 8))
+```
+
+In base R we can use `which()` instead to subset:
 
 ```{r, eval=FALSE}
 mtcars[which(mtcars$mpg > 18 & mtcars$mpg < 20),] # not run
