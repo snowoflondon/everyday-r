@@ -10,7 +10,7 @@ This repository contains a collection of Markdown files compiled with `bookdown`
 #### 4. [Interlude I: A brief glimpse into `data.table`](https://bookdown.org/brianjmpark/everydayR/interlude-i-a-brief-glimpse-into-data.html)
 #### 5. [Everyday exploratory data analysis](https://bookdown.org/brianjmpark/everydayR/everyday-exploratory-data-analysis.html)
 #### 6. [Everyday ML: Classification](https://bookdown.org/brianjmpark/everydayR/everyday-ml-classification.html)
-
+#### 7. Everyday ML: Regression (coming soon)
 ## Resources
 * [R for data science by Hadley Wickham](https://r4ds.had.co.nz/)
 * [Advanced R by Hadley Wickham](https://adv-r.hadley.nz/)
