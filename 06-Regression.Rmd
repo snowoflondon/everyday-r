@@ -1,0 +1,121 @@
+# Everyday ML: Regression
+
+In the previous chapter, the goal of our task was to predict each sample into one of *N* categorical variables. The fundamentals of such a classification task carries over to *regression* problems, where the goal is to predict a continuous variable instead. As such, a regression task involves taking data, fitting a model, evaluating the model, then predicting a new instance. The differences however, lies in exactly how we train the data - as in, how do we measure the 'closeness' of our model to the ground truth? - and how we evaluate the model in the end prior to deployment. The R package suite `tidymodels` handles regression tasks elegantly, however, in this chapter - to be consistent with the previous chapter - we will use `caret` again. 
+
+As before, the explanation of ML concepts and the details into each algorithm is beyond the scope of this book, but more details are available on my [blog](https://brianjmpark.github.io/) as well as documentation for popular ML packages such as Python's [Scikit-Learn](https://scikit-learn.org/stable/). 
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(caret)
+```
+
+
+## Simple linear regression
+
+For this section we will use the `Ozone` dataset from `mlbench`, which involves prediction of the daily maximum one-hour-average ozone reading using various predictors such as humidity, temperature, and wind speed. 
+
+```{r}
+data(Ozone, package = "mlbench")
+colnames(Ozone) <- c("Month", "DayOfMonth", "DayOfWeek",
+                     "OzoneReading", "PressureHeight",
+                     "WindSpeed", "Humidity",
+                     "TemperatureSandburg", "TemperatureElMonte",
+                     "InversionBaseHeight", "PressureGradient",
+                     "InversionTemperature", "Visibility")
+Ozone <- as_tibble(Ozone)
+Ozone <- Ozone %>% select(-c(Month, DayOfMonth, DayOfWeek))
+str(Ozone)
+```
+
+Identifying the number of missing values first is important:
+
+```{r}
+vapply(Ozone, function(x) sum(is.na(x)), FUN.VALUE = double(1))
+```
+
+For the purpose of this exercise, instead of imputation I will just discard the missing values.
+
+```{r}
+Ozone <- na.omit(Ozone)
+dim(Ozone)
+```
+
+For a quick look at the scales and the distribution of the variables, boxplots will do:
+
+```{r}
+Ozone %>% 
+  pivot_longer(everything(), 
+               names_to = 'Var', values_to = 'Val') %>%
+  ggplot(aes(x = Var, y = Val)) + geom_boxplot() + 
+  facet_wrap(~ Var, scales = 'free') + theme_bw()
+```
+
+As seen in the EDA chapter, a correlation plot can help visualize multicollinearity in the data:
+
+```{r}
+corrplot(cor(Ozone %>% select(-OzoneReading)), is.corr = TRUE)
+```
+
+Using `caret`'s `findCorrelation()` function, highly correlated predictors can be removed; the output corresponds to the indices of the highly correlated predictors to be removed.
+
+```{r}
+highCor <- findCorrelation(cor(Ozone %>% select(-OzoneReading)), 
+                cutoff = 0.9)
+highCorCols <- Ozone %>% select(-OzoneReading) %>%
+  select(any_of(highCor)) %>% colnames()
+Ozone <- Ozone %>% select(-any_of(highCorCols))
+highCorCols
+```
+
+A simple linear regression model using ordinary least squares is then built as such:
+
+```{r}
+lm_mod1 <- lm(OzoneReading ~ ., data = Ozone)
+summary(lm_mod1)
+```
+
+The `~` sign denotes that the `OzoneReading` variable (LHS) is predicted by `.` (RHS), which equates to the remaining variables in the `data` provided. The intercept of the model is fitted automatically.
+
+The ANOVA table of the fitted model, which contains information such as the sum of squares for each predictor, is retrieved with `anova()`:
+
+```{r}
+anova(lm_mod1)
+```
+
+For quick interpretation, let's print out the content of the `lm` model fitted:
+
+```{r}
+lm_mod1
+```
+
+Above result suggests that for each unit change in `PressureHeight`, the `OzoneReading` variable is increased by `6.846e-04`. Of course, since this is a multiple regression task (i.e., there are multiple predictors), the interpretation of the coefficient value is not as straightforward. 
+
+In ordinary least squares, the model attempts to minimize the residuals, which is the difference between the original data and the predicted data. Both of these can be retrieved as such:
+
+```{r}
+lm_mod1_pred <- predict(lm_mod1)
+lm_mod1_resid <- resid(lm_mod1)
+```
+
+This means that we can plot these for a nice visualization between the residuals and the fitted values:
+
+```{r}
+plot(predict(lm_mod1), resid(lm_mod1), 
+     main = 'Residuals vs. Fitted', 
+     xlab = 'Fitted values', 
+     ylab = 'Residuals')
+```
+
+A few observations can be made here; firstly, we see that the distribution of the points on either side of the residuals = 0 line seems random and evenly distributed. This suggests that modeling the current data with assumptions of linearity is valid. Secondly, there are no obvious outliers here, which means it is unlikely that our model is influenced by extreme values.
+
+The root-mean-squared-error (RMSE) is the standard measure to use when evaluating regression models; RMSE is the squared root of the mean squared error in the predicted values.
+
+```{r}
+RMSE(lm_mod1_pred, Ozone$OzoneReading)
+```
+
+
+## Using regression for prediction
+
+With the advent of big data and ML, you are more and more likely to run into scenarios where regression is used to predict new data. The previous example with the `Ozone` dataset, we fit the entire dataset using `lm()` and evaluated it using a within-sample method such as the RMSE. On the other hand, it's possible to set aside a portion of the data, fit a model, use cross-validation metrics to tune the model, and evaluate the model one last time using never-before-seen data. Of course, with these concepts, we are firmly in the realm of ML - thus concepts from the previous chapter such as train/test split, model training, and model selection are carried over.
+
