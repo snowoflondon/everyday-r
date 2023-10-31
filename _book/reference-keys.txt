@@ -44,3 +44,4 @@ feature-selection-for-correlated-and-low-variance-predictors
 hyperparameter-tuning
 roc-and-precision-recall-curves
 model-comparisons
+everyday-ml-regression
