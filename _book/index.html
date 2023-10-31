@@ -147,11 +147,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
 <ul>
-<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#r-syntax-in-this-book"><i class="fa fa-check"></i><b>1.1</b> R syntax in this book</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#r-packages-commonly-used-in-this-book"><i class="fa fa-check"></i><b>1.2</b> R packages commonly used in this book</a></li>
-<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#installing-r-packages"><i class="fa fa-check"></i><b>1.3</b> Installing R packages</a></li>
-<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#code-availability"><i class="fa fa-check"></i><b>1.4</b> Code availability</a></li>
-<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#website-hosting"><i class="fa fa-check"></i><b>1.5</b> Website hosting</a></li>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#r-syntax-in-this-book"><i class="fa fa-check"></i><b>1.2</b> R syntax in this book</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#r-packages-commonly-used-in-this-book"><i class="fa fa-check"></i><b>1.3</b> R packages commonly used in this book</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#installing-r-packages"><i class="fa fa-check"></i><b>1.4</b> Installing R packages</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#code-availability"><i class="fa fa-check"></i><b>1.5</b> Code availability</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#website-hosting"><i class="fa fa-check"></i><b>1.6</b> Website hosting</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="everyday-data-wrangling.html"><a href="everyday-data-wrangling.html"><i class="fa fa-check"></i><b>2</b> Everyday data wrangling</a>
 <ul>
@@ -200,6 +201,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#roc-and-precision-recall-curves"><i class="fa fa-check"></i><b>6.6</b> ROC and precision-recall curves</a></li>
 <li class="chapter" data-level="6.7" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-comparisons"><i class="fa fa-check"></i><b>6.7</b> Model comparisons</a></li>
 </ul></li>
+<li class="chapter" data-level="7" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html"><i class="fa fa-check"></i><b>7</b> Everyday ML: Regression</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -227,15 +229,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="introduction" class="section level1 hasAnchor" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p><em>Note: this book is a work in progress. All source code for this project are available on my GitHub, which is linked in 1.4.</em></p>
-<p>This book serves as a collection of R Markdown files that aims to assist users in learning the practical syntax and usage of R. Mainly, code snippets and workflow aimed at tackling everyday tasks in data science will be covered, including data cleaning, data wrangling, iterations, machine learning with <code>caret</code>, data visualization, and web app design using <code>Shiny</code>. Each broad topic will be split into chapters, though there will be some overlap.</p>
-<div id="r-syntax-in-this-book" class="section level2 hasAnchor" number="1.1">
-<h2><span class="header-section-number">1.1</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This book serves as a collection of R Markdown files helps users in learning the practical syntax and usage of R for data science. Mainly, code snippets and workflow aimed at tackling everyday tasks in data science will be covered, which includes data cleaning, data wrangling, iterations, machine learning with <code>caret</code>, data visualization, and web app design using <code>Shiny</code>. Each broad topic will be split into chapters, though there will be some overlap.</p>
+<div id="preface" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Preface<a href="index.html#preface" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This book assumes readers have a basic grasp of R programming language. There are tons of useful resources that provides the first few steps into programming with R and I hope this book can serve as a useful complement to using R - a pocket reference of sorts!</p>
+<p>It depends on who you ask, but many users emphasize the importance of learning the syntax of base R before diving into commonly used packages like <code>dplyr</code> and <code>data.table</code>. It is definitely a good idea to get the hang of base R if you’re developing an app or a package for example - this would lessen the number of dependencies your program has!</p>
+<p>However, similarly to <code>pandas</code> in Python, the popularity of <code>dplyr</code> and associated packages within the <code>tidyverse</code> suite has soared and you wouldn’t be surprised to see <code>tidyverse</code> solutions as the top answers in forums like Stack Overflow (this can be frustrating if you’re a base R purist). Using <code>tidyverse</code> for data science can definitely make your life easy - I find their syntax more pretty intuitive - but I’d like to sit on the fence on the base R vs. <code>tidyverse</code> debate; you should know both! For that reason, in this book I will try to use both interchangeably.</p>
+</div>
+<div id="r-syntax-in-this-book" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 62.8999409 41.0842541 62.4607510  6.3465067  0.4234395
-##  [6] 78.2003742 13.3028615 74.6580050 15.5341085 51.2999231
-## [11] 18.5245571 31.7974115 72.3597154 22.3288491  3.4010818
-## [16] 10.6159988 24.9986350 68.9997111  2.3743562 44.7317586</code></pre>
+<pre><code>##  [1] 52.3694435 70.4087822 45.0589704 32.8420420 93.9234466
+##  [6]  9.5567368  2.4627187 23.8173929 37.0451392 11.3746579
+## [11] 33.5585374 96.8536115 73.5491000 64.6330278 84.3225826
+## [16] 14.5247605  0.8052366  7.7178039 19.2016153 88.9957564</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
@@ -243,11 +251,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## max = 100)): less accurate nanosecond times to avoid potential
 ## integer overflows</code></pre>
 <pre><code>## Unit: nanoseconds
-##                               expr min   lq    mean median
-##  runif(n = 20, min = 0, max = 100) 984 1066 1245.99   1148
-##      uq  max neval
-##  1209.5 7421   100</code></pre>
-<p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it.</p>
+##                               expr min  lq    mean median   uq
+##  runif(n = 20, min = 0, max = 100) 820 943 1038.53    984 1025
+##   max neval
+##  4838   100</code></pre>
+<p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it. However, keep in mind - as of the recent R version (shown below), there is a native R pipe <code>|&gt;</code> which behave almost - but not always - in a similar fashion.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1" tabindex="-1"></a>version</span></code></pre></div>
 <pre><code>##                _                           
@@ -266,8 +274,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## version.string R version 4.3.1 (2023-06-16)
 ## nickname       Beagle Scouts</code></pre>
 </div>
-<div id="r-packages-commonly-used-in-this-book" class="section level2 hasAnchor" number="1.2">
-<h2><span class="header-section-number">1.2</span> R packages commonly used in this book<a href="index.html#r-packages-commonly-used-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="r-packages-commonly-used-in-this-book" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> R packages commonly used in this book<a href="index.html#r-packages-commonly-used-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ul>
 <li><p><code>tidyverse</code>: a collection of packages for data science, including <code>dplyr</code>, <code>purrr</code>, <code>stringr</code>, <code>forcats</code>, <code>readr</code>, and <code>ggplot</code>.</p></li>
 <li><p><code>caret</code>: package for implementation of machine learning models, with support for algorithms such as <code>ranger</code>, <code>rpart</code>, <code>xgbTree</code>, and <code>svmLinear</code>.</p></li>
@@ -277,16 +285,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p><code>Shiny</code>: package for implementation and designing of interactive web apps.</p></li>
 </ul>
 </div>
-<div id="installing-r-packages" class="section level2 hasAnchor" number="1.3">
-<h2><span class="header-section-number">1.3</span> Installing R packages<a href="index.html#installing-r-packages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="installing-r-packages" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Installing R packages<a href="index.html#installing-r-packages" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>R packages found in this book are available on CRAN and thus can be installed simply by running <code>install.packages()</code>. For packages not on CRAN (or if you want to download developmental versions of a package), you can install packages straight from a GitHub repository by running <code>devtools::install_github()</code>.</p>
 </div>
-<div id="code-availability" class="section level2 hasAnchor" number="1.4">
-<h2><span class="header-section-number">1.4</span> Code availability<a href="index.html#code-availability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="code-availability" class="section level2 hasAnchor" number="1.5">
+<h2><span class="header-section-number">1.5</span> Code availability<a href="index.html#code-availability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>All code used to compile this book as well as the individual markdown files are available on my repository <a href="https://github.com/snowoflondon/everyday-r">here</a></p>
 </div>
-<div id="website-hosting" class="section level2 hasAnchor" number="1.5">
-<h2><span class="header-section-number">1.5</span> Website hosting<a href="index.html#website-hosting" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="website-hosting" class="section level2 hasAnchor" number="1.6">
+<h2><span class="header-section-number">1.6</span> Website hosting<a href="index.html#website-hosting" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>This book is hosted on the <code>shinyapps</code> server, deployed with the R package <code>rsconnect</code>. The markdown files are compiled in this book format using the R package <code>bookdown</code>.</p>
 
 </div>
