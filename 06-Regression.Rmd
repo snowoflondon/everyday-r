@@ -117,5 +117,113 @@ RMSE(lm_mod1_pred, Ozone$OzoneReading)
 
 ## Using regression for prediction
 
-With the advent of big data and ML, you are more and more likely to run into scenarios where regression is used to predict new data. The previous example with the `Ozone` dataset, we fit the entire dataset using `lm()` and evaluated it using a within-sample method such as the RMSE. On the other hand, it's possible to set aside a portion of the data, fit a model, use cross-validation metrics to tune the model, and evaluate the model one last time using never-before-seen data. Of course, with these concepts, we are firmly in the realm of ML - thus concepts from the previous chapter such as train/test split, model training, and model selection are carried over.
+With the advent of big data and ML, you are more and more likely to run into scenarios where regression is used to predict new data. In the previous example with the `Ozone` dataset, we fit the entire dataset using `lm()` and evaluated it using a within-sample method such as the RMSE. On the other hand, it's possible to set aside a portion of the data, fit a model, use cross-validation metrics to tune the model, and evaluate the model one last time using never-before-seen data. Of course, with these concepts, we are firmly in the realm of ML - thus concepts from the previous chapter such as train/test split, model training, and model selection are carried over.
 
+```{r}
+idx <- createDataPartition(y = Ozone$OzoneReading, p = .8,
+                           list = FALSE, times = 1)
+Ozone_train <- Ozone[idx,]
+Ozone_test <- Ozone[-idx,]
+paste0('Training data batch dimension: ', nrow(Ozone_train))
+paste0('Test data batch dimension: ', nrow(Ozone_test))
+```
+
+As seen in the previous chapter, we split the original data using `createDataPartition()` to get the training and the test data. Then using `trainControl()` and `train()`, I can use a wrapper for a gradient boosted model for the regression task.
+
+```{r}
+tr <- trainControl(method = 'cv',
+                   number = 5, search = 'grid')
+
+model <- train(OzoneReading ~ ., data = Ozone_train,
+               method = 'gbm', trControl = tr,
+               verbose = FALSE)
+
+model
+```
+
+Evidently, `caret` uses grid search to find the combination of hyperparameters - in this case, `n.trees`, `interaction.depth`, `shrinkage`, and `n.minobsinnode` - which minimizes the RMSE. We could have defined our own hyperparameter space using `expand.grid()` and using that as input for `tuneGrid = ` within `train()`. 
+
+Briefly, the `shrinkage` refers to the learning rate, which describes the size of the incremental steps in gradient descent calculations. The `interaction.depth` describes the number of splits per tree and the `n.trees` describes the total number of trees, which means that for higher values of `n.trees`, the model complexity increases as well as the risk of overfitting the model.
+
+Calling `plot()` method to the model object prints the boosting iterations versus the value we're trying to optimize (i.e., RMSE):
+
+```{r}
+plot(model)
+```
+
+Evidently, the interaction depth (i.e., tree depth) of 1 reaches the minimum RMSE at 100 boosting iterations. The best set of hyperparameters can be printed as such:
+
+```{r}
+model$bestTune
+```
+
+The holdout data is then used to generate predictions and calculate the RMSE and the R squared:
+
+```{r}
+preds <- predict(object = model, newdata = Ozone_test)
+rmse <- RMSE(pred = preds, obs = Ozone_test$OzoneReading)
+r2 <- R2(pred = preds, obs = Ozone_test$OzoneReading)
+paste0('Model RMSE: ', rmse)
+paste0('Model R2: ', r2)
+
+plot(x = preds, y = Ozone_test$OzoneReading)
+```
+
+
+## Categorical predictors and factor encoding
+
+Regression models typically require predictors to be numerical. Therefore, categorical predictors (i.e., factor variables which take on discrete values) need to be numerically encoded. There are two mainly used methods of numerical encoding of categorical predictors:
+
+1) Reference coding: one class of categorical predictor is used as a reference and the rest of the classes are compared to the reference.
+
+2) One-hot encoding: the number of unique classes is retained. The categorical variables are encoded as numeric arrays. This method is also called 'dummy encoding.' 
+
+Let's load the `BostonHousing2` data from `mlbench` and look at the columns:
+
+```{r}
+data(BostonHousing2, package = 'mlbench')
+BH2 <- tibble(BostonHousing2)
+str(BH2)
+```
+
+The target variable is `cmedv` - the corrected median value of homes. There are additionally two categorical predictors here: `town` and `chas`. The `chas` variable has already been numerically encoded so we just need to encode `town`.
+
+```{r}
+paste0('# of levels: ', length(levels(BH2$town)))
+```
+
+There are nearly 100 levels in `town`, so for the sake of this exercise I will truncate the dataset so that it only contains the top 5 largest towns by size:
+
+```{r}
+BH2 %>% group_by(town) %>% tally() %>% 
+  arrange(desc(n)) %>% head(5)
+```
+
+```{r}
+toptowns <- BH2 %>% group_by(town) %>% tally() %>% 
+  arrange(desc(n)) %>% head(5) %>% pull(town)
+
+BH2 <- BH2 %>% filter(town %in% toptowns) %>%
+  mutate(town = factor(town, levels = toptowns))
+```
+
+Note I needed to re-factor the `town` variable after I reduced the number of levels.
+
+Firstly, let's see what happens if we fit the `lm()` model without encoding the `town` variable:
+
+```{r}
+BH2 <- BH2 %>% select(-medv)
+bh_mod1 <- lm(cmedv ~ ., data = BH2)
+summary(bh_mod1)
+```
+
+The categorical variables have evidently been reference-encoded: in the model output, there are 4 total coefficients belonging to the `town` variable, which is one less than the total number of classes in `town` (5). In this case, `Cambridge` class in `town` was used as the reference and the remaining 4 classes are interpreted relative to it. 
+
+Alternatively, a categorical variable can be one-hot encoded using `model.matrix()`, which outputs a sparse matrix with values of 1 and 0: 
+
+```{r}
+town_encoded <- model.matrix(~town -1, data = BH2)
+head(town_encoded)
+```
+
+The predictors are named similarly to the example of reference coding, such that the predictor name is concatenated to each class name. For each observation, the corresponding categorical level is filled with 1 while the remaining levels are filled with 0. For example, as the first 22 rows correspond to homes in `Lynn`, the `townLynn` column is populated with 1s and the others 0s. 
