@@ -147,11 +147,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
 <ul>
-<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#r-syntax-in-this-book"><i class="fa fa-check"></i><b>1.1</b> R syntax in this book</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#r-packages-commonly-used-in-this-book"><i class="fa fa-check"></i><b>1.2</b> R packages commonly used in this book</a></li>
-<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#installing-r-packages"><i class="fa fa-check"></i><b>1.3</b> Installing R packages</a></li>
-<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#code-availability"><i class="fa fa-check"></i><b>1.4</b> Code availability</a></li>
-<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#website-hosting"><i class="fa fa-check"></i><b>1.5</b> Website hosting</a></li>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#r-syntax-in-this-book"><i class="fa fa-check"></i><b>1.2</b> R syntax in this book</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#r-packages-commonly-used-in-this-book"><i class="fa fa-check"></i><b>1.3</b> R packages commonly used in this book</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#installing-r-packages"><i class="fa fa-check"></i><b>1.4</b> Installing R packages</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#code-availability"><i class="fa fa-check"></i><b>1.5</b> Code availability</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#website-hosting"><i class="fa fa-check"></i><b>1.6</b> Website hosting</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="everyday-data-wrangling.html"><a href="everyday-data-wrangling.html"><i class="fa fa-check"></i><b>2</b> Everyday data wrangling</a>
 <ul>
@@ -200,6 +201,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#roc-and-precision-recall-curves"><i class="fa fa-check"></i><b>6.6</b> ROC and precision-recall curves</a></li>
 <li class="chapter" data-level="6.7" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-comparisons"><i class="fa fa-check"></i><b>6.7</b> Model comparisons</a></li>
 </ul></li>
+<li class="chapter" data-level="7" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html"><i class="fa fa-check"></i><b>7</b> Everyday ML: Regression</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#simple-linear-regression"><i class="fa fa-check"></i><b>7.1</b> Simple linear regression</a></li>
+<li class="chapter" data-level="7.2" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#using-regression-for-prediction"><i class="fa fa-check"></i><b>7.2</b> Using regression for prediction</a></li>
+<li class="chapter" data-level="7.3" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding"><i class="fa fa-check"></i><b>7.3</b> Categorical predictors and factor encoding</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -223,12 +230,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="interlude-i-a-brief-glimpse-into-data.table" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Interlude I: A brief glimpse into <code>data.table</code><a href="interlude-i-a-brief-glimpse-into-data.html#interlude-i-a-brief-glimpse-into-data.table" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In the first chapter, we saw various practical solutions in data wrangling using <code>tidyverse</code> and base R. One topic that has not been discussed is the idea of computational efficiency and runtime - this matter has been trivial so far since the datasets have been considerably tiny. However, when working with large data, it may be in the user’s interest to try using an alternative package designed for reducing programming and computation time - <code>data.table</code>. The vignette is available <a href="https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html">here</a>.</p>
-<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb221-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb221-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb221-2" tabindex="-1"></a><span class="fu">options</span>(<span class="at">datatable.print.nrows=</span><span class="dv">10</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb223-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb223-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb223-2" tabindex="-1"></a><span class="fu">options</span>(<span class="at">datatable.print.nrows=</span><span class="dv">10</span>)</span></code></pre></div>
 <p>Similarly to how a <code>tibble</code> is an enhanced form of a <code>data.frame</code> in <code>tidyverse</code>, <code>data.table</code> uses an object class called a <code>data.table</code>. Using <code>fread()</code> to read in data - whether the argument corresponds to a local file or a URL pointing to a dataset - automatically generates a <code>data.table</code> object. Converting a regular <code>data.frame</code> to a <code>data.table</code> is done with <code>setDT()</code>.</p>
-<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb222-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb222-1" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
-<span id="cb222-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb222-2" tabindex="-1"></a><span class="fu">setDT</span>(mtcars)</span>
-<span id="cb222-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb222-3" tabindex="-1"></a><span class="fu">head</span>(mtcars, <span class="dv">10</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb224-1" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb224-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb224-2" tabindex="-1"></a><span class="fu">setDT</span>(mtcars)</span>
+<span id="cb224-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb224-3" tabindex="-1"></a><span class="fu">head</span>(mtcars, <span class="dv">10</span>)</span></code></pre></div>
 <pre><code>##      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
 ##  1: 21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
 ##  2: 21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
@@ -240,26 +247,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8: 24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
 ##  9: 22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
 ## 10: 19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4</code></pre>
-<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb224-1" tabindex="-1"></a><span class="fu">class</span>(mtcars)[<span class="dv">1</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb226-1" tabindex="-1"></a><span class="fu">class</span>(mtcars)[<span class="dv">1</span>]</span></code></pre></div>
 <pre><code>## [1] &quot;data.table&quot;</code></pre>
 <div id="data-wrangling-operations" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Data wrangling operations<a href="interlude-i-a-brief-glimpse-into-data.html#data-wrangling-operations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The vignette does a great job explaining the syntax of <code>data.table</code> in detail, but the takeaway message is that it subsets the data by <code>i</code>, performs an operation according to <code>j</code>, then groups it using <code>by =</code>. That is, <code>DT[i, j, by]</code>.</p>
-<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb226-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg))]</span></code></pre></div>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb228-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg))]</span></code></pre></div>
 <pre><code>##    mean_mileage
 ## 1:     19.74286</code></pre>
 <p>Above, <code>data.table</code> has subsetted the object based on <code>cyl == 6</code> then calculated the mean mileage. The <code>j</code> is wrapped around <code>.()</code>, which is equivalent to <code>list()</code> - this is because the columns in a table are analogous to a <code>list</code> object and we want to return a <code>data.table</code> as our output rather than an atomic vector.</p>
-<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb228-1" tabindex="-1"></a><span class="fu">class</span>(mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg))])</span></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb230-1" tabindex="-1"></a><span class="fu">class</span>(mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg))])</span></code></pre></div>
 <pre><code>## [1] &quot;data.table&quot; &quot;data.frame&quot;</code></pre>
 <p>Multiple calculations can be performed in <code>j</code>:</p>
-<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb230-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span> <span class="sc">&amp;</span> gear <span class="sc">==</span> <span class="dv">4</span>, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg), <span class="at">median_wt =</span> <span class="fu">median</span>(wt))]</span></code></pre></div>
+<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb232-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span> <span class="sc">&amp;</span> gear <span class="sc">==</span> <span class="dv">4</span>, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg), <span class="at">median_wt =</span> <span class="fu">median</span>(wt))]</span></code></pre></div>
 <pre><code>##    mean_mileage median_wt
 ## 1:        19.75    3.1575</code></pre>
 <p>Calculating the number of rows in <code>j</code> uses a special variable <code>.N</code>.</p>
-<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb232-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span> <span class="sc">&amp;</span> gear <span class="sc">==</span> <span class="dv">4</span>, .N]</span></code></pre></div>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb234-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span> <span class="sc">&amp;</span> gear <span class="sc">==</span> <span class="dv">4</span>, .N]</span></code></pre></div>
 <pre><code>## [1] 4</code></pre>
 <p>The <code>j</code> argument can be used to select columns after subsetting rows with <code>i</code>; this is analogous to <code>filter()</code> and <code>select()</code> in <code>dplyr</code>:</p>
-<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb234-1" tabindex="-1"></a>mtcars[, .(mpg, wt, gear)][<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb236-1" tabindex="-1"></a>mtcars[, .(mpg, wt, gear)][<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code></pre></div>
 <pre><code>##      mpg    wt gear
 ##  1: 21.0 2.620    4
 ##  2: 21.0 2.875    4
@@ -271,8 +278,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8: 24.4 3.190    4
 ##  9: 22.8 3.150    4
 ## 10: 19.2 3.440    4</code></pre>
-<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb236-1" tabindex="-1"></a>my_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;mpg&#39;</span>, <span class="st">&#39;wt&#39;</span>, <span class="st">&#39;gear&#39;</span>)</span>
-<span id="cb236-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb236-2" tabindex="-1"></a>mtcars[, ..my_cols][<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb238-1" tabindex="-1"></a>my_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;mpg&#39;</span>, <span class="st">&#39;wt&#39;</span>, <span class="st">&#39;gear&#39;</span>)</span>
+<span id="cb238-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb238-2" tabindex="-1"></a>mtcars[, ..my_cols][<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code></pre></div>
 <pre><code>##      mpg    wt gear
 ##  1: 21.0 2.620    4
 ##  2: 21.0 2.875    4
@@ -285,17 +292,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  9: 22.8 3.150    4
 ## 10: 19.2 3.440    4</code></pre>
 <p>Using <code>by =</code> argument is similar to <code>group_by()</code> in <code>dplyr</code>:</p>
-<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb238-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb238-1" tabindex="-1"></a>mtcars[, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg), <span class="at">median_wt =</span> <span class="fu">median</span>(wt)), by <span class="ot">=</span> cyl]</span></code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb240-1" tabindex="-1"></a>mtcars[, .(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg), <span class="at">median_wt =</span> <span class="fu">median</span>(wt)), by <span class="ot">=</span> cyl]</span></code></pre></div>
 <pre><code>##    cyl mean_mileage median_wt
 ## 1:   6     19.74286     3.215
 ## 2:   4     26.66364     2.200
 ## 3:   8     15.10000     3.755</code></pre>
-<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb240-1" tabindex="-1"></a>mtcars[, .N, by <span class="ot">=</span> cyl]</span></code></pre></div>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb242-1" tabindex="-1"></a>mtcars[, .N, by <span class="ot">=</span> cyl]</span></code></pre></div>
 <pre><code>##    cyl  N
 ## 1:   6  7
 ## 2:   4 11
 ## 3:   8 14</code></pre>
-<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb242-1" tabindex="-1"></a>mtcars[vs <span class="sc">==</span> <span class="dv">0</span>, .N, by <span class="ot">=</span> .(cyl, gear)]</span></code></pre></div>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb244-1" tabindex="-1"></a>mtcars[vs <span class="sc">==</span> <span class="dv">0</span>, .N, by <span class="ot">=</span> .(cyl, gear)]</span></code></pre></div>
 <pre><code>##    cyl gear  N
 ## 1:   6    4  2
 ## 2:   8    3 12
@@ -303,7 +310,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 4:   8    5  2
 ## 5:   6    5  1</code></pre>
 <p>Piping multiple operations together in <code>data.table</code> is straightforward:</p>
-<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb244-1" tabindex="-1"></a>mtcars[vs <span class="sc">==</span> <span class="dv">0</span>, .(mpg, cyl, gear)][,.(<span class="at">mean_mpg =</span> <span class="fu">mean</span>(mpg)), by <span class="ot">=</span> .(cyl, gear)]</span></code></pre></div>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb246-1" tabindex="-1"></a>mtcars[vs <span class="sc">==</span> <span class="dv">0</span>, .(mpg, cyl, gear)][,.(<span class="at">mean_mpg =</span> <span class="fu">mean</span>(mpg)), by <span class="ot">=</span> .(cyl, gear)]</span></code></pre></div>
 <pre><code>##    cyl gear mean_mpg
 ## 1:   6    4    21.00
 ## 2:   8    3    15.05
@@ -314,7 +321,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="sd-.sdcols-and" class="section level2 hasAnchor" number="4.2">
 <h2><span class="header-section-number">4.2</span> <code>.SD</code>, <code>.SDcols</code>, and <code>:=</code><a href="interlude-i-a-brief-glimpse-into-data.html#sd-.sdcols-and" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For slightly more difficult operations, we need to define three new concepts: firstly, the <code>.SD</code> variable points to the current <em>subset of data</em>.</p>
-<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb246-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb246-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .SD]</span></code></pre></div>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb248-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .SD]</span></code></pre></div>
 <pre><code>##     mpg cyl  disp  hp drat    wt  qsec vs am gear carb
 ## 1: 21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
 ## 2: 21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
@@ -324,7 +331,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 6: 17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
 ## 7: 19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6</code></pre>
 <p>In above context, the <code>.SD</code> doesn’t do much. but this special variable is useful when you’re doing operations over multiple columns. Using <code>.SDcols</code> with <code>.SD</code> allows user to specifically <em>point to columns across the current subset of data</em>.</p>
-<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb248-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb248-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .SD, .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;drat&#39;</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb250-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, .SD, .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;drat&#39;</span>)]</span></code></pre></div>
 <pre><code>##     disp  hp drat
 ## 1: 160.0 110 3.90
 ## 2: 160.0 110 3.90
@@ -334,21 +341,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 6: 167.6 123 3.92
 ## 7: 145.0 175 3.62</code></pre>
 <p>This means we can easily perform operations across a subset of columns:</p>
-<div class="sourceCode" id="cb250"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb250-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb250-1" tabindex="-1"></a>mtcars[, <span class="fu">lapply</span>(.SD, mean), by <span class="ot">=</span> cyl, .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;drat&#39;</span>)]</span></code></pre></div>
+<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb252-1" tabindex="-1"></a>mtcars[, <span class="fu">lapply</span>(.SD, mean), by <span class="ot">=</span> cyl, .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;drat&#39;</span>)]</span></code></pre></div>
 <pre><code>##    cyl     disp        hp     drat
 ## 1:   6 183.3143 122.28571 3.585714
 ## 2:   4 105.1364  82.63636 4.070909
 ## 3:   8 353.1000 209.21429 3.229286</code></pre>
 <p><code>.SDcols</code> is flexible because it also accepts indices:</p>
-<div class="sourceCode" id="cb252"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb252-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb252-1" tabindex="-1"></a>col_idx <span class="ot">&lt;-</span> <span class="fu">colnames</span>(mtcars) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;drat&#39;</span>)</span>
-<span id="cb252-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb252-2" tabindex="-1"></a>mtcars[, <span class="fu">lapply</span>(.SD, mean), by <span class="ot">=</span> cyl, .SDcols <span class="ot">=</span> col_idx]</span></code></pre></div>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb254-1" tabindex="-1"></a>col_idx <span class="ot">&lt;-</span> <span class="fu">colnames</span>(mtcars) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;drat&#39;</span>)</span>
+<span id="cb254-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb254-2" tabindex="-1"></a>mtcars[, <span class="fu">lapply</span>(.SD, mean), by <span class="ot">=</span> cyl, .SDcols <span class="ot">=</span> col_idx]</span></code></pre></div>
 <pre><code>##    cyl     disp        hp     drat
 ## 1:   6 183.3143 122.28571 3.585714
 ## 2:   4 105.1364  82.63636 4.070909
 ## 3:   8 353.1000 209.21429 3.229286</code></pre>
 <p>Using the <code>:=</code> operator allows user to define new columns in one of two ways: firstly, in a simple <code>LHS := RHS</code> syntax; this creates a new column but does not print the result to the console.</p>
-<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb254-1" tabindex="-1"></a>mtcars[, HpPerMpg <span class="sc">:=</span> .(hp<span class="sc">/</span>mpg)]</span>
-<span id="cb254-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb254-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb256-1" tabindex="-1"></a>mtcars[, HpPerMpg <span class="sc">:=</span> .(hp<span class="sc">/</span>mpg)]</span>
+<span id="cb256-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb256-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
 <pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
 ## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
 ## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
@@ -357,11 +364,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5: 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2 9.358289
 ## 6: 18.1   6  225 105 2.76 3.460 20.22  1  0    3    1 5.801105</code></pre>
 <p>This allows users to remove columns by setting the RHS to <code>NULL</code>:</p>
-<div class="sourceCode" id="cb256"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb256-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb256-1" tabindex="-1"></a><span class="co"># not run</span></span>
-<span id="cb256-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb256-2" tabindex="-1"></a>mtcars[, HpPerMpg <span class="sc">:=</span> <span class="cn">NULL</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb258"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb258-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb258-1" tabindex="-1"></a><span class="co"># not run</span></span>
+<span id="cb258-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb258-2" tabindex="-1"></a>mtcars[, HpPerMpg <span class="sc">:=</span> <span class="cn">NULL</span>]</span></code></pre></div>
 <p>Subsetting using <code>i</code> allows for condition-based operations, similar to <code>mutate(case_when())</code> in <code>dplyr</code>:</p>
-<div class="sourceCode" id="cb257"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb257-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb257-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, CylThreshold <span class="sc">:=</span> <span class="st">&#39;Over 6&#39;</span>][cyl <span class="sc">!=</span> <span class="dv">6</span>, CylThreshold <span class="sc">:=</span> <span class="st">&#39;Under 6&#39;</span>]</span>
-<span id="cb257-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb257-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb259-1" tabindex="-1"></a>mtcars[cyl <span class="sc">==</span> <span class="dv">6</span>, CylThreshold <span class="sc">:=</span> <span class="st">&#39;Over 6&#39;</span>][cyl <span class="sc">!=</span> <span class="dv">6</span>, CylThreshold <span class="sc">:=</span> <span class="st">&#39;Under 6&#39;</span>]</span>
+<span id="cb259-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb259-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
 <pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
 ## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
 ## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
@@ -377,8 +384,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5:      Under 6
 ## 6:       Over 6</code></pre>
 <p>Secondly, <code>:=</code> can be used in a functional form:</p>
-<div class="sourceCode" id="cb259"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb259-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb259-1" tabindex="-1"></a>mtcars[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">HpPerMpg =</span> hp<span class="sc">/</span>mpg, <span class="at">MpgXCyl =</span> mpg<span class="sc">*</span>cyl)]</span>
-<span id="cb259-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb259-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb261-1" tabindex="-1"></a>mtcars[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">HpPerMpg =</span> hp<span class="sc">/</span>mpg, <span class="at">MpgXCyl =</span> mpg<span class="sc">*</span>cyl)]</span>
+<span id="cb261-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb261-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
 <pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
 ## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
 ## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
@@ -394,8 +401,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5:      Under 6   149.6
 ## 6:       Over 6   108.6</code></pre>
 <p>Combining the <code>:=</code> with <code>by =</code>:</p>
-<div class="sourceCode" id="cb261"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb261-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb261-1" tabindex="-1"></a>mtcars[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg)), by <span class="ot">=</span> .(cyl, vs)]</span>
-<span id="cb261-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb261-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb263-1" tabindex="-1"></a>mtcars[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">mean_mileage =</span> <span class="fu">mean</span>(mpg)), by <span class="ot">=</span> .(cyl, vs)]</span>
+<span id="cb263-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb263-2" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
 <pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
 ## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
 ## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
@@ -411,9 +418,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5:      Under 6   149.6     15.10000
 ## 6:       Over 6   108.6     19.12500</code></pre>
 <p>Combining <code>.SD</code> with the <code>:=</code> operator:</p>
-<div class="sourceCode" id="cb263"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb263-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb263-1" tabindex="-1"></a>mtcars[, <span class="fu">c</span>(<span class="st">&#39;max_disp&#39;</span>, <span class="st">&#39;max_hp&#39;</span>, <span class="st">&#39;max_wt&#39;</span>) <span class="sc">:=</span> <span class="fu">lapply</span>(.SD, max), </span>
-<span id="cb263-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb263-2" tabindex="-1"></a>       by <span class="ot">=</span> cyl, .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;wt&#39;</span>)]</span>
-<span id="cb263-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb263-3" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb265-1" tabindex="-1"></a>mtcars[, <span class="fu">c</span>(<span class="st">&#39;max_disp&#39;</span>, <span class="st">&#39;max_hp&#39;</span>, <span class="st">&#39;max_wt&#39;</span>) <span class="sc">:=</span> <span class="fu">lapply</span>(.SD, max), </span>
+<span id="cb265-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb265-2" tabindex="-1"></a>       by <span class="ot">=</span> cyl, .SDcols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;disp&#39;</span>, <span class="st">&#39;hp&#39;</span>, <span class="st">&#39;wt&#39;</span>)]</span>
+<span id="cb265-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb265-3" tabindex="-1"></a><span class="fu">head</span>(mtcars)</span></code></pre></div>
 <pre><code>##     mpg cyl disp  hp drat    wt  qsec vs am gear carb HpPerMpg
 ## 1: 21.0   6  160 110 3.90 2.620 16.46  0  1    4    4 5.238095
 ## 2: 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4 5.238095
@@ -429,14 +436,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5:      Under 6   149.6     15.10000    472.0    335  5.424
 ## 6:       Over 6   108.6     19.12500    258.0    175  3.460</code></pre>
 <p>Finally, a strange behaviour is observed when we start making copies of data; for example:</p>
-<div class="sourceCode" id="cb265"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb265-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb265-1" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
-<span id="cb265-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb265-2" tabindex="-1"></a><span class="fu">setDT</span>(iris)</span></code></pre></div>
-<div class="sourceCode" id="cb266"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb266-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb266-1" tabindex="-1"></a>iris2 <span class="ot">&lt;-</span> iris</span>
-<span id="cb266-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb266-2" tabindex="-1"></a><span class="fu">identical</span>(iris, iris2)</span></code></pre></div>
+<div class="sourceCode" id="cb267"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb267-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb267-1" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
+<span id="cb267-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb267-2" tabindex="-1"></a><span class="fu">setDT</span>(iris)</span></code></pre></div>
+<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb268-1" tabindex="-1"></a>iris2 <span class="ot">&lt;-</span> iris</span>
+<span id="cb268-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb268-2" tabindex="-1"></a><span class="fu">identical</span>(iris, iris2)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>Now see what happens when we change one of the columns in <code>iris2</code> using <code>:=</code>:</p>
-<div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb268-1" tabindex="-1"></a>iris2[, Petal.Width <span class="sc">:=</span> Petal.Width<span class="sc">/</span><span class="dv">100</span>]</span>
-<span id="cb268-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb268-2" tabindex="-1"></a>iris2</span></code></pre></div>
+<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb270-1" tabindex="-1"></a>iris2[, Petal.Width <span class="sc">:=</span> Petal.Width<span class="sc">/</span><span class="dv">100</span>]</span>
+<span id="cb270-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb270-2" tabindex="-1"></a>iris2</span></code></pre></div>
 <pre><code>##      Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
 ##   1:          5.1         3.5          1.4       0.002    setosa
 ##   2:          4.9         3.0          1.4       0.002    setosa
@@ -450,7 +457,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 149:          6.2         3.4          5.4       0.023 virginica
 ## 150:          5.9         3.0          5.1       0.018 virginica</code></pre>
 <p>It turns out that changing <code>iris2</code> has also changed the original data <code>iris</code>:</p>
-<div class="sourceCode" id="cb270"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb270-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb270-1" tabindex="-1"></a><span class="fu">head</span>(iris)</span></code></pre></div>
+<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb272-1" tabindex="-1"></a><span class="fu">head</span>(iris)</span></code></pre></div>
 <pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 ## 1:          5.1         3.5          1.4       0.002  setosa
 ## 2:          4.9         3.0          1.4       0.002  setosa
@@ -458,37 +465,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 4:          4.6         3.1          1.5       0.002  setosa
 ## 5:          5.0         3.6          1.4       0.002  setosa
 ## 6:          5.4         3.9          1.7       0.004  setosa</code></pre>
-<div class="sourceCode" id="cb272"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb272-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb272-1" tabindex="-1"></a><span class="fu">identical</span>(iris, iris2)</span></code></pre></div>
+<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb274-1" tabindex="-1"></a><span class="fu">identical</span>(iris, iris2)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>However, if we use <code>&lt;-</code> to change one of the columns of <code>iris2</code>, the original <code>iris</code> data does not change:</p>
-<div class="sourceCode" id="cb274"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb274-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb274-1" tabindex="-1"></a>iris2<span class="sc">$</span>Petal.Length <span class="ot">&lt;-</span> iris2<span class="sc">$</span>Petal.Length<span class="sc">/</span><span class="dv">100</span></span>
-<span id="cb274-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb274-2" tabindex="-1"></a><span class="fu">identical</span>(iris, iris2)</span></code></pre></div>
+<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb276-1" tabindex="-1"></a>iris2<span class="sc">$</span>Petal.Length <span class="ot">&lt;-</span> iris2<span class="sc">$</span>Petal.Length<span class="sc">/</span><span class="dv">100</span></span>
+<span id="cb276-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb276-2" tabindex="-1"></a><span class="fu">identical</span>(iris, iris2)</span></code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 <p>The rationale for this behaviour is well-explained in this stackoverflow <a href="https://stackoverflow.com/questions/10225098/understanding-exactly-when-a-data-table-is-a-reference-to-vs-a-copy-of-another">post</a>, but essentially what happens is that <code>:=</code> operator <em>modifies by reference</em>. Both <code>iris2</code> and <code>iris</code> are pointing to the same location after copying initially with <code>&lt;-</code>. Thus when we modify the copy of <code>iris</code> by reference, there is no need to copy the entire dataset <code>iris</code> to alter its copy. On the other hand, changing <code>iris2</code> using <code>&lt;-</code> will copy the entire thing even if we’re only changing just one column. This behaviour is undesirable when we’re working with very large data.</p>
 <p>To avoid changing the original dataset but still use <code>:=</code> to update a copy, <code>data.table</code> uses the <code>copy()</code> function:</p>
-<div class="sourceCode" id="cb276"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb276-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb276-1" tabindex="-1"></a>iris3 <span class="ot">&lt;-</span> <span class="fu">copy</span>(iris)</span>
-<span id="cb276-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb276-2" tabindex="-1"></a>iris3[, Petal.Width <span class="sc">:=</span> Petal.Width<span class="sc">/</span><span class="dv">100</span>]</span>
-<span id="cb276-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb276-3" tabindex="-1"></a><span class="fu">identical</span>(iris, iris3) <span class="co"># only the iris3 object was changed here</span></span></code></pre></div>
+<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-1" tabindex="-1"></a>iris3 <span class="ot">&lt;-</span> <span class="fu">copy</span>(iris)</span>
+<span id="cb278-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-2" tabindex="-1"></a>iris3[, Petal.Width <span class="sc">:=</span> Petal.Width<span class="sc">/</span><span class="dv">100</span>]</span>
+<span id="cb278-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-3" tabindex="-1"></a><span class="fu">identical</span>(iris, iris3) <span class="co"># only the iris3 object was changed here</span></span></code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 </div>
 <div id="reshaping-data-using-melt-and-dcast" class="section level2 hasAnchor" number="4.3">
 <h2><span class="header-section-number">4.3</span> Reshaping data using <code>melt</code> and <code>dcast</code><a href="interlude-i-a-brief-glimpse-into-data.html#reshaping-data-using-melt-and-dcast" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In the first chapter, I briefly touched on <code>melt()</code> as an alternative to <code>tidr::pivot_longer()</code>. Base R’s equivalent <code>reshape()</code> is rather clunky to use, so I much prefer the <code>tidyr</code> or <code>data.table</code> solutions.</p>
-<div class="sourceCode" id="cb278"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb278-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-1" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
-<span id="cb278-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-2" tabindex="-1"></a>  <span class="at">Team =</span> <span class="fu">c</span>(<span class="st">&#39;Tottenham&#39;</span>, <span class="st">&#39;Arsenal&#39;</span>, <span class="st">&#39;Chelsea&#39;</span>, <span class="st">&#39;ManUnited&#39;</span>),</span>
-<span id="cb278-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-3" tabindex="-1"></a>  <span class="at">Wins =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>),</span>
-<span id="cb278-4"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-4" tabindex="-1"></a>  <span class="at">Goals =</span> <span class="fu">c</span>(<span class="dv">29</span>, <span class="dv">18</span>, <span class="dv">22</span>, <span class="dv">26</span>),</span>
-<span id="cb278-5"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-5" tabindex="-1"></a>  <span class="at">CleanSheets =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
-<span id="cb278-6"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-6" tabindex="-1"></a>)</span>
-<span id="cb278-7"><a href="interlude-i-a-brief-glimpse-into-data.html#cb278-7" tabindex="-1"></a>DT</span></code></pre></div>
+<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-1" tabindex="-1"></a>DT <span class="ot">&lt;-</span> <span class="fu">data.table</span>(</span>
+<span id="cb280-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-2" tabindex="-1"></a>  <span class="at">Team =</span> <span class="fu">c</span>(<span class="st">&#39;Tottenham&#39;</span>, <span class="st">&#39;Arsenal&#39;</span>, <span class="st">&#39;Chelsea&#39;</span>, <span class="st">&#39;ManUnited&#39;</span>),</span>
+<span id="cb280-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-3" tabindex="-1"></a>  <span class="at">Wins =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>),</span>
+<span id="cb280-4"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-4" tabindex="-1"></a>  <span class="at">Goals =</span> <span class="fu">c</span>(<span class="dv">29</span>, <span class="dv">18</span>, <span class="dv">22</span>, <span class="dv">26</span>),</span>
+<span id="cb280-5"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-5" tabindex="-1"></a>  <span class="at">CleanSheets =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb280-6"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-6" tabindex="-1"></a>)</span>
+<span id="cb280-7"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-7" tabindex="-1"></a>DT</span></code></pre></div>
 <pre><code>##         Team Wins Goals CleanSheets
 ## 1: Tottenham    7    29           3
 ## 2:   Arsenal    3    18           1
 ## 3:   Chelsea    4    22           2
 ## 4: ManUnited    6    26           3</code></pre>
-<div class="sourceCode" id="cb280"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb280-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-1" tabindex="-1"></a>DT_long <span class="ot">&lt;-</span> <span class="fu">melt</span>(DT, <span class="at">id.vars =</span> <span class="st">&#39;Team&#39;</span>, <span class="at">measure.vars =</span> <span class="fu">c</span>(<span class="st">&#39;Wins&#39;</span>, <span class="st">&#39;Goals&#39;</span>, <span class="st">&#39;CleanSheets&#39;</span>),</span>
-<span id="cb280-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-2" tabindex="-1"></a>                <span class="at">variable.name =</span> <span class="st">&#39;Stat&#39;</span>, <span class="at">value.name =</span> <span class="st">&#39;Value&#39;</span>)</span>
-<span id="cb280-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb280-3" tabindex="-1"></a>DT_long</span></code></pre></div>
+<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb282-1" tabindex="-1"></a>DT_long <span class="ot">&lt;-</span> <span class="fu">melt</span>(DT, <span class="at">id.vars =</span> <span class="st">&#39;Team&#39;</span>, <span class="at">measure.vars =</span> <span class="fu">c</span>(<span class="st">&#39;Wins&#39;</span>, <span class="st">&#39;Goals&#39;</span>, <span class="st">&#39;CleanSheets&#39;</span>),</span>
+<span id="cb282-2"><a href="interlude-i-a-brief-glimpse-into-data.html#cb282-2" tabindex="-1"></a>                <span class="at">variable.name =</span> <span class="st">&#39;Stat&#39;</span>, <span class="at">value.name =</span> <span class="st">&#39;Value&#39;</span>)</span>
+<span id="cb282-3"><a href="interlude-i-a-brief-glimpse-into-data.html#cb282-3" tabindex="-1"></a>DT_long</span></code></pre></div>
 <pre><code>##          Team        Stat Value
 ##  1: Tottenham        Wins     7
 ##  2:   Arsenal        Wins     3
@@ -502,7 +509,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 11:   Chelsea CleanSheets     2
 ## 12: ManUnited CleanSheets     3</code></pre>
 <p>The <code>data.table</code> equivalent to <code>tidyr::pivot_wider()</code> is <code>dcast()</code>; this function takes in a formula as an argument (<code>~</code>) where the LHS corresponds to the <code>id.vars</code> and the RHS corresponds to the column that originated from the <code>measure.vars</code>. Running this yields the original dataset:</p>
-<div class="sourceCode" id="cb282"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb282-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb282-1" tabindex="-1"></a><span class="fu">dcast</span>(DT_long, Team <span class="sc">~</span> Stat, <span class="at">value.var =</span> <span class="st">&#39;Value&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb284-1"><a href="interlude-i-a-brief-glimpse-into-data.html#cb284-1" tabindex="-1"></a><span class="fu">dcast</span>(DT_long, Team <span class="sc">~</span> Stat, <span class="at">value.var =</span> <span class="st">&#39;Value&#39;</span>)</span></code></pre></div>
 <pre><code>##         Team Wins Goals CleanSheets
 ## 1:   Arsenal    3    18           1
 ## 2:   Chelsea    4    22           2

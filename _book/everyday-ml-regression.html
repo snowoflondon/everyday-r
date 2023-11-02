@@ -201,7 +201,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.6" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#roc-and-precision-recall-curves"><i class="fa fa-check"></i><b>6.6</b> ROC and precision-recall curves</a></li>
 <li class="chapter" data-level="6.7" data-path="everyday-ml-classification.html"><a href="everyday-ml-classification.html#model-comparisons"><i class="fa fa-check"></i><b>6.7</b> Model comparisons</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html"><i class="fa fa-check"></i><b>7</b> Everyday ML: Regression</a></li>
+<li class="chapter" data-level="7" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html"><i class="fa fa-check"></i><b>7</b> Everyday ML: Regression</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#simple-linear-regression"><i class="fa fa-check"></i><b>7.1</b> Simple linear regression</a></li>
+<li class="chapter" data-level="7.2" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#using-regression-for-prediction"><i class="fa fa-check"></i><b>7.2</b> Using regression for prediction</a></li>
+<li class="chapter" data-level="7.3" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding"><i class="fa fa-check"></i><b>7.3</b> Categorical predictors and factor encoding</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -224,7 +229,321 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="everyday-ml-regression" class="section level1 hasAnchor" number="7">
 <h1><span class="header-section-number">Chapter 7</span> Everyday ML: Regression<a href="everyday-ml-regression.html#everyday-ml-regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In the previous chapter, the goal of our task was to predict each sample into one of <em>N</em> categorical variables. The fundamentals of such a classification task carries over to <em>regression</em> problems, where the goal is to predict a continuous variable instead. As such, a regression task involves taking data, fitting a model, evaluating the model, then predicting a new instance. The differences however, lies in exactly how we train the data - as in, how do we measure the ‘closeness’ of our model to the ground truth? - and how we evaluate the model in the end prior to deployment. The R package suite <code>tidymodels</code> handles regression tasks elegantly, however, in this chapter - to be consistent with the previous chapter - we will use <code>caret</code> again.</p>
+<p>As before, the explanation of ML concepts and the details into each algorithm is beyond the scope of this book, but more details are available on my <a href="https://brianjmpark.github.io/">blog</a> as well as documentation for popular ML packages such as Python’s <a href="https://scikit-learn.org/stable/">Scikit-Learn</a>.</p>
+<div class="sourceCode" id="cb424"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb424-1"><a href="everyday-ml-regression.html#cb424-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb424-2"><a href="everyday-ml-regression.html#cb424-2" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code></pre></div>
+<div id="simple-linear-regression" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Simple linear regression<a href="everyday-ml-regression.html#simple-linear-regression" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>For this section we will use the <code>Ozone</code> dataset from <code>mlbench</code>, which involves prediction of the daily maximum one-hour-average ozone reading using various predictors such as humidity, temperature, and wind speed.</p>
+<div class="sourceCode" id="cb425"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb425-1"><a href="everyday-ml-regression.html#cb425-1" tabindex="-1"></a><span class="fu">data</span>(Ozone, <span class="at">package =</span> <span class="st">&quot;mlbench&quot;</span>)</span>
+<span id="cb425-2"><a href="everyday-ml-regression.html#cb425-2" tabindex="-1"></a><span class="fu">colnames</span>(Ozone) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Month&quot;</span>, <span class="st">&quot;DayOfMonth&quot;</span>, <span class="st">&quot;DayOfWeek&quot;</span>,</span>
+<span id="cb425-3"><a href="everyday-ml-regression.html#cb425-3" tabindex="-1"></a>                     <span class="st">&quot;OzoneReading&quot;</span>, <span class="st">&quot;PressureHeight&quot;</span>,</span>
+<span id="cb425-4"><a href="everyday-ml-regression.html#cb425-4" tabindex="-1"></a>                     <span class="st">&quot;WindSpeed&quot;</span>, <span class="st">&quot;Humidity&quot;</span>,</span>
+<span id="cb425-5"><a href="everyday-ml-regression.html#cb425-5" tabindex="-1"></a>                     <span class="st">&quot;TemperatureSandburg&quot;</span>, <span class="st">&quot;TemperatureElMonte&quot;</span>,</span>
+<span id="cb425-6"><a href="everyday-ml-regression.html#cb425-6" tabindex="-1"></a>                     <span class="st">&quot;InversionBaseHeight&quot;</span>, <span class="st">&quot;PressureGradient&quot;</span>,</span>
+<span id="cb425-7"><a href="everyday-ml-regression.html#cb425-7" tabindex="-1"></a>                     <span class="st">&quot;InversionTemperature&quot;</span>, <span class="st">&quot;Visibility&quot;</span>)</span>
+<span id="cb425-8"><a href="everyday-ml-regression.html#cb425-8" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Ozone)</span>
+<span id="cb425-9"><a href="everyday-ml-regression.html#cb425-9" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Month, DayOfMonth, DayOfWeek))</span>
+<span id="cb425-10"><a href="everyday-ml-regression.html#cb425-10" tabindex="-1"></a><span class="fu">str</span>(Ozone)</span></code></pre></div>
+<pre><code>## tibble [366 × 10] (S3: tbl_df/tbl/data.frame)
+##  $ OzoneReading        : num [1:366] 3 3 3 5 5 6 4 4 6 7 ...
+##  $ PressureHeight      : num [1:366] 5480 5660 5710 5700 5760 5720 5790 5790 5700 5700 ...
+##  $ WindSpeed           : num [1:366] 8 6 4 3 3 4 6 3 3 3 ...
+##  $ Humidity            : num [1:366] 20 NA 28 37 51 69 19 25 73 59 ...
+##  $ TemperatureSandburg : num [1:366] NA 38 40 45 54 35 45 55 41 44 ...
+##  $ TemperatureElMonte  : num [1:366] NA NA NA NA 45.3 ...
+##  $ InversionBaseHeight : num [1:366] 5000 NA 2693 590 1450 ...
+##  $ PressureGradient    : num [1:366] -15 -14 -25 -24 25 15 -33 -28 23 -2 ...
+##  $ InversionTemperature: num [1:366] 30.6 NA 47.7 55 57 ...
+##  $ Visibility          : num [1:366] 200 300 250 100 60 60 100 250 120 120 ...</code></pre>
+<p>Identifying the number of missing values first is important:</p>
+<div class="sourceCode" id="cb427"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb427-1"><a href="everyday-ml-regression.html#cb427-1" tabindex="-1"></a><span class="fu">vapply</span>(Ozone, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="at">FUN.VALUE =</span> <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
+<pre><code>##         OzoneReading       PressureHeight            WindSpeed 
+##                    5                   12                    0 
+##             Humidity  TemperatureSandburg   TemperatureElMonte 
+##                   15                    2                  139 
+##  InversionBaseHeight     PressureGradient InversionTemperature 
+##                   15                    1                   14 
+##           Visibility 
+##                    0</code></pre>
+<p>For the purpose of this exercise, instead of imputation I will just discard the missing values.</p>
+<div class="sourceCode" id="cb429"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb429-1"><a href="everyday-ml-regression.html#cb429-1" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(Ozone)</span>
+<span id="cb429-2"><a href="everyday-ml-regression.html#cb429-2" tabindex="-1"></a><span class="fu">dim</span>(Ozone)</span></code></pre></div>
+<pre><code>## [1] 203  10</code></pre>
+<p>For a quick look at the scales and the distribution of the variables, boxplots will do:</p>
+<div class="sourceCode" id="cb431"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb431-1"><a href="everyday-ml-regression.html#cb431-1" tabindex="-1"></a>Ozone <span class="sc">%&gt;%</span> </span>
+<span id="cb431-2"><a href="everyday-ml-regression.html#cb431-2" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), </span>
+<span id="cb431-3"><a href="everyday-ml-regression.html#cb431-3" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&#39;Var&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Val&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb431-4"><a href="everyday-ml-regression.html#cb431-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Var, <span class="at">y =</span> Val)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb431-5"><a href="everyday-ml-regression.html#cb431-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Var, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-244-1.png" width="672" /></p>
+<p>As seen in the EDA chapter, a correlation plot can help visualize multicollinearity in the data:</p>
+<div class="sourceCode" id="cb432"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb432-1"><a href="everyday-ml-regression.html#cb432-1" tabindex="-1"></a><span class="fu">corrplot</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), <span class="at">is.corr =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-245-1.png" width="672" /></p>
+<p>Using <code>caret</code>’s <code>findCorrelation()</code> function, highly correlated predictors can be removed; the output corresponds to the indices of the highly correlated predictors to be removed.</p>
+<div class="sourceCode" id="cb433"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb433-1"><a href="everyday-ml-regression.html#cb433-1" tabindex="-1"></a>highCor <span class="ot">&lt;-</span> <span class="fu">findCorrelation</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), </span>
+<span id="cb433-2"><a href="everyday-ml-regression.html#cb433-2" tabindex="-1"></a>                <span class="at">cutoff =</span> <span class="fl">0.9</span>)</span>
+<span id="cb433-3"><a href="everyday-ml-regression.html#cb433-3" tabindex="-1"></a>highCorCols <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading) <span class="sc">%&gt;%</span></span>
+<span id="cb433-4"><a href="everyday-ml-regression.html#cb433-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">any_of</span>(highCor)) <span class="sc">%&gt;%</span> <span class="fu">colnames</span>()</span>
+<span id="cb433-5"><a href="everyday-ml-regression.html#cb433-5" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(highCorCols))</span>
+<span id="cb433-6"><a href="everyday-ml-regression.html#cb433-6" tabindex="-1"></a>highCorCols</span></code></pre></div>
+<pre><code>## [1] &quot;InversionTemperature&quot; &quot;TemperatureElMonte&quot;</code></pre>
+<p>A simple linear regression model using ordinary least squares is then built as such:</p>
+<div class="sourceCode" id="cb435"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb435-1"><a href="everyday-ml-regression.html#cb435-1" tabindex="-1"></a>lm_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(OzoneReading <span class="sc">~</span> ., <span class="at">data =</span> Ozone)</span>
+<span id="cb435-2"><a href="everyday-ml-regression.html#cb435-2" tabindex="-1"></a><span class="fu">summary</span>(lm_mod1)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = OzoneReading ~ ., data = Ozone)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -12.5051  -3.3213  -0.2129   3.0129  13.8078 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         -1.577e+01  3.482e+01  -0.453 0.651148    
+## PressureHeight       6.846e-04  6.399e-03   0.107 0.914911    
+## WindSpeed            1.217e-01  1.806e-01   0.674 0.501307    
+## Humidity             9.021e-02  2.466e-02   3.658 0.000327 ***
+## TemperatureSandburg  3.325e-01  5.093e-02   6.529 5.59e-10 ***
+## InversionBaseHeight -7.348e-04  2.258e-04  -3.254 0.001341 ** 
+## PressureGradient    -8.341e-03  1.370e-02  -0.609 0.543293    
+## Visibility          -7.132e-03  5.045e-03  -1.414 0.159029    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.686 on 195 degrees of freedom
+## Multiple R-squared:  0.684,  Adjusted R-squared:  0.6726 
+## F-statistic: 60.29 on 7 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>The <code>~</code> sign denotes that the <code>OzoneReading</code> variable (LHS) is predicted by <code>.</code> (RHS), which equates to the remaining variables in the <code>data</code> provided. The intercept of the model is fitted automatically.</p>
+<p>The ANOVA table of the fitted model, which contains information such as the sum of squares for each predictor, is retrieved with <code>anova()</code>:</p>
+<div class="sourceCode" id="cb437"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb437-1"><a href="everyday-ml-regression.html#cb437-1" tabindex="-1"></a><span class="fu">anova</span>(lm_mod1)</span></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: OzoneReading
+##                      Df Sum Sq Mean Sq  F value    Pr(&gt;F)    
+## PressureHeight        1 4787.6  4787.6 218.0230 &lt; 2.2e-16 ***
+## WindSpeed             1  704.5   704.5  32.0844 5.235e-08 ***
+## Humidity              1 2241.2  2241.2 102.0647 &lt; 2.2e-16 ***
+## TemperatureSandburg   1 1163.4  1163.4  52.9825 8.055e-12 ***
+## InversionBaseHeight   1  315.0   315.0  14.3432 0.0002028 ***
+## PressureGradient      1   11.9    11.9   0.5439 0.4616879    
+## Visibility            1   43.9    43.9   1.9987 0.1590293    
+## Residuals           195 4282.0    22.0                       
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>For quick interpretation, let’s print out the content of the <code>lm</code> model fitted:</p>
+<div class="sourceCode" id="cb439"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb439-1"><a href="everyday-ml-regression.html#cb439-1" tabindex="-1"></a>lm_mod1</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = OzoneReading ~ ., data = Ozone)
+## 
+## Coefficients:
+##         (Intercept)       PressureHeight            WindSpeed  
+##          -1.577e+01            6.846e-04            1.217e-01  
+##            Humidity  TemperatureSandburg  InversionBaseHeight  
+##           9.021e-02            3.325e-01           -7.348e-04  
+##    PressureGradient           Visibility  
+##          -8.341e-03           -7.132e-03</code></pre>
+<p>Above result suggests that for each unit change in <code>PressureHeight</code>, the <code>OzoneReading</code> variable is increased by <code>6.846e-04</code>. Of course, since this is a multiple regression task (i.e., there are multiple predictors), the interpretation of the coefficient value is not as straightforward.</p>
+<p>In ordinary least squares, the model attempts to minimize the residuals, which is the difference between the original data and the predicted data. Both of these can be retrieved as such:</p>
+<div class="sourceCode" id="cb441"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb441-1"><a href="everyday-ml-regression.html#cb441-1" tabindex="-1"></a>lm_mod1_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_mod1)</span>
+<span id="cb441-2"><a href="everyday-ml-regression.html#cb441-2" tabindex="-1"></a>lm_mod1_resid <span class="ot">&lt;-</span> <span class="fu">resid</span>(lm_mod1)</span></code></pre></div>
+<p>This means that we can plot these for a nice visualization between the residuals and the fitted values:</p>
+<div class="sourceCode" id="cb442"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb442-1"><a href="everyday-ml-regression.html#cb442-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">predict</span>(lm_mod1), <span class="fu">resid</span>(lm_mod1), </span>
+<span id="cb442-2"><a href="everyday-ml-regression.html#cb442-2" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&#39;Residuals vs. Fitted&#39;</span>, </span>
+<span id="cb442-3"><a href="everyday-ml-regression.html#cb442-3" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&#39;Fitted values&#39;</span>, </span>
+<span id="cb442-4"><a href="everyday-ml-regression.html#cb442-4" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">&#39;Residuals&#39;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-251-1.png" width="672" /></p>
+<p>A few observations can be made here; firstly, we see that the distribution of the points on either side of the residuals = 0 line seems random and evenly distributed. This suggests that modeling the current data with assumptions of linearity is valid. Secondly, there are no obvious outliers here, which means it is unlikely that our model is influenced by extreme values.</p>
+<p>The root-mean-squared-error (RMSE) is the standard measure to use when evaluating regression models; RMSE is the squared root of the mean squared error in the predicted values.</p>
+<div class="sourceCode" id="cb443"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb443-1"><a href="everyday-ml-regression.html#cb443-1" tabindex="-1"></a><span class="fu">RMSE</span>(lm_mod1_pred, Ozone<span class="sc">$</span>OzoneReading)</span></code></pre></div>
+<pre><code>## [1] 4.592772</code></pre>
+</div>
+<div id="using-regression-for-prediction" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Using regression for prediction<a href="everyday-ml-regression.html#using-regression-for-prediction" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>With the advent of big data and ML, you are more and more likely to run into scenarios where regression is used to predict new data. In the previous example with the <code>Ozone</code> dataset, we fit the entire dataset using <code>lm()</code> and evaluated it using a within-sample method such as the RMSE. On the other hand, it’s possible to set aside a portion of the data, fit a model, use cross-validation metrics to tune the model, and evaluate the model one last time using never-before-seen data. Of course, with these concepts, we are firmly in the realm of ML - thus concepts from the previous chapter such as train/test split, model training, and model selection are carried over.</p>
+<div class="sourceCode" id="cb445"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb445-1"><a href="everyday-ml-regression.html#cb445-1" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(<span class="at">y =</span> Ozone<span class="sc">$</span>OzoneReading, <span class="at">p =</span> .<span class="dv">8</span>,</span>
+<span id="cb445-2"><a href="everyday-ml-regression.html#cb445-2" tabindex="-1"></a>                           <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb445-3"><a href="everyday-ml-regression.html#cb445-3" tabindex="-1"></a>Ozone_train <span class="ot">&lt;-</span> Ozone[idx,]</span>
+<span id="cb445-4"><a href="everyday-ml-regression.html#cb445-4" tabindex="-1"></a>Ozone_test <span class="ot">&lt;-</span> Ozone[<span class="sc">-</span>idx,]</span>
+<span id="cb445-5"><a href="everyday-ml-regression.html#cb445-5" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Training data batch dimension: &#39;</span>, <span class="fu">nrow</span>(Ozone_train))</span></code></pre></div>
+<pre><code>## [1] &quot;Training data batch dimension: 164&quot;</code></pre>
+<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb447-1"><a href="everyday-ml-regression.html#cb447-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Test data batch dimension: &#39;</span>, <span class="fu">nrow</span>(Ozone_test))</span></code></pre></div>
+<pre><code>## [1] &quot;Test data batch dimension: 39&quot;</code></pre>
+<p>As seen in the previous chapter, we split the original data using <code>createDataPartition()</code> to get the training and the test data. Then using <code>trainControl()</code> and <code>train()</code>, I can use a wrapper for a gradient boosted model for the regression task.</p>
+<div class="sourceCode" id="cb449"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb449-1"><a href="everyday-ml-regression.html#cb449-1" tabindex="-1"></a>tr <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
+<span id="cb449-2"><a href="everyday-ml-regression.html#cb449-2" tabindex="-1"></a>                   <span class="at">number =</span> <span class="dv">5</span>, <span class="at">search =</span> <span class="st">&#39;grid&#39;</span>)</span>
+<span id="cb449-3"><a href="everyday-ml-regression.html#cb449-3" tabindex="-1"></a></span>
+<span id="cb449-4"><a href="everyday-ml-regression.html#cb449-4" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(OzoneReading <span class="sc">~</span> ., <span class="at">data =</span> Ozone_train,</span>
+<span id="cb449-5"><a href="everyday-ml-regression.html#cb449-5" tabindex="-1"></a>               <span class="at">method =</span> <span class="st">&#39;gbm&#39;</span>, <span class="at">trControl =</span> tr,</span>
+<span id="cb449-6"><a href="everyday-ml-regression.html#cb449-6" tabindex="-1"></a>               <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb449-7"><a href="everyday-ml-regression.html#cb449-7" tabindex="-1"></a></span>
+<span id="cb449-8"><a href="everyday-ml-regression.html#cb449-8" tabindex="-1"></a>model</span></code></pre></div>
+<pre><code>## Stochastic Gradient Boosting 
+## 
+## 164 samples
+##   7 predictor
+## 
+## No pre-processing
+## Resampling: Cross-Validated (5 fold) 
+## Summary of sample sizes: 132, 132, 130, 131, 131 
+## Resampling results across tuning parameters:
+## 
+##   interaction.depth  n.trees  RMSE      Rsquared   MAE     
+##   1                   50      4.630898  0.6759574  3.655685
+##   1                  100      4.641358  0.6784356  3.603800
+##   1                  150      4.687776  0.6742934  3.632741
+##   2                   50      4.714275  0.6712452  3.631883
+##   2                  100      4.753206  0.6625908  3.584495
+##   2                  150      4.786053  0.6596358  3.598532
+##   3                   50      4.694933  0.6725721  3.549717
+##   3                  100      4.803256  0.6622239  3.601409
+##   3                  150      4.934647  0.6431102  3.693087
+## 
+## Tuning parameter &#39;shrinkage&#39; was held constant at a value of
+##  0.1
+## Tuning parameter &#39;n.minobsinnode&#39; was held constant at
+##  a value of 10
+## RMSE was used to select the optimal model using the
+##  smallest value.
+## The final values used for the model were n.trees =
+##  50, interaction.depth = 1, shrinkage = 0.1 and n.minobsinnode
+##  = 10.</code></pre>
+<p>Evidently, <code>caret</code> uses grid search to find the combination of hyperparameters - in this case, <code>n.trees</code>, <code>interaction.depth</code>, <code>shrinkage</code>, and <code>n.minobsinnode</code> - which minimizes the RMSE. We could have defined our own hyperparameter space using <code>expand.grid()</code> and using that as input for <code>tuneGrid =</code> within <code>train()</code>.</p>
+<p>Briefly, the <code>shrinkage</code> refers to the learning rate, which describes the size of the incremental steps in gradient descent calculations. The <code>interaction.depth</code> describes the number of splits per tree and the <code>n.trees</code> describes the total number of trees, which means that for higher values of <code>n.trees</code>, the model complexity increases as well as the risk of overfitting the model.</p>
+<p>Calling <code>plot()</code> method to the model object prints the boosting iterations versus the value we’re trying to optimize (i.e., RMSE):</p>
+<div class="sourceCode" id="cb451"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb451-1"><a href="everyday-ml-regression.html#cb451-1" tabindex="-1"></a><span class="fu">plot</span>(model)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-255-1.png" width="672" /></p>
+<p>Evidently, the interaction depth (i.e., tree depth) of 1 reaches the minimum RMSE at 100 boosting iterations. The best set of hyperparameters can be printed as such:</p>
+<div class="sourceCode" id="cb452"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb452-1"><a href="everyday-ml-regression.html#cb452-1" tabindex="-1"></a>model<span class="sc">$</span>bestTune</span></code></pre></div>
+<pre><code>##   n.trees interaction.depth shrinkage n.minobsinnode
+## 1      50                 1       0.1             10</code></pre>
+<p>The holdout data is then used to generate predictions and calculate the RMSE and the R squared:</p>
+<div class="sourceCode" id="cb454"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb454-1"><a href="everyday-ml-regression.html#cb454-1" tabindex="-1"></a>preds <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="at">object =</span> model, <span class="at">newdata =</span> Ozone_test)</span>
+<span id="cb454-2"><a href="everyday-ml-regression.html#cb454-2" tabindex="-1"></a>rmse <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(<span class="at">pred =</span> preds, <span class="at">obs =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span>
+<span id="cb454-3"><a href="everyday-ml-regression.html#cb454-3" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">R2</span>(<span class="at">pred =</span> preds, <span class="at">obs =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span>
+<span id="cb454-4"><a href="everyday-ml-regression.html#cb454-4" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Model RMSE: &#39;</span>, rmse)</span></code></pre></div>
+<pre><code>## [1] &quot;Model RMSE: 4.45076380391138&quot;</code></pre>
+<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="everyday-ml-regression.html#cb456-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Model R2: &#39;</span>, r2)</span></code></pre></div>
+<pre><code>## [1] &quot;Model R2: 0.750807931113192&quot;</code></pre>
+<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="everyday-ml-regression.html#cb458-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> preds, <span class="at">y =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-257-1.png" width="672" /></p>
+</div>
+<div id="categorical-predictors-and-factor-encoding" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Categorical predictors and factor encoding<a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Regression models typically require predictors to be numerical. Therefore, categorical predictors (i.e., factor variables which take on discrete values) need to be numerically encoded. There are two mainly used methods of numerical encoding of categorical predictors:</p>
+<ol style="list-style-type: decimal">
+<li><p>Reference coding: one class of categorical predictor is used as a reference and the rest of the classes are compared to the reference.</p></li>
+<li><p>One-hot encoding: the number of unique classes is retained. The categorical variables are encoded as numeric arrays. This method is also called ‘dummy encoding.’</p></li>
+</ol>
+<p>Let’s load the <code>BostonHousing2</code> data from <code>mlbench</code> and look at the columns:</p>
+<div class="sourceCode" id="cb459"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb459-1"><a href="everyday-ml-regression.html#cb459-1" tabindex="-1"></a><span class="fu">data</span>(BostonHousing2, <span class="at">package =</span> <span class="st">&#39;mlbench&#39;</span>)</span>
+<span id="cb459-2"><a href="everyday-ml-regression.html#cb459-2" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(BostonHousing2)</span>
+<span id="cb459-3"><a href="everyday-ml-regression.html#cb459-3" tabindex="-1"></a><span class="fu">str</span>(BH2)</span></code></pre></div>
+<pre><code>## tibble [506 × 19] (S3: tbl_df/tbl/data.frame)
+##  $ town   : Factor w/ 92 levels &quot;Arlington&quot;,&quot;Ashland&quot;,..: 54 77 77 46 46 46 69 69 69 69 ...
+##  $ tract  : int [1:506] 2011 2021 2022 2031 2032 2033 2041 2042 2043 2044 ...
+##  $ lon    : num [1:506] -71 -71 -70.9 -70.9 -70.9 ...
+##  $ lat    : num [1:506] 42.3 42.3 42.3 42.3 42.3 ...
+##  $ medv   : num [1:506] 24 21.6 34.7 33.4 36.2 28.7 22.9 27.1 16.5 18.9 ...
+##  $ cmedv  : num [1:506] 24 21.6 34.7 33.4 36.2 28.7 22.9 22.1 16.5 18.9 ...
+##  $ crim   : num [1:506] 0.00632 0.02731 0.02729 0.03237 0.06905 ...
+##  $ zn     : num [1:506] 18 0 0 0 0 0 12.5 12.5 12.5 12.5 ...
+##  $ indus  : num [1:506] 2.31 7.07 7.07 2.18 2.18 2.18 7.87 7.87 7.87 7.87 ...
+##  $ chas   : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ nox    : num [1:506] 0.538 0.469 0.469 0.458 0.458 0.458 0.524 0.524 0.524 0.524 ...
+##  $ rm     : num [1:506] 6.58 6.42 7.18 7 7.15 ...
+##  $ age    : num [1:506] 65.2 78.9 61.1 45.8 54.2 58.7 66.6 96.1 100 85.9 ...
+##  $ dis    : num [1:506] 4.09 4.97 4.97 6.06 6.06 ...
+##  $ rad    : int [1:506] 1 2 2 3 3 3 5 5 5 5 ...
+##  $ tax    : int [1:506] 296 242 242 222 222 222 311 311 311 311 ...
+##  $ ptratio: num [1:506] 15.3 17.8 17.8 18.7 18.7 18.7 15.2 15.2 15.2 15.2 ...
+##  $ b      : num [1:506] 397 397 393 395 397 ...
+##  $ lstat  : num [1:506] 4.98 9.14 4.03 2.94 5.33 ...</code></pre>
+<p>The target variable is <code>cmedv</code> - the corrected median value of homes. There are additionally two categorical predictors here: <code>town</code> and <code>chas</code>. The <code>chas</code> variable has already been numerically encoded so we just need to encode <code>town</code>.</p>
+<div class="sourceCode" id="cb461"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb461-1"><a href="everyday-ml-regression.html#cb461-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;# of levels: &#39;</span>, <span class="fu">length</span>(<span class="fu">levels</span>(BH2<span class="sc">$</span>town)))</span></code></pre></div>
+<pre><code>## [1] &quot;# of levels: 92&quot;</code></pre>
+<p>There are nearly 100 levels in <code>town</code>, so for the sake of this exercise I will truncate the dataset so that it only contains the top 5 largest towns by size:</p>
+<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb463-1"><a href="everyday-ml-regression.html#cb463-1" tabindex="-1"></a>BH2 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(town) <span class="sc">%&gt;%</span> <span class="fu">tally</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb463-2"><a href="everyday-ml-regression.html#cb463-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 2
+##   town                  n
+##   &lt;fct&gt;             &lt;int&gt;
+## 1 Cambridge            30
+## 2 Boston Savin Hill    23
+## 3 Lynn                 22
+## 4 Boston Roxbury       19
+## 5 Newton               18</code></pre>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="everyday-ml-regression.html#cb465-1" tabindex="-1"></a>toptowns <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(town) <span class="sc">%&gt;%</span> <span class="fu">tally</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb465-2"><a href="everyday-ml-regression.html#cb465-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(town)</span>
+<span id="cb465-3"><a href="everyday-ml-regression.html#cb465-3" tabindex="-1"></a></span>
+<span id="cb465-4"><a href="everyday-ml-regression.html#cb465-4" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(town <span class="sc">%in%</span> toptowns) <span class="sc">%&gt;%</span></span>
+<span id="cb465-5"><a href="everyday-ml-regression.html#cb465-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">factor</span>(town, <span class="at">levels =</span> toptowns))</span></code></pre></div>
+<p>Note I needed to re-factor the <code>town</code> variable after I reduced the number of levels.</p>
+<p>Firstly, let’s see what happens if we fit the <code>lm()</code> model without encoding the <code>town</code> variable:</p>
+<div class="sourceCode" id="cb466"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb466-1"><a href="everyday-ml-regression.html#cb466-1" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>medv)</span>
+<span id="cb466-2"><a href="everyday-ml-regression.html#cb466-2" tabindex="-1"></a>bh_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cmedv <span class="sc">~</span> ., <span class="at">data =</span> BH2)</span>
+<span id="cb466-3"><a href="everyday-ml-regression.html#cb466-3" tabindex="-1"></a><span class="fu">summary</span>(bh_mod1)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = cmedv ~ ., data = BH2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.3640 -1.9905 -0.1141  1.6872  9.5167 
+## 
+## Coefficients: (5 not defined because of singularities)
+##                         Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)           -2.248e+02  3.390e+03  -0.066 0.947265    
+## townBoston Savin Hill -3.406e+02  1.830e+02  -1.862 0.065724 .  
+## townLynn              -1.862e+02  1.028e+02  -1.811 0.073210 .  
+## townBoston Roxbury    -3.545e+02  1.898e+02  -1.868 0.064835 .  
+## townNewton             1.788e+01  1.218e+01   1.468 0.145481    
+## tract                 -1.258e-01  6.939e-02  -1.813 0.072989 .  
+## lon                   -3.051e+01  4.140e+01  -0.737 0.462944    
+## lat                   -3.524e+01  5.507e+01  -0.640 0.523801    
+## crim                   7.705e-02  4.645e-02   1.659 0.100452    
+## zn                            NA         NA      NA       NA    
+## indus                         NA         NA      NA       NA    
+## chas1                 -1.288e+00  1.114e+00  -1.157 0.250237    
+## nox                   -2.920e+01  6.722e+00  -4.343 3.48e-05 ***
+## rm                     7.822e+00  6.910e-01  11.320  &lt; 2e-16 ***
+## age                   -9.919e-02  2.899e-02  -3.422 0.000915 ***
+## dis                   -3.442e+00  1.573e+00  -2.188 0.031091 *  
+## rad                           NA         NA      NA       NA    
+## tax                           NA         NA      NA       NA    
+## ptratio                       NA         NA      NA       NA    
+## b                      1.840e-02  3.564e-03   5.163 1.31e-06 ***
+## lstat                 -2.028e-01  8.412e-02  -2.411 0.017803 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 3.286 on 96 degrees of freedom
+## Multiple R-squared:  0.9167, Adjusted R-squared:  0.9037 
+## F-statistic: 70.48 on 15 and 96 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>The categorical variables have evidently been reference-encoded: in the model output, there are 4 total coefficients belonging to the <code>town</code> variable, which is one less than the total number of classes in <code>town</code> (5). In this case, <code>Cambridge</code> class in <code>town</code> was used as the reference and the remaining 4 classes are interpreted relative to it.</p>
+<p>Alternatively, a categorical variable can be one-hot encoded using <code>model.matrix()</code>, which outputs a sparse matrix with values of 1 and 0:</p>
+<div class="sourceCode" id="cb468"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb468-1"><a href="everyday-ml-regression.html#cb468-1" tabindex="-1"></a>town_encoded <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>town <span class="sc">-</span><span class="dv">1</span>, <span class="at">data =</span> BH2)</span>
+<span id="cb468-2"><a href="everyday-ml-regression.html#cb468-2" tabindex="-1"></a><span class="fu">head</span>(town_encoded)</span></code></pre></div>
+<pre><code>##   townCambridge townBoston Savin Hill townLynn townBoston Roxbury
+## 1             0                     0        1                  0
+## 2             0                     0        1                  0
+## 3             0                     0        1                  0
+## 4             0                     0        1                  0
+## 5             0                     0        1                  0
+## 6             0                     0        1                  0
+##   townNewton
+## 1          0
+## 2          0
+## 3          0
+## 4          0
+## 5          0
+## 6          0</code></pre>
+<p>The predictors are named similarly to the example of reference coding, such that the predictor name is concatenated to each class name. For each observation, the corresponding categorical level is filled with 1 while the remaining levels are filled with 0. For example, as the first 22 rows correspond to homes in <code>Lynn</code>, the <code>townLynn</code> column is populated with 1s and the others 0s.</p>
 
+</div>
 </div>
             </section>
 
