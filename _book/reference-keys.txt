@@ -45,3 +45,6 @@ hyperparameter-tuning
 roc-and-precision-recall-curves
 model-comparisons
 everyday-ml-regression
+simple-linear-regression
+using-regression-for-prediction
+categorical-predictors-and-factor-encoding
