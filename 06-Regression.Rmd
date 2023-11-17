@@ -227,3 +227,34 @@ head(town_encoded)
 ```
 
 The predictors are named similarly to the example of reference coding, such that the predictor name is concatenated to each class name. For each observation, the corresponding categorical level is filled with 1 while the remaining levels are filled with 0. For example, as the first 22 rows correspond to homes in `Lynn`, the `townLynn` column is populated with 1s and the others 0s. Using these encoded variables in lieu of the original factors is the standard approach in certain machine learning models, such as decision trees and ensemble learners. 
+
+
+## Elastic net regression
+
+One of the biggest challenges in predictive modeling is the balance between underfitting and overfitting to the training data. A widely used regularization strategy (i.e., constrain the model to reduce model complexity) is to add a penalty (or a cost) term to the objective function. In the case of simple linear regression, this would be like adding an extra term to the MSE function. 
+
+The L1 and L2 regularization techniques refer to adding an extra term to the objective function - namely, the L1 and L2 vector norms. The L1 vector norm describes the sum of the absolute values of the vector while the L2 norm describes the squared root of the squared values of the vector. The details are beyond the scope of this book, but for further reading check out my [blog post on this subject](https://brianjmpark.github.io/post/2022-05-30-l1-l2-norms-and-regularized-linear-models-index/). 
+
+As such, in linear models this turns out to be:
+
+$J(\theta) = MSE(\theta) + \alpha\frac{1}{2}\sum_{i = 1}^{n} |\theta_{i}|$
+
+$J(\theta) = MSE(\theta) + \alpha\frac{1}{2}\sum_{i = 1}^{n} \theta_{i}^{2}$
+
+In regression, incorporating L1 and L2 regularization is as known as Lasso and Ridge regression, respectively. Meanwhile, Elastic Net regression uses a mixture of both techniques, with the hyperparameter $\alpha$ describing the ratio of the two. In R, this can be implemented with the back-end *glmnet* which can be run on its own or as a wrapper in *caret*.
+
+```{r}
+data(mtcars)
+eln_mod <- train(mpg ~ ., data = mtcars,
+                 method = 'glmnet',
+                 preProcess = c('center', 'scale'),
+                 trControl = tr)
+eln_mod
+```
+
+We're using the `trControl` defined previously, with a grid search for `alpha` and `lambda` (the shrinkage parameter). As before, calling `bestTune` prints out the set of hyperparmeters tested with the lowest loss.
+
+```{r}
+eln_mod$bestTune
+```
+
