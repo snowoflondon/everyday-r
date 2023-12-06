@@ -103,11 +103,18 @@ Sometimes it's useful to transform numeric columns; this is particularly helpful
 mtcars %>% mutate(mpg = mpg*2)
 ```
 
-Using `across()` allows for conditional transformation and keep the old columns, while renaming the new columns:
+Using `across()` allows you to specifically select which columns you'd like to apply a given function on. The first part of the `across()` argument should therefore specify the columns of interest. Here, `where()` is particularly useful as it returns indices (kind of like `grep()`) after evaluating a logical expression, such as `is.numeric()`. The second part of `across()` takes the function you'd like to apply, while the optional `.names` argument allows you to create new columns rather than overwrite the old ones.
 
 ```{r}
 mtcars %>% 
   mutate(across(where(is.numeric), function(x) x*2, .names = "double_{col}"))
+```
+
+```{r}
+mtcars %>%
+  mutate(across(where(is.character),
+                function(x) gsub('[a-z]$', '', x))) %>%
+  select(CAR)
 ```
 
 Conditional `mutate()` can also be done using `mutate_if()`, though the `_if()` functions, along with variants `_at()` and `_all()` have been effectively replaced by `across()`, as seen above. 
