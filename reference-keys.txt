@@ -1,5 +1,5 @@
-tab:unnamed-chunk-153
-tab:unnamed-chunk-168
+tab:unnamed-chunk-154
+tab:unnamed-chunk-169
 introduction
 preface
 r-syntax-in-this-book
@@ -44,3 +44,8 @@ feature-selection-for-correlated-and-low-variance-predictors
 hyperparameter-tuning
 roc-and-precision-recall-curves
 model-comparisons
+everyday-ml-regression
+simple-linear-regression
+using-regression-for-prediction
+categorical-predictors-and-factor-encoding
+elastic-net-regression
