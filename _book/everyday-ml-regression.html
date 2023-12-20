@@ -206,6 +206,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.1" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#simple-linear-regression"><i class="fa fa-check"></i><b>7.1</b> Simple linear regression</a></li>
 <li class="chapter" data-level="7.2" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#using-regression-for-prediction"><i class="fa fa-check"></i><b>7.2</b> Using regression for prediction</a></li>
 <li class="chapter" data-level="7.3" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding"><i class="fa fa-check"></i><b>7.3</b> Categorical predictors and factor encoding</a></li>
+<li class="chapter" data-level="7.4" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#elastic-net-regression"><i class="fa fa-check"></i><b>7.4</b> Elastic net regression</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -277,10 +278,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb431-3"><a href="everyday-ml-regression.html#cb431-3" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&#39;Var&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Val&#39;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb431-4"><a href="everyday-ml-regression.html#cb431-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Var, <span class="at">y =</span> Val)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
 <span id="cb431-5"><a href="everyday-ml-regression.html#cb431-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Var, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-244-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-245-1.png" width="672" /></p>
 <p>As seen in the EDA chapter, a correlation plot can help visualize multicollinearity in the data:</p>
 <div class="sourceCode" id="cb432"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb432-1"><a href="everyday-ml-regression.html#cb432-1" tabindex="-1"></a><span class="fu">corrplot</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), <span class="at">is.corr =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-245-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-246-1.png" width="672" /></p>
 <p>Using <code>caret</code>’s <code>findCorrelation()</code> function, highly correlated predictors can be removed; the output corresponds to the indices of the highly correlated predictors to be removed.</p>
 <div class="sourceCode" id="cb433"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb433-1"><a href="everyday-ml-regression.html#cb433-1" tabindex="-1"></a>highCor <span class="ot">&lt;-</span> <span class="fu">findCorrelation</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), </span>
 <span id="cb433-2"><a href="everyday-ml-regression.html#cb433-2" tabindex="-1"></a>                <span class="at">cutoff =</span> <span class="fl">0.9</span>)</span>
@@ -355,7 +356,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb442-2"><a href="everyday-ml-regression.html#cb442-2" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&#39;Residuals vs. Fitted&#39;</span>, </span>
 <span id="cb442-3"><a href="everyday-ml-regression.html#cb442-3" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&#39;Fitted values&#39;</span>, </span>
 <span id="cb442-4"><a href="everyday-ml-regression.html#cb442-4" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">&#39;Residuals&#39;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-251-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-252-1.png" width="672" /></p>
 <p>A few observations can be made here; firstly, we see that the distribution of the points on either side of the residuals = 0 line seems random and evenly distributed. This suggests that modeling the current data with assumptions of linearity is valid. Secondly, there are no obvious outliers here, which means it is unlikely that our model is influenced by extreme values.</p>
 <p>The root-mean-squared-error (RMSE) is the standard measure to use when evaluating regression models; RMSE is the squared root of the mean squared error in the predicted values.</p>
 <div class="sourceCode" id="cb443"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb443-1"><a href="everyday-ml-regression.html#cb443-1" tabindex="-1"></a><span class="fu">RMSE</span>(lm_mod1_pred, Ozone<span class="sc">$</span>OzoneReading)</span></code></pre></div>
@@ -415,7 +416,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Briefly, the <code>shrinkage</code> refers to the learning rate, which describes the size of the incremental steps in gradient descent calculations. The <code>interaction.depth</code> describes the number of splits per tree and the <code>n.trees</code> describes the total number of trees, which means that for higher values of <code>n.trees</code>, the model complexity increases as well as the risk of overfitting the model.</p>
 <p>Calling <code>plot()</code> method to the model object prints the boosting iterations versus the value we’re trying to optimize (i.e., RMSE):</p>
 <div class="sourceCode" id="cb451"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb451-1"><a href="everyday-ml-regression.html#cb451-1" tabindex="-1"></a><span class="fu">plot</span>(model)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-255-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-256-1.png" width="672" /></p>
 <p>Evidently, the interaction depth (i.e., tree depth) of 1 reaches the minimum RMSE at 100 boosting iterations. The best set of hyperparameters can be printed as such:</p>
 <div class="sourceCode" id="cb452"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb452-1"><a href="everyday-ml-regression.html#cb452-1" tabindex="-1"></a>model<span class="sc">$</span>bestTune</span></code></pre></div>
 <pre><code>##   n.trees interaction.depth shrinkage n.minobsinnode
@@ -429,7 +430,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="everyday-ml-regression.html#cb456-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Model R2: &#39;</span>, r2)</span></code></pre></div>
 <pre><code>## [1] &quot;Model R2: 0.750807931113192&quot;</code></pre>
 <div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="everyday-ml-regression.html#cb458-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> preds, <span class="at">y =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-257-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-258-1.png" width="672" /></p>
 </div>
 <div id="categorical-predictors-and-factor-encoding" class="section level2 hasAnchor" number="7.3">
 <h2><span class="header-section-number">7.3</span> Categorical predictors and factor encoding<a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -542,6 +543,50 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5          0
 ## 6          0</code></pre>
 <p>The predictors are named similarly to the example of reference coding, such that the predictor name is concatenated to each class name. For each observation, the corresponding categorical level is filled with 1 while the remaining levels are filled with 0. For example, as the first 22 rows correspond to homes in <code>Lynn</code>, the <code>townLynn</code> column is populated with 1s and the others 0s. Using these encoded variables in lieu of the original factors is the standard approach in certain machine learning models, such as decision trees and ensemble learners.</p>
+</div>
+<div id="elastic-net-regression" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Elastic net regression<a href="everyday-ml-regression.html#elastic-net-regression" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>One of the biggest challenges in predictive modeling is the balance between underfitting and overfitting to the training data. A widely used regularization strategy (i.e., constrain the model to reduce model complexity) is to add a penalty (or a cost) term to the objective function. In the case of simple linear regression, this would be like adding an extra term to the MSE function.</p>
+<p>The L1 and L2 regularization techniques refer to adding an extra term to the objective function - namely, the L1 and L2 vector norms. The L1 vector norm describes the sum of the absolute values of the vector while the L2 norm describes the squared root of the squared values of the vector. The details are beyond the scope of this book, but for further reading check out my <a href="https://brianjmpark.github.io/post/2022-05-30-l1-l2-norms-and-regularized-linear-models-index/">blog post on this subject</a>.</p>
+<p>As such, in linear models this turns out to be:</p>
+<p><span class="math inline">\(J(\theta) = MSE(\theta) + \alpha\frac{1}{2}\sum_{i = 1}^{n} |\theta_{i}|\)</span></p>
+<p><span class="math inline">\(J(\theta) = MSE(\theta) + \alpha\frac{1}{2}\sum_{i = 1}^{n} \theta_{i}^{2}\)</span></p>
+<p>In regression, incorporating L1 and L2 regularization is as known as Lasso and Ridge regression, respectively. Meanwhile, Elastic Net regression uses a mixture of both techniques, with the hyperparameter <span class="math inline">\(\alpha\)</span> describing the ratio of the two. In R, this can be implemented with the back-end <em>glmnet</em> which can be run on its own or as a wrapper in <em>caret</em>.</p>
+<div class="sourceCode" id="cb470"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb470-1"><a href="everyday-ml-regression.html#cb470-1" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb470-2"><a href="everyday-ml-regression.html#cb470-2" tabindex="-1"></a>eln_mod <span class="ot">&lt;-</span> <span class="fu">train</span>(mpg <span class="sc">~</span> ., <span class="at">data =</span> mtcars,</span>
+<span id="cb470-3"><a href="everyday-ml-regression.html#cb470-3" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">&#39;glmnet&#39;</span>,</span>
+<span id="cb470-4"><a href="everyday-ml-regression.html#cb470-4" tabindex="-1"></a>                 <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&#39;center&#39;</span>, <span class="st">&#39;scale&#39;</span>),</span>
+<span id="cb470-5"><a href="everyday-ml-regression.html#cb470-5" tabindex="-1"></a>                 <span class="at">trControl =</span> tr)</span>
+<span id="cb470-6"><a href="everyday-ml-regression.html#cb470-6" tabindex="-1"></a>eln_mod</span></code></pre></div>
+<pre><code>## glmnet 
+## 
+## 32 samples
+## 10 predictors
+## 
+## Pre-processing: centered (10), scaled (10) 
+## Resampling: Cross-Validated (5 fold) 
+## Summary of sample sizes: 25, 25, 26, 25, 27 
+## Resampling results across tuning parameters:
+## 
+##   alpha  lambda      RMSE      Rsquared   MAE     
+##   0.10   0.01029396  4.452870  0.6256119  3.654107
+##   0.10   0.10293962  3.913182  0.6894015  3.233255
+##   0.10   1.02939621  3.104474  0.8032698  2.540240
+##   0.55   0.01029396  4.423287  0.6291525  3.629092
+##   0.55   0.10293962  3.661364  0.7244250  3.012562
+##   0.55   1.02939621  3.168239  0.7940001  2.610785
+##   1.00   0.01029396  4.387221  0.6334478  3.597207
+##   1.00   0.10293962  3.551244  0.7407368  2.929359
+##   1.00   1.02939621  2.950957  0.8332474  2.364204
+## 
+## RMSE was used to select the optimal model using the
+##  smallest value.
+## The final values used for the model were alpha = 1 and lambda
+##  = 1.029396.</code></pre>
+<p>We’re using the <code>trControl</code> defined previously, with a grid search for <code>alpha</code> and <code>lambda</code> (the shrinkage parameter). As before, calling <code>bestTune</code> prints out the set of hyperparmeters tested with the lowest loss.</p>
+<div class="sourceCode" id="cb472"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb472-1"><a href="everyday-ml-regression.html#cb472-1" tabindex="-1"></a>eln_mod<span class="sc">$</span>bestTune</span></code></pre></div>
+<pre><code>##   alpha   lambda
+## 9     1 1.029396</code></pre>
 
 </div>
 </div>
@@ -605,6 +650,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
