@@ -499,6 +499,8 @@ df1 %>% inner_join(df2, by = 'name')
 df1 %>% left_join(df2, by = 'name')
 ```
 
+For a great visualization of the different join functions in `tidyverse`, check out the chapter on relational data in Hadley's book *R for Data Science* [here](https://r4ds.had.co.nz/relational-data.html). 
+
 Base R uses `merge()` with the argument `all.x = ` and `all_y = `:
 
 ```{r}
