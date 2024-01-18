@@ -245,6 +245,12 @@ mtcars[which(mtcars$mpg > 18 & mtcars$mpg < 20),] # not run
 mtcars[which(mtcars$cyl %in% c(6,8)),] # not run
 ```
 
+Base R function `subset()` also works:
+
+```{r}
+subset(mtcars, cyl == 6 & vs == 0)
+```
+
 
 ## Subsetting columns based on strings
 
