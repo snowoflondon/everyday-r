@@ -232,21 +232,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 7</span> Everyday ML: Regression<a href="everyday-ml-regression.html#everyday-ml-regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In the previous chapter, the goal of our task was to predict each sample into one of <em>N</em> categorical variables. The fundamentals of such a classification task carries over to <em>regression</em> problems, where the goal is to predict a continuous variable instead. As such, a regression task involves taking data, fitting a model, evaluating the model, then predicting a new instance. The differences however, lies in exactly how we train the data - as in, how do we measure the ‘closeness’ of our model to the ground truth? - and how we evaluate the model in the end prior to deployment. The R package suite <code>tidymodels</code> handles regression tasks elegantly, however, in this chapter - to be consistent with the previous chapter - we will use <code>caret</code> again.</p>
 <p>As before, the explanation of ML concepts and the details into each algorithm is beyond the scope of this book, but more details are available on my <a href="https://brianjmpark.github.io/">blog</a> as well as documentation for popular ML packages such as Python’s <a href="https://scikit-learn.org/stable/">Scikit-Learn</a>.</p>
-<div class="sourceCode" id="cb426"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb426-1"><a href="everyday-ml-regression.html#cb426-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb426-2"><a href="everyday-ml-regression.html#cb426-2" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code></pre></div>
+<div class="sourceCode" id="cb428"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb428-1"><a href="everyday-ml-regression.html#cb428-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb428-2"><a href="everyday-ml-regression.html#cb428-2" tabindex="-1"></a><span class="fu">library</span>(caret)</span></code></pre></div>
 <div id="simple-linear-regression" class="section level2 hasAnchor" number="7.1">
 <h2><span class="header-section-number">7.1</span> Simple linear regression<a href="everyday-ml-regression.html#simple-linear-regression" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For this section we will use the <code>Ozone</code> dataset from <code>mlbench</code>, which involves prediction of the daily maximum one-hour-average ozone reading using various predictors such as humidity, temperature, and wind speed.</p>
-<div class="sourceCode" id="cb427"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb427-1"><a href="everyday-ml-regression.html#cb427-1" tabindex="-1"></a><span class="fu">data</span>(Ozone, <span class="at">package =</span> <span class="st">&quot;mlbench&quot;</span>)</span>
-<span id="cb427-2"><a href="everyday-ml-regression.html#cb427-2" tabindex="-1"></a><span class="fu">colnames</span>(Ozone) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Month&quot;</span>, <span class="st">&quot;DayOfMonth&quot;</span>, <span class="st">&quot;DayOfWeek&quot;</span>,</span>
-<span id="cb427-3"><a href="everyday-ml-regression.html#cb427-3" tabindex="-1"></a>                     <span class="st">&quot;OzoneReading&quot;</span>, <span class="st">&quot;PressureHeight&quot;</span>,</span>
-<span id="cb427-4"><a href="everyday-ml-regression.html#cb427-4" tabindex="-1"></a>                     <span class="st">&quot;WindSpeed&quot;</span>, <span class="st">&quot;Humidity&quot;</span>,</span>
-<span id="cb427-5"><a href="everyday-ml-regression.html#cb427-5" tabindex="-1"></a>                     <span class="st">&quot;TemperatureSandburg&quot;</span>, <span class="st">&quot;TemperatureElMonte&quot;</span>,</span>
-<span id="cb427-6"><a href="everyday-ml-regression.html#cb427-6" tabindex="-1"></a>                     <span class="st">&quot;InversionBaseHeight&quot;</span>, <span class="st">&quot;PressureGradient&quot;</span>,</span>
-<span id="cb427-7"><a href="everyday-ml-regression.html#cb427-7" tabindex="-1"></a>                     <span class="st">&quot;InversionTemperature&quot;</span>, <span class="st">&quot;Visibility&quot;</span>)</span>
-<span id="cb427-8"><a href="everyday-ml-regression.html#cb427-8" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Ozone)</span>
-<span id="cb427-9"><a href="everyday-ml-regression.html#cb427-9" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Month, DayOfMonth, DayOfWeek))</span>
-<span id="cb427-10"><a href="everyday-ml-regression.html#cb427-10" tabindex="-1"></a><span class="fu">str</span>(Ozone)</span></code></pre></div>
+<div class="sourceCode" id="cb429"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb429-1"><a href="everyday-ml-regression.html#cb429-1" tabindex="-1"></a><span class="fu">data</span>(Ozone, <span class="at">package =</span> <span class="st">&quot;mlbench&quot;</span>)</span>
+<span id="cb429-2"><a href="everyday-ml-regression.html#cb429-2" tabindex="-1"></a><span class="fu">colnames</span>(Ozone) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Month&quot;</span>, <span class="st">&quot;DayOfMonth&quot;</span>, <span class="st">&quot;DayOfWeek&quot;</span>,</span>
+<span id="cb429-3"><a href="everyday-ml-regression.html#cb429-3" tabindex="-1"></a>                     <span class="st">&quot;OzoneReading&quot;</span>, <span class="st">&quot;PressureHeight&quot;</span>,</span>
+<span id="cb429-4"><a href="everyday-ml-regression.html#cb429-4" tabindex="-1"></a>                     <span class="st">&quot;WindSpeed&quot;</span>, <span class="st">&quot;Humidity&quot;</span>,</span>
+<span id="cb429-5"><a href="everyday-ml-regression.html#cb429-5" tabindex="-1"></a>                     <span class="st">&quot;TemperatureSandburg&quot;</span>, <span class="st">&quot;TemperatureElMonte&quot;</span>,</span>
+<span id="cb429-6"><a href="everyday-ml-regression.html#cb429-6" tabindex="-1"></a>                     <span class="st">&quot;InversionBaseHeight&quot;</span>, <span class="st">&quot;PressureGradient&quot;</span>,</span>
+<span id="cb429-7"><a href="everyday-ml-regression.html#cb429-7" tabindex="-1"></a>                     <span class="st">&quot;InversionTemperature&quot;</span>, <span class="st">&quot;Visibility&quot;</span>)</span>
+<span id="cb429-8"><a href="everyday-ml-regression.html#cb429-8" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(Ozone)</span>
+<span id="cb429-9"><a href="everyday-ml-regression.html#cb429-9" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Month, DayOfMonth, DayOfWeek))</span>
+<span id="cb429-10"><a href="everyday-ml-regression.html#cb429-10" tabindex="-1"></a><span class="fu">str</span>(Ozone)</span></code></pre></div>
 <pre><code>## tibble [366 × 10] (S3: tbl_df/tbl/data.frame)
 ##  $ OzoneReading        : num [1:366] 3 3 3 5 5 6 4 4 6 7 ...
 ##  $ PressureHeight      : num [1:366] 5480 5660 5710 5700 5760 5720 5790 5790 5700 5700 ...
@@ -259,7 +259,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ InversionTemperature: num [1:366] 30.6 NA 47.7 55 57 ...
 ##  $ Visibility          : num [1:366] 200 300 250 100 60 60 100 250 120 120 ...</code></pre>
 <p>Identifying the number of missing values first is important:</p>
-<div class="sourceCode" id="cb429"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb429-1"><a href="everyday-ml-regression.html#cb429-1" tabindex="-1"></a><span class="fu">vapply</span>(Ozone, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="at">FUN.VALUE =</span> <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb431"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb431-1"><a href="everyday-ml-regression.html#cb431-1" tabindex="-1"></a><span class="fu">vapply</span>(Ozone, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="at">FUN.VALUE =</span> <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##         OzoneReading       PressureHeight            WindSpeed 
 ##                    5                   12                    0 
 ##             Humidity  TemperatureSandburg   TemperatureElMonte 
@@ -269,30 +269,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##           Visibility 
 ##                    0</code></pre>
 <p>For the purpose of this exercise, instead of imputation I will just discard the missing values.</p>
-<div class="sourceCode" id="cb431"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb431-1"><a href="everyday-ml-regression.html#cb431-1" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(Ozone)</span>
-<span id="cb431-2"><a href="everyday-ml-regression.html#cb431-2" tabindex="-1"></a><span class="fu">dim</span>(Ozone)</span></code></pre></div>
+<div class="sourceCode" id="cb433"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb433-1"><a href="everyday-ml-regression.html#cb433-1" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(Ozone)</span>
+<span id="cb433-2"><a href="everyday-ml-regression.html#cb433-2" tabindex="-1"></a><span class="fu">dim</span>(Ozone)</span></code></pre></div>
 <pre><code>## [1] 203  10</code></pre>
 <p>For a quick look at the scales and the distribution of the variables, boxplots will do:</p>
-<div class="sourceCode" id="cb433"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb433-1"><a href="everyday-ml-regression.html#cb433-1" tabindex="-1"></a>Ozone <span class="sc">%&gt;%</span> </span>
-<span id="cb433-2"><a href="everyday-ml-regression.html#cb433-2" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), </span>
-<span id="cb433-3"><a href="everyday-ml-regression.html#cb433-3" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&#39;Var&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Val&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb433-4"><a href="everyday-ml-regression.html#cb433-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Var, <span class="at">y =</span> Val)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
-<span id="cb433-5"><a href="everyday-ml-regression.html#cb433-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Var, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-245-1.png" width="672" /></p>
-<p>As seen in the EDA chapter, a correlation plot can help visualize multicollinearity in the data:</p>
-<div class="sourceCode" id="cb434"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb434-1"><a href="everyday-ml-regression.html#cb434-1" tabindex="-1"></a><span class="fu">corrplot</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), <span class="at">is.corr =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb435"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb435-1"><a href="everyday-ml-regression.html#cb435-1" tabindex="-1"></a>Ozone <span class="sc">%&gt;%</span> </span>
+<span id="cb435-2"><a href="everyday-ml-regression.html#cb435-2" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), </span>
+<span id="cb435-3"><a href="everyday-ml-regression.html#cb435-3" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&#39;Var&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Val&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb435-4"><a href="everyday-ml-regression.html#cb435-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Var, <span class="at">y =</span> Val)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb435-5"><a href="everyday-ml-regression.html#cb435-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Var, <span class="at">scales =</span> <span class="st">&#39;free&#39;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-246-1.png" width="672" /></p>
+<p>As seen in the EDA chapter, a correlation plot can help visualize multicollinearity in the data:</p>
+<div class="sourceCode" id="cb436"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb436-1"><a href="everyday-ml-regression.html#cb436-1" tabindex="-1"></a><span class="fu">corrplot</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), <span class="at">is.corr =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-247-1.png" width="672" /></p>
 <p>Using <code>caret</code>’s <code>findCorrelation()</code> function, highly correlated predictors can be removed; the output corresponds to the indices of the highly correlated predictors to be removed.</p>
-<div class="sourceCode" id="cb435"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb435-1"><a href="everyday-ml-regression.html#cb435-1" tabindex="-1"></a>highCor <span class="ot">&lt;-</span> <span class="fu">findCorrelation</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), </span>
-<span id="cb435-2"><a href="everyday-ml-regression.html#cb435-2" tabindex="-1"></a>                <span class="at">cutoff =</span> <span class="fl">0.9</span>)</span>
-<span id="cb435-3"><a href="everyday-ml-regression.html#cb435-3" tabindex="-1"></a>highCorCols <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading) <span class="sc">%&gt;%</span></span>
-<span id="cb435-4"><a href="everyday-ml-regression.html#cb435-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">any_of</span>(highCor)) <span class="sc">%&gt;%</span> <span class="fu">colnames</span>()</span>
-<span id="cb435-5"><a href="everyday-ml-regression.html#cb435-5" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(highCorCols))</span>
-<span id="cb435-6"><a href="everyday-ml-regression.html#cb435-6" tabindex="-1"></a>highCorCols</span></code></pre></div>
+<div class="sourceCode" id="cb437"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb437-1"><a href="everyday-ml-regression.html#cb437-1" tabindex="-1"></a>highCor <span class="ot">&lt;-</span> <span class="fu">findCorrelation</span>(<span class="fu">cor</span>(Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading)), </span>
+<span id="cb437-2"><a href="everyday-ml-regression.html#cb437-2" tabindex="-1"></a>                <span class="at">cutoff =</span> <span class="fl">0.9</span>)</span>
+<span id="cb437-3"><a href="everyday-ml-regression.html#cb437-3" tabindex="-1"></a>highCorCols <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>OzoneReading) <span class="sc">%&gt;%</span></span>
+<span id="cb437-4"><a href="everyday-ml-regression.html#cb437-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">any_of</span>(highCor)) <span class="sc">%&gt;%</span> <span class="fu">colnames</span>()</span>
+<span id="cb437-5"><a href="everyday-ml-regression.html#cb437-5" tabindex="-1"></a>Ozone <span class="ot">&lt;-</span> Ozone <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(highCorCols))</span>
+<span id="cb437-6"><a href="everyday-ml-regression.html#cb437-6" tabindex="-1"></a>highCorCols</span></code></pre></div>
 <pre><code>## [1] &quot;InversionTemperature&quot; &quot;TemperatureElMonte&quot;</code></pre>
 <p>A simple linear regression model using ordinary least squares is then built as such:</p>
-<div class="sourceCode" id="cb437"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb437-1"><a href="everyday-ml-regression.html#cb437-1" tabindex="-1"></a>lm_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(OzoneReading <span class="sc">~</span> ., <span class="at">data =</span> Ozone)</span>
-<span id="cb437-2"><a href="everyday-ml-regression.html#cb437-2" tabindex="-1"></a><span class="fu">summary</span>(lm_mod1)</span></code></pre></div>
+<div class="sourceCode" id="cb439"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb439-1"><a href="everyday-ml-regression.html#cb439-1" tabindex="-1"></a>lm_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(OzoneReading <span class="sc">~</span> ., <span class="at">data =</span> Ozone)</span>
+<span id="cb439-2"><a href="everyday-ml-regression.html#cb439-2" tabindex="-1"></a><span class="fu">summary</span>(lm_mod1)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = OzoneReading ~ ., data = Ozone)
@@ -319,7 +319,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## F-statistic: 60.29 on 7 and 195 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>The <code>~</code> sign denotes that the <code>OzoneReading</code> variable (LHS) is predicted by <code>.</code> (RHS), which equates to the remaining variables in the <code>data</code> provided. The intercept of the model is fitted automatically.</p>
 <p>The ANOVA table of the fitted model, which contains information such as the sum of squares for each predictor, is retrieved with <code>anova()</code>:</p>
-<div class="sourceCode" id="cb439"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb439-1"><a href="everyday-ml-regression.html#cb439-1" tabindex="-1"></a><span class="fu">anova</span>(lm_mod1)</span></code></pre></div>
+<div class="sourceCode" id="cb441"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb441-1"><a href="everyday-ml-regression.html#cb441-1" tabindex="-1"></a><span class="fu">anova</span>(lm_mod1)</span></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Response: OzoneReading
@@ -335,7 +335,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>For quick interpretation, let’s print out the content of the <code>lm</code> model fitted:</p>
-<div class="sourceCode" id="cb441"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb441-1"><a href="everyday-ml-regression.html#cb441-1" tabindex="-1"></a>lm_mod1</span></code></pre></div>
+<div class="sourceCode" id="cb443"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb443-1"><a href="everyday-ml-regression.html#cb443-1" tabindex="-1"></a>lm_mod1</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = OzoneReading ~ ., data = Ozone)
@@ -349,39 +349,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##          -8.341e-03           -7.132e-03</code></pre>
 <p>Above result suggests that for each unit change in <code>PressureHeight</code>, the <code>OzoneReading</code> variable is increased by <code>6.846e-04</code>. Of course, since this is a multiple regression task (i.e., there are multiple predictors), the interpretation of the coefficient value is not as straightforward.</p>
 <p>In ordinary least squares, the model attempts to minimize the residuals, which is the difference between the original data and the predicted data. Both of these can be retrieved as such:</p>
-<div class="sourceCode" id="cb443"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb443-1"><a href="everyday-ml-regression.html#cb443-1" tabindex="-1"></a>lm_mod1_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_mod1)</span>
-<span id="cb443-2"><a href="everyday-ml-regression.html#cb443-2" tabindex="-1"></a>lm_mod1_resid <span class="ot">&lt;-</span> <span class="fu">resid</span>(lm_mod1)</span></code></pre></div>
+<div class="sourceCode" id="cb445"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb445-1"><a href="everyday-ml-regression.html#cb445-1" tabindex="-1"></a>lm_mod1_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_mod1)</span>
+<span id="cb445-2"><a href="everyday-ml-regression.html#cb445-2" tabindex="-1"></a>lm_mod1_resid <span class="ot">&lt;-</span> <span class="fu">resid</span>(lm_mod1)</span></code></pre></div>
 <p>This means that we can plot these for a nice visualization between the residuals and the fitted values:</p>
-<div class="sourceCode" id="cb444"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb444-1"><a href="everyday-ml-regression.html#cb444-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">predict</span>(lm_mod1), <span class="fu">resid</span>(lm_mod1), </span>
-<span id="cb444-2"><a href="everyday-ml-regression.html#cb444-2" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&#39;Residuals vs. Fitted&#39;</span>, </span>
-<span id="cb444-3"><a href="everyday-ml-regression.html#cb444-3" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&#39;Fitted values&#39;</span>, </span>
-<span id="cb444-4"><a href="everyday-ml-regression.html#cb444-4" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">&#39;Residuals&#39;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-252-1.png" width="672" /></p>
+<div class="sourceCode" id="cb446"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb446-1"><a href="everyday-ml-regression.html#cb446-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">predict</span>(lm_mod1), <span class="fu">resid</span>(lm_mod1), </span>
+<span id="cb446-2"><a href="everyday-ml-regression.html#cb446-2" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&#39;Residuals vs. Fitted&#39;</span>, </span>
+<span id="cb446-3"><a href="everyday-ml-regression.html#cb446-3" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&#39;Fitted values&#39;</span>, </span>
+<span id="cb446-4"><a href="everyday-ml-regression.html#cb446-4" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">&#39;Residuals&#39;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-253-1.png" width="672" /></p>
 <p>A few observations can be made here; firstly, we see that the distribution of the points on either side of the residuals = 0 line seems random and evenly distributed. This suggests that modeling the current data with assumptions of linearity is valid. Secondly, there are no obvious outliers here, which means it is unlikely that our model is influenced by extreme values.</p>
 <p>The root-mean-squared-error (RMSE) is the standard measure to use when evaluating regression models; RMSE is the squared root of the mean squared error in the predicted values.</p>
-<div class="sourceCode" id="cb445"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb445-1"><a href="everyday-ml-regression.html#cb445-1" tabindex="-1"></a><span class="fu">RMSE</span>(lm_mod1_pred, Ozone<span class="sc">$</span>OzoneReading)</span></code></pre></div>
+<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb447-1"><a href="everyday-ml-regression.html#cb447-1" tabindex="-1"></a><span class="fu">RMSE</span>(lm_mod1_pred, Ozone<span class="sc">$</span>OzoneReading)</span></code></pre></div>
 <pre><code>## [1] 4.592772</code></pre>
 </div>
 <div id="using-regression-for-prediction" class="section level2 hasAnchor" number="7.2">
 <h2><span class="header-section-number">7.2</span> Using regression for prediction<a href="everyday-ml-regression.html#using-regression-for-prediction" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>With the advent of big data and ML, you are more and more likely to run into scenarios where regression is used to predict new data. In the previous example with the <code>Ozone</code> dataset, we fit the entire dataset using <code>lm()</code> and evaluated it using a within-sample method such as the RMSE. On the other hand, it’s possible to set aside a portion of the data, fit a model, use cross-validation metrics to tune the model, and evaluate the model one last time using never-before-seen data. Of course, with these concepts, we are firmly in the realm of ML - thus concepts from the previous chapter such as train/test split, model training, and model selection are carried over.</p>
-<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb447-1"><a href="everyday-ml-regression.html#cb447-1" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(<span class="at">y =</span> Ozone<span class="sc">$</span>OzoneReading, <span class="at">p =</span> .<span class="dv">8</span>,</span>
-<span id="cb447-2"><a href="everyday-ml-regression.html#cb447-2" tabindex="-1"></a>                           <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
-<span id="cb447-3"><a href="everyday-ml-regression.html#cb447-3" tabindex="-1"></a>Ozone_train <span class="ot">&lt;-</span> Ozone[idx,]</span>
-<span id="cb447-4"><a href="everyday-ml-regression.html#cb447-4" tabindex="-1"></a>Ozone_test <span class="ot">&lt;-</span> Ozone[<span class="sc">-</span>idx,]</span>
-<span id="cb447-5"><a href="everyday-ml-regression.html#cb447-5" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Training data batch dimension: &#39;</span>, <span class="fu">nrow</span>(Ozone_train))</span></code></pre></div>
+<div class="sourceCode" id="cb449"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb449-1"><a href="everyday-ml-regression.html#cb449-1" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(<span class="at">y =</span> Ozone<span class="sc">$</span>OzoneReading, <span class="at">p =</span> .<span class="dv">8</span>,</span>
+<span id="cb449-2"><a href="everyday-ml-regression.html#cb449-2" tabindex="-1"></a>                           <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb449-3"><a href="everyday-ml-regression.html#cb449-3" tabindex="-1"></a>Ozone_train <span class="ot">&lt;-</span> Ozone[idx,]</span>
+<span id="cb449-4"><a href="everyday-ml-regression.html#cb449-4" tabindex="-1"></a>Ozone_test <span class="ot">&lt;-</span> Ozone[<span class="sc">-</span>idx,]</span>
+<span id="cb449-5"><a href="everyday-ml-regression.html#cb449-5" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Training data batch dimension: &#39;</span>, <span class="fu">nrow</span>(Ozone_train))</span></code></pre></div>
 <pre><code>## [1] &quot;Training data batch dimension: 164&quot;</code></pre>
-<div class="sourceCode" id="cb449"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb449-1"><a href="everyday-ml-regression.html#cb449-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Test data batch dimension: &#39;</span>, <span class="fu">nrow</span>(Ozone_test))</span></code></pre></div>
+<div class="sourceCode" id="cb451"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb451-1"><a href="everyday-ml-regression.html#cb451-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Test data batch dimension: &#39;</span>, <span class="fu">nrow</span>(Ozone_test))</span></code></pre></div>
 <pre><code>## [1] &quot;Test data batch dimension: 39&quot;</code></pre>
 <p>As seen in the previous chapter, we split the original data using <code>createDataPartition()</code> to get the training and the test data. Then using <code>trainControl()</code> and <code>train()</code>, I can use a wrapper for a gradient boosted model for the regression task.</p>
-<div class="sourceCode" id="cb451"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb451-1"><a href="everyday-ml-regression.html#cb451-1" tabindex="-1"></a>tr <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
-<span id="cb451-2"><a href="everyday-ml-regression.html#cb451-2" tabindex="-1"></a>                   <span class="at">number =</span> <span class="dv">5</span>, <span class="at">search =</span> <span class="st">&#39;grid&#39;</span>)</span>
-<span id="cb451-3"><a href="everyday-ml-regression.html#cb451-3" tabindex="-1"></a></span>
-<span id="cb451-4"><a href="everyday-ml-regression.html#cb451-4" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(OzoneReading <span class="sc">~</span> ., <span class="at">data =</span> Ozone_train,</span>
-<span id="cb451-5"><a href="everyday-ml-regression.html#cb451-5" tabindex="-1"></a>               <span class="at">method =</span> <span class="st">&#39;gbm&#39;</span>, <span class="at">trControl =</span> tr,</span>
-<span id="cb451-6"><a href="everyday-ml-regression.html#cb451-6" tabindex="-1"></a>               <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb451-7"><a href="everyday-ml-regression.html#cb451-7" tabindex="-1"></a></span>
-<span id="cb451-8"><a href="everyday-ml-regression.html#cb451-8" tabindex="-1"></a>model</span></code></pre></div>
+<div class="sourceCode" id="cb453"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb453-1"><a href="everyday-ml-regression.html#cb453-1" tabindex="-1"></a>tr <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">&#39;cv&#39;</span>,</span>
+<span id="cb453-2"><a href="everyday-ml-regression.html#cb453-2" tabindex="-1"></a>                   <span class="at">number =</span> <span class="dv">5</span>, <span class="at">search =</span> <span class="st">&#39;grid&#39;</span>)</span>
+<span id="cb453-3"><a href="everyday-ml-regression.html#cb453-3" tabindex="-1"></a></span>
+<span id="cb453-4"><a href="everyday-ml-regression.html#cb453-4" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(OzoneReading <span class="sc">~</span> ., <span class="at">data =</span> Ozone_train,</span>
+<span id="cb453-5"><a href="everyday-ml-regression.html#cb453-5" tabindex="-1"></a>               <span class="at">method =</span> <span class="st">&#39;gbm&#39;</span>, <span class="at">trControl =</span> tr,</span>
+<span id="cb453-6"><a href="everyday-ml-regression.html#cb453-6" tabindex="-1"></a>               <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb453-7"><a href="everyday-ml-regression.html#cb453-7" tabindex="-1"></a></span>
+<span id="cb453-8"><a href="everyday-ml-regression.html#cb453-8" tabindex="-1"></a>model</span></code></pre></div>
 <pre><code>## Stochastic Gradient Boosting 
 ## 
 ## 164 samples
@@ -413,22 +413,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Evidently, <code>caret</code> uses grid search to find the combination of hyperparameters - in this case, <code>n.trees</code>, <code>interaction.depth</code>, <code>shrinkage</code>, and <code>n.minobsinnode</code> - which minimizes the RMSE. We could have defined our own hyperparameter space using <code>expand.grid()</code> and using that as input for <code>tuneGrid =</code> within <code>train()</code>.</p>
 <p>Briefly, the <code>shrinkage</code> refers to the learning rate, which describes the size of the incremental steps in gradient descent calculations. The <code>interaction.depth</code> describes the number of splits per tree and the <code>n.trees</code> describes the total number of trees, which means that for higher values of <code>n.trees</code>, the model complexity increases as well as the risk of overfitting the model.</p>
 <p>Calling <code>plot()</code> method to the model object prints the boosting iterations versus the value we’re trying to optimize (i.e., RMSE):</p>
-<div class="sourceCode" id="cb453"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb453-1"><a href="everyday-ml-regression.html#cb453-1" tabindex="-1"></a><span class="fu">plot</span>(model)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-256-1.png" width="672" /></p>
+<div class="sourceCode" id="cb455"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb455-1"><a href="everyday-ml-regression.html#cb455-1" tabindex="-1"></a><span class="fu">plot</span>(model)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-257-1.png" width="672" /></p>
 <p>Evidently, the interaction depth (i.e., tree depth) of 1 reaches the minimum RMSE at 100 boosting iterations. The best set of hyperparameters can be printed as such:</p>
-<div class="sourceCode" id="cb454"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb454-1"><a href="everyday-ml-regression.html#cb454-1" tabindex="-1"></a>model<span class="sc">$</span>bestTune</span></code></pre></div>
+<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="everyday-ml-regression.html#cb456-1" tabindex="-1"></a>model<span class="sc">$</span>bestTune</span></code></pre></div>
 <pre><code>##   n.trees interaction.depth shrinkage n.minobsinnode
 ## 1      50                 1       0.1             10</code></pre>
 <p>The holdout data is then used to generate predictions and calculate the RMSE and the R squared:</p>
-<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb456-1"><a href="everyday-ml-regression.html#cb456-1" tabindex="-1"></a>preds <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="at">object =</span> model, <span class="at">newdata =</span> Ozone_test)</span>
-<span id="cb456-2"><a href="everyday-ml-regression.html#cb456-2" tabindex="-1"></a>rmse <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(<span class="at">pred =</span> preds, <span class="at">obs =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span>
-<span id="cb456-3"><a href="everyday-ml-regression.html#cb456-3" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">R2</span>(<span class="at">pred =</span> preds, <span class="at">obs =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span>
-<span id="cb456-4"><a href="everyday-ml-regression.html#cb456-4" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Model RMSE: &#39;</span>, rmse)</span></code></pre></div>
+<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="everyday-ml-regression.html#cb458-1" tabindex="-1"></a>preds <span class="ot">&lt;-</span> <span class="fu">predict</span>(<span class="at">object =</span> model, <span class="at">newdata =</span> Ozone_test)</span>
+<span id="cb458-2"><a href="everyday-ml-regression.html#cb458-2" tabindex="-1"></a>rmse <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(<span class="at">pred =</span> preds, <span class="at">obs =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span>
+<span id="cb458-3"><a href="everyday-ml-regression.html#cb458-3" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">R2</span>(<span class="at">pred =</span> preds, <span class="at">obs =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span>
+<span id="cb458-4"><a href="everyday-ml-regression.html#cb458-4" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Model RMSE: &#39;</span>, rmse)</span></code></pre></div>
 <pre><code>## [1] &quot;Model RMSE: 4.45076380391138&quot;</code></pre>
-<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb458-1"><a href="everyday-ml-regression.html#cb458-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Model R2: &#39;</span>, r2)</span></code></pre></div>
+<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb460-1"><a href="everyday-ml-regression.html#cb460-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;Model R2: &#39;</span>, r2)</span></code></pre></div>
 <pre><code>## [1] &quot;Model R2: 0.750807931113192&quot;</code></pre>
-<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb460-1"><a href="everyday-ml-regression.html#cb460-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> preds, <span class="at">y =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-258-1.png" width="672" /></p>
+<div class="sourceCode" id="cb462"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb462-1"><a href="everyday-ml-regression.html#cb462-1" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> preds, <span class="at">y =</span> Ozone_test<span class="sc">$</span>OzoneReading)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-259-1.png" width="672" /></p>
 </div>
 <div id="categorical-predictors-and-factor-encoding" class="section level2 hasAnchor" number="7.3">
 <h2><span class="header-section-number">7.3</span> Categorical predictors and factor encoding<a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -438,9 +438,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>One-hot encoding: the number of unique classes is retained. The categorical variables are encoded as numeric arrays. This method is also called ‘dummy encoding.’</p></li>
 </ol>
 <p>Let’s load the <code>BostonHousing2</code> data from <code>mlbench</code> and look at the columns:</p>
-<div class="sourceCode" id="cb461"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb461-1"><a href="everyday-ml-regression.html#cb461-1" tabindex="-1"></a><span class="fu">data</span>(BostonHousing2, <span class="at">package =</span> <span class="st">&#39;mlbench&#39;</span>)</span>
-<span id="cb461-2"><a href="everyday-ml-regression.html#cb461-2" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(BostonHousing2)</span>
-<span id="cb461-3"><a href="everyday-ml-regression.html#cb461-3" tabindex="-1"></a><span class="fu">str</span>(BH2)</span></code></pre></div>
+<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb463-1"><a href="everyday-ml-regression.html#cb463-1" tabindex="-1"></a><span class="fu">data</span>(BostonHousing2, <span class="at">package =</span> <span class="st">&#39;mlbench&#39;</span>)</span>
+<span id="cb463-2"><a href="everyday-ml-regression.html#cb463-2" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(BostonHousing2)</span>
+<span id="cb463-3"><a href="everyday-ml-regression.html#cb463-3" tabindex="-1"></a><span class="fu">str</span>(BH2)</span></code></pre></div>
 <pre><code>## tibble [506 × 19] (S3: tbl_df/tbl/data.frame)
 ##  $ town   : Factor w/ 92 levels &quot;Arlington&quot;,&quot;Ashland&quot;,..: 54 77 77 46 46 46 69 69 69 69 ...
 ##  $ tract  : int [1:506] 2011 2021 2022 2031 2032 2033 2041 2042 2043 2044 ...
@@ -462,11 +462,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  $ b      : num [1:506] 397 397 393 395 397 ...
 ##  $ lstat  : num [1:506] 4.98 9.14 4.03 2.94 5.33 ...</code></pre>
 <p>The target variable is <code>cmedv</code> - the corrected median value of homes. There are additionally two categorical predictors here: <code>town</code> and <code>chas</code>. The <code>chas</code> variable has already been numerically encoded so we just need to encode <code>town</code>.</p>
-<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb463-1"><a href="everyday-ml-regression.html#cb463-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;# of levels: &#39;</span>, <span class="fu">length</span>(<span class="fu">levels</span>(BH2<span class="sc">$</span>town)))</span></code></pre></div>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="everyday-ml-regression.html#cb465-1" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">&#39;# of levels: &#39;</span>, <span class="fu">length</span>(<span class="fu">levels</span>(BH2<span class="sc">$</span>town)))</span></code></pre></div>
 <pre><code>## [1] &quot;# of levels: 92&quot;</code></pre>
 <p>There are nearly 100 levels in <code>town</code>, so for the sake of this exercise I will truncate the dataset so that it only contains the top 5 largest towns by size:</p>
-<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="everyday-ml-regression.html#cb465-1" tabindex="-1"></a>BH2 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(town) <span class="sc">%&gt;%</span> <span class="fu">tally</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb465-2"><a href="everyday-ml-regression.html#cb465-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb467"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb467-1"><a href="everyday-ml-regression.html#cb467-1" tabindex="-1"></a>BH2 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(town) <span class="sc">%&gt;%</span> <span class="fu">tally</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb467-2"><a href="everyday-ml-regression.html#cb467-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 5 × 2
 ##   town                  n
 ##   &lt;fct&gt;             &lt;int&gt;
@@ -475,16 +475,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 3 Lynn                 22
 ## 4 Boston Roxbury       19
 ## 5 Newton               18</code></pre>
-<div class="sourceCode" id="cb467"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb467-1"><a href="everyday-ml-regression.html#cb467-1" tabindex="-1"></a>toptowns <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(town) <span class="sc">%&gt;%</span> <span class="fu">tally</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb467-2"><a href="everyday-ml-regression.html#cb467-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(town)</span>
-<span id="cb467-3"><a href="everyday-ml-regression.html#cb467-3" tabindex="-1"></a></span>
-<span id="cb467-4"><a href="everyday-ml-regression.html#cb467-4" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(town <span class="sc">%in%</span> toptowns) <span class="sc">%&gt;%</span></span>
-<span id="cb467-5"><a href="everyday-ml-regression.html#cb467-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">factor</span>(town, <span class="at">levels =</span> toptowns))</span></code></pre></div>
+<div class="sourceCode" id="cb469"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb469-1"><a href="everyday-ml-regression.html#cb469-1" tabindex="-1"></a>toptowns <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(town) <span class="sc">%&gt;%</span> <span class="fu">tally</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb469-2"><a href="everyday-ml-regression.html#cb469-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(town)</span>
+<span id="cb469-3"><a href="everyday-ml-regression.html#cb469-3" tabindex="-1"></a></span>
+<span id="cb469-4"><a href="everyday-ml-regression.html#cb469-4" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(town <span class="sc">%in%</span> toptowns) <span class="sc">%&gt;%</span></span>
+<span id="cb469-5"><a href="everyday-ml-regression.html#cb469-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">factor</span>(town, <span class="at">levels =</span> toptowns))</span></code></pre></div>
 <p>Note I needed to re-factor the <code>town</code> variable after I reduced the number of levels.</p>
 <p>Firstly, let’s see what happens if we fit the <code>lm()</code> model without encoding the <code>town</code> variable:</p>
-<div class="sourceCode" id="cb468"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb468-1"><a href="everyday-ml-regression.html#cb468-1" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>medv)</span>
-<span id="cb468-2"><a href="everyday-ml-regression.html#cb468-2" tabindex="-1"></a>bh_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cmedv <span class="sc">~</span> ., <span class="at">data =</span> BH2)</span>
-<span id="cb468-3"><a href="everyday-ml-regression.html#cb468-3" tabindex="-1"></a><span class="fu">summary</span>(bh_mod1)</span></code></pre></div>
+<div class="sourceCode" id="cb470"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb470-1"><a href="everyday-ml-regression.html#cb470-1" tabindex="-1"></a>BH2 <span class="ot">&lt;-</span> BH2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>medv)</span>
+<span id="cb470-2"><a href="everyday-ml-regression.html#cb470-2" tabindex="-1"></a>bh_mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cmedv <span class="sc">~</span> ., <span class="at">data =</span> BH2)</span>
+<span id="cb470-3"><a href="everyday-ml-regression.html#cb470-3" tabindex="-1"></a><span class="fu">summary</span>(bh_mod1)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = cmedv ~ ., data = BH2)
@@ -524,8 +524,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## F-statistic: 70.48 on 15 and 96 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>The categorical variables have evidently been reference-encoded: in the model output, there are 4 total coefficients belonging to the <code>town</code> variable, which is one less than the total number of classes in <code>town</code> (5). In this case, <code>Cambridge</code> class in <code>town</code> was used as the reference and the remaining 4 classes are interpreted relative to it.</p>
 <p>Alternatively, a categorical variable can be one-hot encoded using <code>model.matrix()</code>, which outputs a sparse matrix with values of 1 and 0:</p>
-<div class="sourceCode" id="cb470"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb470-1"><a href="everyday-ml-regression.html#cb470-1" tabindex="-1"></a>town_encoded <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>town <span class="sc">-</span><span class="dv">1</span>, <span class="at">data =</span> BH2)</span>
-<span id="cb470-2"><a href="everyday-ml-regression.html#cb470-2" tabindex="-1"></a><span class="fu">head</span>(town_encoded)</span></code></pre></div>
+<div class="sourceCode" id="cb472"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb472-1"><a href="everyday-ml-regression.html#cb472-1" tabindex="-1"></a>town_encoded <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>town <span class="sc">-</span><span class="dv">1</span>, <span class="at">data =</span> BH2)</span>
+<span id="cb472-2"><a href="everyday-ml-regression.html#cb472-2" tabindex="-1"></a><span class="fu">head</span>(town_encoded)</span></code></pre></div>
 <pre><code>##   townCambridge townBoston Savin Hill townLynn townBoston Roxbury
 ## 1             0                     0        1                  0
 ## 2             0                     0        1                  0
@@ -550,12 +550,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><span class="math inline">\(J(\theta) = MSE(\theta) + \alpha\frac{1}{2}\sum_{i = 1}^{n} |\theta_{i}|\)</span></p>
 <p><span class="math inline">\(J(\theta) = MSE(\theta) + \alpha\frac{1}{2}\sum_{i = 1}^{n} \theta_{i}^{2}\)</span></p>
 <p>In regression, incorporating L1 and L2 regularization is as known as Lasso and Ridge regression, respectively. Meanwhile, Elastic Net regression uses a mixture of both techniques, with the hyperparameter <span class="math inline">\(\alpha\)</span> describing the ratio of the two. In R, this can be implemented with the back-end <em>glmnet</em> which can be run on its own or as a wrapper in <em>caret</em>.</p>
-<div class="sourceCode" id="cb472"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb472-1"><a href="everyday-ml-regression.html#cb472-1" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
-<span id="cb472-2"><a href="everyday-ml-regression.html#cb472-2" tabindex="-1"></a>eln_mod <span class="ot">&lt;-</span> <span class="fu">train</span>(mpg <span class="sc">~</span> ., <span class="at">data =</span> mtcars,</span>
-<span id="cb472-3"><a href="everyday-ml-regression.html#cb472-3" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">&#39;glmnet&#39;</span>,</span>
-<span id="cb472-4"><a href="everyday-ml-regression.html#cb472-4" tabindex="-1"></a>                 <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&#39;center&#39;</span>, <span class="st">&#39;scale&#39;</span>),</span>
-<span id="cb472-5"><a href="everyday-ml-regression.html#cb472-5" tabindex="-1"></a>                 <span class="at">trControl =</span> tr)</span>
-<span id="cb472-6"><a href="everyday-ml-regression.html#cb472-6" tabindex="-1"></a>eln_mod</span></code></pre></div>
+<div class="sourceCode" id="cb474"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb474-1"><a href="everyday-ml-regression.html#cb474-1" tabindex="-1"></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb474-2"><a href="everyday-ml-regression.html#cb474-2" tabindex="-1"></a>eln_mod <span class="ot">&lt;-</span> <span class="fu">train</span>(mpg <span class="sc">~</span> ., <span class="at">data =</span> mtcars,</span>
+<span id="cb474-3"><a href="everyday-ml-regression.html#cb474-3" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">&#39;glmnet&#39;</span>,</span>
+<span id="cb474-4"><a href="everyday-ml-regression.html#cb474-4" tabindex="-1"></a>                 <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">&#39;center&#39;</span>, <span class="st">&#39;scale&#39;</span>),</span>
+<span id="cb474-5"><a href="everyday-ml-regression.html#cb474-5" tabindex="-1"></a>                 <span class="at">trControl =</span> tr)</span>
+<span id="cb474-6"><a href="everyday-ml-regression.html#cb474-6" tabindex="-1"></a>eln_mod</span></code></pre></div>
 <pre><code>## glmnet 
 ## 
 ## 32 samples
@@ -581,7 +581,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## The final values used for the model were alpha = 1 and lambda
 ##  = 1.029396.</code></pre>
 <p>We’re using the <code>trControl</code> defined previously, with a grid search for <code>alpha</code> and <code>lambda</code> (the shrinkage parameter). As before, calling <code>bestTune</code> prints out the set of hyperparmeters tested with the lowest loss.</p>
-<div class="sourceCode" id="cb474"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb474-1"><a href="everyday-ml-regression.html#cb474-1" tabindex="-1"></a>eln_mod<span class="sc">$</span>bestTune</span></code></pre></div>
+<div class="sourceCode" id="cb476"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb476-1"><a href="everyday-ml-regression.html#cb476-1" tabindex="-1"></a>eln_mod<span class="sc">$</span>bestTune</span></code></pre></div>
 <pre><code>##   alpha   lambda
 ## 9     1 1.029396</code></pre>
 
