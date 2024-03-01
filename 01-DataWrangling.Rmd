@@ -280,6 +280,21 @@ Alternatively, in base R and regex:
 mtcars[,grepl('^m|c$', names(mtcars))]
 ```
 
+We can also define a vector containing the column names and use `select()` using the helper functions such as `any_of()` and `all_of()`. 
+
+```{r}
+my_cols <- c('mpg', 'cyl', 'am')
+mtcars %>% select(any_of(my_cols))
+```
+
+Standard slicing and dicing works just as well:
+
+```{r}
+mtcars[,my_cols]
+```
+
+`any_of()` is particularly useful when the vector of strings contains columns that don't exist in the data. For example, if `my_cols` contained elements called `banana` and `apple`, running `mtcars[,my_cols]` will throw an error - you can't subset columns that don't exist. Using `any_of()` safely finds columns that do exist in `my_cols` and returns them safely.
+
 
 ## Long and wide data formats
 
