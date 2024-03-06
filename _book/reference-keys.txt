@@ -1,5 +1,5 @@
-tab:unnamed-chunk-155
-tab:unnamed-chunk-170
+tab:unnamed-chunk-157
+tab:unnamed-chunk-172
 introduction
 preface
 r-syntax-in-this-book
