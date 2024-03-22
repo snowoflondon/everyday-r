@@ -1,0 +1,128 @@
+# Digression II: Survival analysis with R
+
+One of the main advantages in using R is the abundance of maintained packages for a wide variety of statistical applications. An example of a commonly used statistical concept is survival analysis, also known as time-to-event analysis. Survival analysis is used to find the time until a specified event occurs - in most cases, this event is an outcome or an endpoint for a study. This outcome could be death of a patient or a disease re-occurrence (often used in clinical studies to study the relationship between patient survival and patient striations) or something mundane such as customer churning or a failure of a mechanical system. In R, such analysis can be handled trivially using syntax already familiar to us.
+
+There are two functions critical to survival analysis: the survival function $S(t)$ and the hazard function $h(t)$ - both a function of time $t$. The survival function describes the probability of surviving beyond time $t$ without the event occurring. It describes the proportion of the sample which has not experienced the event up until $t$. The hazard function describes the rate at which events occur at time $t$, given that the sample has survived up until that time. Thus, a higher value of this rate denotes higher risk.
+
+The Kaplan-Meier estimator is used to estimate the survival function $S(t)$ given censored data. In this case, a data point is said to be censored if the sample (i.e., individual) does not experience the event during the study period. The Kaplan-Meier method is non-parametric, which means it does not make any assumptions about the distribution of the survival times. It also does not quantify the effect size (i.e., difference in risk between sample groups) but instead outputs the probability of survival at given time points.
+
+$\hat{S}(t)=\prod_{i:t_{i}\le t} (1-\frac{d_{i}}{n_{i}})$
+
+Here, $\hat{S}(t)$ describes the probability of survival at $t$, $t$ is the time of interest, $t_{i}$ is the times of event occurrences, $d_{i}$ is the number of observed events, and $n_{i}$ is the number of individuals at risk before $t_{i}$. The product is evaluated over all event times $t_{i}$ less than equal to the time point of interest $t$. For each $t_{i}$ then, $(1-\frac{d_{i}}{n_{i}})$ denotes the probability of surviving beyond $t_{i}$. 
+
+Often, we frame our hypothesis to test whether there is a difference between two groups of individuals with respect to their survival probability. For example, we might be interested in whether, given patients enrolled in chemotherapy, men and women have different survival outcomes. Two survival functions can be subject to the log-rank test to compare the distributions:
+
+$\chi^{2}=\sum_{i}^{n}\frac{(O_{i}-E_{i})^{2}}{E_{i}}$
+
+Above, $O_{i}$ is the number of observed events in group $i$, while $E_{i}$ is the number of expected events in $i$. $n$ is the number of groups being compared. The $E_{i}$ term here can be calculated based on the Kaplan-Meier probabilities and the total number of observed events across the groups. The obtained log-rank test statistic is compared against the $\chi^{2}$ distribution for statistical inference. 
+
+In R, the workhorse of survival analysis is the aptly named package `survival` and `survminer`.
+
+```{r}
+library(tidyverse)
+library(survival)
+library(survminer)
+
+df <- survival::ovarian %>% as_tibble()
+df %>% glimpse()
+```
+
+I loaded the ovarian cancer dataset from the `survival` package. Here, we can striate the patients into two groups based on the `rx` column, which describes two different treatment regimen. The censor status as a binary variable is located in the `fustat` column, where `0` indicates censored, and `1` indicates death. 
+
+The Kaplan-Meier estimator is fit using `survfit()` on a survival object created by `Surv()`. Here, standard formula notation applies as we saw before. 
+
+```{r}
+s <- survfit(Surv(futime, fustat) ~ rx, data = df)
+s
+
+library(broom)
+tidy(s)
+```
+
+The survival plots are then drawn:
+
+```{r}
+ggsurvplot(s, ggtheme = theme_survminer(),
+           risk.table = 'abs_pct', pval = TRUE,
+           risk.table.col = 'strata',
+           palette = c("#a6f5c5", "#9d95bc"),
+           surv.median.line = 'hv')
+```
+
+Here, the p-value ($p=0.3$) indicated on the figure is the p-value obtained from the log-rank test comparing the two groups. We can also extract this value by:
+
+```{r}
+surv_pvalue(s)
+```
+
+The log-rank test and its associated values (such as the expected number of events) can formally be run using `survdiff()` as well:
+
+```{r}
+survdiff(Surv(futime, fustat) ~ rx, data = df)
+```
+
+In order to quantify the difference in risk between the two groups, we use the hazard function.
+
+$h_{i}(t)=h_{0}(t)e^{\sum_{i}^{n}\beta x}$
+
+Here, $h_{i}(t)$ denotes the hazard function for group $i$, which is a function of time $t$. It is then the exponential of the coefficient $\beta$ obtained from model fitting which describes the effect size of the hazard function. The ratio between two hazard functions (i.e., between individuals or groups) then describes the relative difference in risk.
+
+Therefore, it is evident that unlike the Kaplan-Meier estimator, hazard models output a list of coefficients for each covariate along with their p-values. This means that we are able to identify the magnitude and the direction of the association between each predictor variable and the hazard of experiencing the event.
+
+Formally, the hazards regression model is fit in R using `coxph()` (stands for Cox proportional hazards model):
+
+```{r}
+cox <- coxph(Surv(futime, fustat) ~ rx, 
+             data = df, ties = 'exact')
+summary(cox)
+```
+
+Firstly, look at the last portion of the `summary()` output: the log-rank test is included in the model output as a test for overall difference in the groups. The p-value here should equal to the p-value we obtained previously for the log-rank test:
+
+```{r}
+summary(cox)$sctest
+```
+
+Going back to the `summary()` output, the `coef` given equals the regression model coefficient $\beta$. Here, since there are two groups, the first group (i.e., `rx=1`) is used as the reference. Here, the `coef` value of `-0.5964` suggests that the `rx=2` group have lower risk than the other, though obviously the result is not statistically significant. The effect size, or the hazard ratio then, is the exponential of this value, which is also given in the `summary()` output as `0.5508`. This result suggests that the second group havs less risk of event than the other by a factor of 0.5508, or roughly 45%, at p-value of 0.31 (i.e., not significant). 
+
+The advantage of the hazard regression model is the ability to fit multiple predictors. This allows us to account for correlation between the predictor variables and identify potential associations. 
+
+```{r}
+cox2 <- coxph(Surv(futime, fustat) ~ rx + age + ecog.ps,
+              data = df, ties = 'exact')
+```
+
+The log-rank test returns a p-value of `3.14e-04`, suggesting a difference between the groups.
+
+```{r}
+summary(cox2)$sctest
+```
+
+The `summary()` output on the multivariate model shows that there could be an association between patients' age and hazard risk ($\alpha < .05$):
+
+```{r}
+summary(cox2)
+```
+
+A useful visualization to depict the respective hazard ratios is a linerange plot. For that we first need to do a bit of `dplyr` operations to obtain the confidence intervals and the hazard ratios.
+
+```{r}
+c <- tidy(cox2)
+c <- c %>% mutate(upper = estimate+1.96*std.error,
+                  lower = estimate-1.96*std.error)
+r <- c('estimate', 'upper', 'lower')
+c <- c %>% mutate(across(all_of(r), exp))
+
+ggplot(c, aes(x = estimate, y = term,
+               color = estimate>1)) +
+  geom_vline(xintercept = 1, color = 'gray') +
+  geom_linerange(aes(xmin = lower, xmax = upper),
+                 linewidth = 1.5, alpha = .5) +
+  geom_point(size = 4) + theme_minimal() +
+  scale_color_manual(values = c('green', 'red'),
+                     guide = 'none') +
+  theme(axis.text.y = element_text(hjust = 0, size = 18),
+        text = element_text(size = 18)) +
+  ylab('') + xlab('HR estimate (95% C.I.)')
+```
+
