@@ -208,6 +208,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.3" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding"><i class="fa fa-check"></i><b>7.3</b> Categorical predictors and factor encoding</a></li>
 <li class="chapter" data-level="7.4" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#elastic-net-regression"><i class="fa fa-check"></i><b>7.4</b> Elastic net regression</a></li>
 </ul></li>
+<li class="chapter" data-level="8" data-path="digression-i-gradient-descent-with-r.html"><a href="digression-i-gradient-descent-with-r.html"><i class="fa fa-check"></i><b>8</b> Digression I: Gradient descent with R</a></li>
+<li class="chapter" data-level="9" data-path="digression-ii-survival-analysis-with-r.html"><a href="digression-ii-survival-analysis-with-r.html"><i class="fa fa-check"></i><b>9</b> Digression II: Survival analysis with R</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -246,21 +248,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.2</span> R syntax in this book<a href="index.html#r-syntax-in-this-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Code chunks will be presented in a typical Markdown format as such, with the code output below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a><span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>)</span></code></pre></div>
-<pre><code>##  [1] 69.0709852 18.0264456 77.5463292 77.2710905 52.4442155
-##  [6] 70.8544607 93.6874894 84.8936069 46.5406055 50.4766206
-## [11] 39.0829417  2.3239378 85.4008131 55.2736743 82.0792683
-## [16]  0.6627355 52.4165286 43.6120847 10.8098285 57.3371293</code></pre>
+<pre><code>##  [1] 86.5544839  4.1597651 71.9618412 72.2593990 49.5171120
+##  [6] 43.7057444 22.0336953 68.1447566 81.9539577  0.9975925
+## [11] 32.0767239 85.5006679 58.4824134  2.7996030 57.6497652
+## [16] 77.2525484 38.6410517 47.0563594 80.6563789 21.4674578</code></pre>
 <p>When using commands outside of base R, the loading of the parent package will be explicitly shown to avoid confusion:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
 <span id="cb3-2"><a href="index.html#cb3-2" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">runif</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">100</span>))</span></code></pre></div>
-<pre><code>## Warning in microbenchmark::microbenchmark(runif(n = 20,
-## min = 0, max = 100)): less accurate nanosecond times to
-## avoid potential integer overflows</code></pre>
+<pre><code>## Warning in microbenchmark::microbenchmark(runif(n = 20, min =
+## 0, max = 100)): less accurate nanosecond times to avoid
+## potential integer overflows</code></pre>
 <pre><code>## Unit: nanoseconds
-##                               expr min   lq    mean median
-##  runif(n = 20, min = 0, max = 100) 902 1025 1202.12   1107
-##    uq  max neval
-##  1230 8487   100</code></pre>
+##                               expr min  lq    mean median   uq
+##  runif(n = 20, min = 0, max = 100) 861 943 1127.09   1066 1107
+##   max neval
+##  8159   100</code></pre>
 <p>Typically in longer chains of code, I will use <code>%&gt;%</code> from <code>magrittr</code> as a pipe. This is usually standard practice in code using packages from the <code>tidyverse</code> so it’s a good habit to start using it. However, keep in mind - as of the recent R version (shown below), there is a native R pipe <code>|&gt;</code> which behave almost - but not always - in a similar fashion.</p>
 <p>Finally, here is the R version I am currently using:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1" tabindex="-1"></a>version</span></code></pre></div>
