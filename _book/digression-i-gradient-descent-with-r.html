@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Digression I: Gradient Descent with R | Everyday-R: Practical R for Data Science</title>
+  <title>Chapter 8 Digression I: Gradient descent with R | Everyday-R: Practical R for Data Science</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
 set in the _output.yml file.</p>" />
   <meta name="generator" content="bookdown 0.34 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Digression I: Gradient Descent with R | Everyday-R: Practical R for Data Science" />
+  <meta property="og:title" content="Chapter 8 Digression I: Gradient descent with R | Everyday-R: Practical R for Data Science" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ set in the _output.yml file.</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Digression I: Gradient Descent with R | Everyday-R: Practical R for Data Science" />
+  <meta name="twitter:title" content="Chapter 8 Digression I: Gradient descent with R | Everyday-R: Practical R for Data Science" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 The HTML output format for this example is bookdown::gitbook,
@@ -36,7 +36,7 @@ set in the _output.yml file.</p>" />
   
   
 <link rel="prev" href="everyday-ml-regression.html"/>
-
+<link rel="next" href="digression-ii-survival-analysis-with-r.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -208,7 +208,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.3" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding"><i class="fa fa-check"></i><b>7.3</b> Categorical predictors and factor encoding</a></li>
 <li class="chapter" data-level="7.4" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#elastic-net-regression"><i class="fa fa-check"></i><b>7.4</b> Elastic net regression</a></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="digression-i-gradient-descent-with-r.html"><a href="digression-i-gradient-descent-with-r.html"><i class="fa fa-check"></i><b>8</b> Digression I: Gradient Descent with R</a></li>
+<li class="chapter" data-level="8" data-path="digression-i-gradient-descent-with-r.html"><a href="digression-i-gradient-descent-with-r.html"><i class="fa fa-check"></i><b>8</b> Digression I: Gradient descent with R</a></li>
+<li class="chapter" data-level="9" data-path="digression-ii-survival-analysis-with-r.html"><a href="digression-ii-survival-analysis-with-r.html"><i class="fa fa-check"></i><b>9</b> Digression II: Survival analysis with R</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -230,7 +231,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="digression-i-gradient-descent-with-r" class="section level1 hasAnchor" number="8">
-<h1><span class="header-section-number">Chapter 8</span> Digression I: Gradient Descent with R<a href="digression-i-gradient-descent-with-r.html#digression-i-gradient-descent-with-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<h1><span class="header-section-number">Chapter 8</span> Digression I: Gradient descent with R<a href="digression-i-gradient-descent-with-r.html#digression-i-gradient-descent-with-r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>Previous two chapters covered two main facets of supervised models: classification and regression. Though it may seem trivial, one of the most important aspects of machine learning is the model training process. When training a model, one must consider both domain knowledge (which may aid in feature engineering) as well as model complexity. Related to these ideas is the concept of parameter space - therein which we can formally define the process of model training as <em>searching for a combination of model parameters that minimizes a cost function</em>. Now, this isn’t a ML book so there is no need to do a deep-dive here at all; however, the preceding definition can boil down to a simple task of minimizing error - a concept that extends to the simplest of models such as a simple linear model.</p>
 <p>In brief, model training is an iterative process where we evaluate a prediction <span class="math inline">\(y(x_{i})\)</span> over a training set, evaluate a loss (i.e., deviation between <span class="math inline">\(y(x_{i})\)</span> and <span class="math inline">\(y\)</span> - the ground truth), then tweak the model (i.e., model parameters) to minimize the loss.</p>
 <p>In simple linear regression, this loss term is actually squared to account for deviations in either direction. This is called the square loss. Summing the square loss over the number of samples then, we get the <em>mean squared error</em> or <em>MSE</em>.</p>
@@ -273,7 +274,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb483-3"><a href="digression-i-gradient-descent-with-r.html#cb483-3" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> </span>
 <span id="cb483-4"><a href="digression-i-gradient-descent-with-r.html#cb483-4" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
 <span id="cb483-5"><a href="digression-i-gradient-descent-with-r.html#cb483-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&#39;Simulated Data&#39;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-287-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-271-1.png" width="672" /></p>
 <div class="sourceCode" id="cb484"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb484-1"><a href="digression-i-gradient-descent-with-r.html#cb484-1" tabindex="-1"></a><span class="fu">rm</span>(theta_0, theta_1)</span></code></pre></div>
 <p>Now we fit a linear model using <code>lm()</code>, as seen previously:</p>
 <div class="sourceCode" id="cb485"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb485-1"><a href="digression-i-gradient-descent-with-r.html#cb485-1" tabindex="-1"></a>ols <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data)</span>
@@ -374,7 +375,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb497-2"><a href="digression-i-gradient-descent-with-r.html#cb497-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
 <span id="cb497-3"><a href="digression-i-gradient-descent-with-r.html#cb497-3" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
 <span id="cb497-4"><a href="digression-i-gradient-descent-with-r.html#cb497-4" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&#39;Gradient descent over 100 iterations&#39;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-294-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-278-1.png" width="672" /></p>
 <p>As a visual aid to see how gradient descent is working, we can visualize the regression line at each iteration over our synthetic data. Here, the blue line indicates the regression line at the first iteration, which has a slope and intercept of 0 (since we initialized them at 0). Over the 100 iterations, the regression line approaches the line of best fit we obtained earlier using <code>lm()</code>. The green line indicates the line at the 100th iteration.</p>
 <div class="sourceCode" id="cb498"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb498-1"><a href="digression-i-gradient-descent-with-r.html#cb498-1" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> </span>
 <span id="cb498-2"><a href="digression-i-gradient-descent-with-r.html#cb498-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
@@ -388,7 +389,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb498-10"><a href="digression-i-gradient-descent-with-r.html#cb498-10" tabindex="-1"></a>              <span class="at">data =</span> res <span class="sc">%&gt;%</span> <span class="fu">slice_tail</span>(), </span>
 <span id="cb498-11"><a href="digression-i-gradient-descent-with-r.html#cb498-11" tabindex="-1"></a>              <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&#39;green&#39;</span>) <span class="sc">+</span></span>
 <span id="cb498-12"><a href="digression-i-gradient-descent-with-r.html#cb498-12" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&#39;Gradient descent over 100 iterations&#39;</span>)</span></code></pre></div>
-<p><img src="_main_files/figure-html/unnamed-chunk-295-1.png" width="672" /></p>
+<p><img src="_main_files/figure-html/unnamed-chunk-279-1.png" width="672" /></p>
 
 </div>
             </section>
@@ -396,8 +397,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="everyday-ml-regression.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="everyday-ml-regression.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="digression-ii-survival-analysis-with-r.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
