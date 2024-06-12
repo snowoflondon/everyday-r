@@ -1,0 +1,367 @@
+# Everyday exploratory data analysis
+
+Before diving straight into complex modeling tasks, many downstream failures and oversights can be avoided with a broad, preliminary look at the data. Exploratory data analysis (EDA) doesn't aim to answer a specific question or a hypothesis, but seeks to find general, interesting trends and quirks in the data. Finding and identifying outliers, understanding data formats, and investigating the distribution of the data are all components of EDA. There is no one set rule or protocol, but this chapter aims to follow a typical EDA workflow working with continuous, categorical, and ordinal data.
+
+```{r,warning=FALSE, message=FALSE}
+library(tidyverse)
+library(mlbench)
+library(skimr)
+```
+
+
+## Workflow 1: continuous data
+
+For this exercise I will use the Boston Housing dataset from `mlbench`, which is a common dataset used in ML tutorials. It consists of numerical features (except one column `chas`, which is a binary dummy variable) and a continuous target variable `medv` - median value of homes.
+
+```{r}
+data("BostonHousing")
+df <- as_tibble(BostonHousing)
+```
+
+The function `str()` conveniently returns the structure of the dataset and as we can see, it returns the nature of each column.
+
+```{r}
+str(df)
+```
+
+For a neat summary of a dataset, we can also use `skim()` from the package `skimr`, which behaves nicely in a typical `tidyverse` pipe style:
+
+```{r}
+skim(df) %>% summary()
+```
+
+Immediately we see that the column `chas` is a factor. As previously iterated, this column contains a dummy variable which indicates `1` if tract bounds river and `0` if otherwise. As expected, `vapply()` output says this is the only non-numerical column. We will have to be aware of this.
+
+```{r}
+vapply(df, is.numeric, logical(1))
+```
+
+Generally, features (also as known as predictors) tend to show some degree of correlations with one another. This can be identified with `cor()`, which returns a correlation matrix. 
+
+```{r}
+cor_res <- cor(df %>% select(-c(medv, chas)))
+head(cor_res)
+```
+
+The package `corrplot` elegantly outputs a visualization using the correlation matrix:
+
+```{r, warning=FALSE, message=FALSE}
+library(corrplot)
+corrplot(cor_res, method = 'color')
+```
+
+Now it's time to check the distribution of the features. For this I want to make a boxplot, but for that I need to reshape the dataset first. As seen in Chapter 1, `tidyr::pivot_longer()` can be used to convert the data into long format.
+
+```{r}
+dfm <- df %>% select(-c(medv, chas)) %>%
+  pivot_longer(everything(), names_to = 'Feature', values_to = 'Value')
+
+dfm
+```
+
+Now it's trivial to use `ggplot()` to make the boxplot:
+
+```{r}
+ggplot(dfm, aes(x = Feature, y = Value)) + 
+  geom_boxplot(aes(fill = Feature), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none')
+```
+
+It looks like the scales for the features are not consistent. This is common in real-life data and for most ML algorithms, features need to be preprocessed. I will cover this in the future chapters, but in brief, we can calculate the z-score as such for each predictor:
+
+```{r}
+zs <- function(x){
+  (x - mean(x)) / sd(x)
+}
+
+df_s <- df %>% select(-c(medv, chas)) %>%
+  mutate(across(everything(), zs))
+
+df_s
+```
+
+Now the boxplots look more uniform: 
+
+```{r}
+df_sm <- df_s %>% pivot_longer(everything(), 
+                               names_to = 'Feature', 
+                               values_to = 'Value')
+
+ggplot(df_sm, aes(x = Feature, y = Value)) + 
+  geom_boxplot(aes(fill = Feature), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none')
+```
+
+How about our target variable - the housing price? This column is also continuous so let's check the shape of this distribution using a histogram:
+
+```{r}
+hist(df$medv)
+```
+
+It looks like the mean value for `medv` is at around 22 to 23. Changing the number of bins can give us a better look, if needed.
+
+Since the target variable is continuous, we can easily fit a simple linear model to check for relationships between the predictors and the target. This part may be delving a bit deeper than our initial goal of EDA, but it's still useful to make us aware of possible relationships in our data.
+
+```{r}
+df_num <- df %>% select(-chas)
+
+lm_mod <- lm(medv ~ ., data = df_num)
+summary(lm_mod)
+```
+
+An ANOVA table on the fitted model gives us additional info such as the mean sum of squares:
+
+```{r}
+anova(lm_mod)
+```
+
+The `broom` package is useful in converting summaries of model objects into workable tibbles:
+
+```{r, message=FALSE, warning=FALSE}
+library(broom)
+tidy(lm_mod)
+```
+
+Since we seem to have linear relationships across our dataset, we can use scatterplots in combination with correlation analysis to generate useful visualizations:
+
+```{r, warning=FALSE, message=FALSE}
+library(ggpubr)
+ggplot(df_num, aes(x = rm, y = medv)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm') + theme_bw() + 
+  stat_cor(method = 'pearson')
+```
+
+Oops! Even though it's clear there is indeed a linear relationship between the number of rooms `rm` and the housing price `medv`, it looks like there is a strange behaviour at `medv == 50`. Indeed, it looks like the measurement was artificially capped at 50 and there are 16 instances where this value is found:
+
+```{r}
+length(df$medv[df$medv == 50])
+```
+Since we're only concerned with EDA for now, we won't delve further into how we're going to tackle this. Of course, if we are training a prediction model, we probably shouldn't leave the values capped like that as is. EDA have made us aware of this before we started high-level modeling tasks, and that's good.
+
+Let's circle back to the dummy variable `chas`. Since this is a factor, let's treat them as groups and compare the distribution of `medv` using a Wilcoxon test:
+
+```{r}
+df_chas <- df %>% select(medv, chas)
+
+ggplot(df_chas, aes(x = chas, y = medv)) +
+  geom_boxplot(aes(fill = chas), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none') +
+  stat_compare_means(method = 'wilcox')
+```
+
+A quick summary table can be accessed using `skimr::skim()` on the grouped data:
+
+```{r}
+df_chas %>% group_by(chas) %>% skim()
+```
+
+Boxplots are nice but violin plots give us a further look at the shape of the distributions: this way we can actually see that `medv` values are capped at 50.
+
+```{r}
+ggplot(df_chas, aes(x = chas, y = medv)) +
+  geom_violin(aes(fill = chas), alpha = .6) + 
+  theme_bw() + theme(legend.position = 'none') +
+  stat_compare_means(method = 'wilcox')
+```
+
+
+## Workflow 2: dates and ordinal data
+
+For this part I will pull the `Ozone` data from `mlbench` which has the following three columns as the first three: integers coding for the month, integers coding for the day of the month, and integers coding for the day of the week, with Monday coded as the first day (i.e., 1 = Mon., 2 = Tues.,...). The rest of the columns correspond to various weather measurements as continuous values such as the temperature, humidity, and visibility.
+
+```{r}
+data('Ozone')
+df <- as_tibble(Ozone)
+df
+```
+
+It's not necessary in this case, but since we are working with dates let's make the date labels easier to read. Using `lubridate` I will convert the month labels into a factor with character levels. Then using base R's `weekdays()` I will convert the days of the week to characters as well.
+
+```{r, message=FALSE, warning=FALSE}
+library(lubridate)
+df <- df %>% 
+  mutate(V1 = lubridate::month(as.numeric(V1), 
+                               label = TRUE)) %>%
+  mutate(V3 = weekdays(.Date(4:10))[df$V3])
+
+df
+```
+
+```{r}
+df <- df %>% 
+  mutate(V3 = factor(V3, levels= 
+                       weekdays(.Date(4:10))))
+```
+
+Another thing to note - since this data is temporal data, there's a big chance there are many missing values due to external factors. Let's see:
+
+```{r}
+vapply(df, function(x) sum(is.na(x)), double(1))
+```
+Column `V9`, which correspond to temperature measured in El Monte, CA has 139 missing values! Immediately you could argue we can replace these with 0s but remember the nature of this data - a 0 degree weather has actual meaning. Imputation cases like this are tricky and that will be important during modeling tasks. 
+
+Since we are working with ordinal data - in our case, data points over time, it makes sense to make a trendline. Using `facet_wrap()`, in `ggplot()`, I can make a grid based on the time of the month; here I am plotting `V8` - temperature measured at Sandburg, CA - versus `V2` - day of the month.
+
+```{r, warning=FALSE}
+ggplot(df, aes(x = V2, y = V8)) + 
+  geom_point() + geom_line(aes(group = 1)) +
+  facet_wrap(~ V1) + theme_bw() +
+  theme(axis.text.x = element_blank())
+```
+
+For a visual reference, let's see what happens when we plot the temperature at El Monte instead, with all those missing values:
+
+```{r, warning=FALSE}
+ggplot(df, aes(x = V2, y = V9)) + 
+  geom_point() + geom_line(aes(group = 1)) +
+  facet_wrap(~ V1) + theme_bw() +
+  theme(axis.text.x = element_blank())
+```
+
+Adding multiple trendlines is easy using the `group = ` aesthetic within `geom_line()`; here I will plot `V7` and `V11` together - humidity and pressure gradient measured at LAX, respectively:
+
+```{r, warning=FALSE}
+df_2 <- df %>% select(V1, V2, V7, V11) %>%
+  pivot_longer(c(V7, V11), 
+               names_to = 'Measurement', 
+               values_to = 'Values')
+
+ggplot(df_2, aes(x = V2, y = Values)) +
+  geom_point() + 
+  geom_line(aes(group = Measurement,
+                color = Measurement)) +
+  facet_wrap(~ V1) + theme_bw() + 
+  theme(legend.position = 'bottom',
+        axis.text.x = element_blank())
+```
+
+Working with grouped data such as this means an ANOVA tells us whether there is a significant variation across the group means relative to the within-group means:
+
+```{r}
+aov_mod <- aov(V8 ~ V1, data = df)
+summary(aov_mod)
+```
+
+A nice way to visualize an ANOVA result is by using grouped boxplots; here I am adding the Kruskal-Wallis ANOVA result from `ggpubr()`:
+
+```{r, warning=FALSE}
+ggplot(df, aes(x = V1, y = V8)) +
+  geom_boxplot(aes(fill = V1), alpha = .6) +
+  theme_bw() + xlab('') +
+  theme(legend.position = 'none') +
+  stat_compare_means(method = 'kruskal')
+```
+
+Instead of an ANOVA, I can also run pairwise Wilcoxon tests against a reference group. Here I will make January the reference group:
+
+```{r, warnings=FALSE}
+ggplot(df, aes(x = V1, y = V8)) +
+  geom_boxplot(aes(fill = V1), alpha = .6) +
+  theme_bw() + xlab('') +
+  theme(legend.position = 'none') +
+  stat_compare_means(method = 'wilcox',
+                     ref.group = 'Jan',
+                     label = 'p.signif')
+```
+
+If we want to calculate values based on groups, `dplyr`'s `group_by()` is useful, as seen in Chapter 1:
+
+```{r}
+df %>% group_by(V1) %>%
+  summarise(across(V4:V13, ~ mean(.x, na.rm = TRUE), 
+                   .names = 'mean_{col}'))
+```
+
+```{r,warning=FALSE}
+df %>% group_by(V1, V3) %>%
+  summarise(mean_hum_LAX = mean(V7, na.rm=T))
+```
+
+
+## Visualization of clusters 
+
+Clustering and dimensionality reduction tasks can give us a visual look at groupings in the data. The concept of unsupervised clustering and dimensionality reduction techniques will be covered in one of the future chapters, but this is a high-level glance that will be useful in quickly identifying clusters:
+
+```{r}
+data("iris")
+df <- as_tibble(iris)
+```
+
+For PCA, I will use the useful `factoextra` package for visualization. The first step is to make sure that the input for PCA is numeric; this means that, for example, in the `iris` dataset, I need to exclude the column containing the target labels. Additionally, I am declaring the target label column as a factor, since I want to label the data points with these labels in the PCA plot.
+
+The `fviz_pca_ind()` function draws the PCA plot:
+
+```{r, warning=FALSE, message=FALSE}
+library(factoextra)
+
+pc_res <- prcomp(
+  df %>% select(-Species), scale = TRUE
+)
+
+groups <- factor(df$Species)
+
+fviz_pca_ind(pc_res, col.ind = groups, 
+             addEllipses = TRUE, 
+             legend.title = 'Species')
+```
+
+Since this is a tiny and simple dataset frequently used in these types of tutorials, it's no surprise that we get nice ellipses in the data. The data points separate well across the first PC (the x-axis).
+
+The `fviz_contrib()` plot shows the contribution of each variable. The horizontal red line here shows the expected level of contribution if the contributions were uniform. The `axes = 1` argument states that I want to check for the contribution in the first PC only.
+
+```{r}
+fviz_contrib(pc_res, axes = 1, choice = 'var')
+```
+
+Screeplot shows the level of covariance explained by each PC:
+
+```{r}
+fviz_screeplot(pc_res)
+```
+
+Alternatively, dendrograms are a commonly used tools to visualize hierarchical clustering in the data. Again, the concept behind the clustering method will be explained in greater detail in future chapters, but essentially we need to generate a distance matrix (using some sort of a distance metric, in this case Euclidean distance) and then calculate linkage between each instance. The `dist()` and `hclust()` from base R handles this nicely:
+
+```{r}
+data(mtcars)
+
+dm <- dist(mtcars, method = 'euclidean')
+hc <- hclust(dm, method = 'complete')
+```
+
+The `dendextend` package can accept the output from `hclust` to make customizable dendrograms:
+
+```{r, warning=FALSE, message=FALSE}
+library(dendextend)
+den <- as.dendrogram(hc)
+
+den %>% plot()
+```
+
+When we know the number of clusters present, we can color them differently with `color_branches()`. For an alternative look at dendrograms, we can circlize them using `circlize_dendrogram()`:
+
+```{r}
+den %>% color_branches(k = 4) %>%
+  circlize_dendrogram()
+```
+
+The `cutree()` function accepts the `hclust()` output and assigns a cluster label, depending on the number of clusters defined:
+
+```{r}
+cutree(hc, k = 4) %>% head()
+```
+
+Finally, identifying the optimal number of clusters in the data can mainly be done using the silhouette method or the elbow (also called the wss) method:
+
+```{r}
+fviz_nbclust(mtcars, FUNcluster = hcut,
+             method = 'silhouette',
+             diss = dm)
+```
+
+```{r}
+fviz_nbclust(mtcars, FUNcluster = hcut,
+             method = 'wss',
+             diss = dm)
+```
+
