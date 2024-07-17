@@ -208,6 +208,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.3" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#categorical-predictors-and-factor-encoding"><i class="fa fa-check"></i><b>7.3</b> Categorical predictors and factor encoding</a></li>
 <li class="chapter" data-level="7.4" data-path="everyday-ml-regression.html"><a href="everyday-ml-regression.html#elastic-net-regression"><i class="fa fa-check"></i><b>7.4</b> Elastic net regression</a></li>
 </ul></li>
+<li class="chapter" data-level="8" data-path="digression-i-gradient-descent-with-r.html"><a href="digression-i-gradient-descent-with-r.html"><i class="fa fa-check"></i><b>8</b> Digression I: Gradient descent with R</a></li>
+<li class="chapter" data-level="9" data-path="digression-ii-survival-analysis-with-r.html"><a href="digression-ii-survival-analysis-with-r.html"><i class="fa fa-check"></i><b>9</b> Digression II: Survival analysis with R</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -241,37 +243,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>There are 11 columns here and since this is a toy dataset, it is already neat and tidy. However, sometimes we may need to rename the columns to trim specific strings or to make downstream analysis easier. Renaming column headers with <code>dplyr::rename()</code> is as simple as <code>rename(new_name = old_name)</code>, but with <code>rename_with()</code> there’s more flexibility:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="everyday-data-wrangling.html#cb10-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">rename_with</span>(toupper)</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     MPG   CYL  DISP    HP  DRAT    WT  QSEC    VS    AM  GEAR
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  9 Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      MPG   CYL  DISP    HP  DRAT    WT  QSEC    VS    AM
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: CARB &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: GEAR &lt;dbl&gt;, CARB &lt;dbl&gt;</code></pre>
 <p>You can pass any function within <code>rename_with()</code> to alter the column headers and use the <code>.cols =</code> argument to define which columns you’d apply the function to:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="everyday-data-wrangling.html#cb12-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">rename_with</span>(<span class="cf">function</span>(x) <span class="fu">paste0</span>(x, <span class="st">&quot;_1&quot;</span>), <span class="at">.cols =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR      mpg_1 cyl_1 disp_1  hp_1 drat_1  wt_1 qsec_1  vs_1  am_1
-##    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda R…  21       6   160    110   3.9   2.62   16.5     0     1
-##  2 Mazda R…  21       6   160    110   3.9   2.88   17.0     0     1
-##  3 Datsun …  22.8     4   108     93   3.85  2.32   18.6     1     1
-##  4 Hornet …  21.4     6   258    110   3.08  3.22   19.4     1     0
-##  5 Hornet …  18.7     8   360    175   3.15  3.44   17.0     0     0
-##  6 Valiant   18.1     6   225    105   2.76  3.46   20.2     1     0
-##  7 Duster …  14.3     8   360    245   3.21  3.57   15.8     0     0
-##  8 Merc 24…  24.4     4   147.    62   3.69  3.19   20       1     0
-##  9 Merc 230  22.8     4   141.    95   3.92  3.15   22.9     1     0
-## 10 Merc 280  19.2     6   168.   123   3.92  3.44   18.3     1     0
+##    CAR       mpg_1 cyl_1 disp_1  hp_1 drat_1  wt_1 qsec_1  vs_1
+##    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda RX4  21       6   160    110   3.9   2.62   16.5     0
+##  2 Mazda RX…  21       6   160    110   3.9   2.88   17.0     0
+##  3 Datsun 7…  22.8     4   108     93   3.85  2.32   18.6     1
+##  4 Hornet 4…  21.4     6   258    110   3.08  3.22   19.4     1
+##  5 Hornet S…  18.7     8   360    175   3.15  3.44   17.0     0
+##  6 Valiant    18.1     6   225    105   2.76  3.46   20.2     1
+##  7 Duster 3…  14.3     8   360    245   3.21  3.57   15.8     0
+##  8 Merc 240D  24.4     4   147.    62   3.69  3.19   20       1
+##  9 Merc 230   22.8     4   141.    95   3.92  3.15   22.9     1
+## 10 Merc 280   19.2     6   168.   123   3.92  3.44   18.3     1
 ## # ℹ 22 more rows
-## # ℹ 2 more variables: gear_1 &lt;dbl&gt;, carb_1 &lt;dbl&gt;</code></pre>
+## # ℹ 3 more variables: am_1 &lt;dbl&gt;, gear_1 &lt;dbl&gt;, carb_1 &lt;dbl&gt;</code></pre>
 <p>Alternatively with base R, you can call the <code>names</code> attribute and alter that directly:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="everyday-data-wrangling.html#cb14-1" tabindex="-1"></a><span class="fu">names</span>(mtcars)[<span class="sc">-</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="fu">names</span>(mtcars[<span class="sc">-</span><span class="dv">1</span>]), <span class="st">&#39;_1&#39;</span>) <span class="co"># not run</span></span></code></pre></div>
 </div>
@@ -323,20 +325,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The <code>n()</code> function is useful when filtering by groups of size greater than a certain value:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="everyday-data-wrangling.html#cb26-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;</span> <span class="dv">7</span>) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 25 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  2 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  3 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  4 Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  5 Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-##  6 Merc…  16.4     8  276.   180  3.07  4.07  17.4     0     0     3
-##  7 Merc…  17.3     8  276.   180  3.07  3.73  17.6     0     0     3
-##  8 Merc…  15.2     8  276.   180  3.07  3.78  18       0     0     3
-##  9 Cadi…  10.4     8  472    205  2.93  5.25  18.0     0     0     3
-## 10 Linc…  10.4     8  460    215  3     5.42  17.8     0     0     3
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  2 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  3 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  4 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0
+##  5 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0
+##  6 Merc …  16.4     8  276.   180  3.07  4.07  17.4     0     0
+##  7 Merc …  17.3     8  276.   180  3.07  3.73  17.6     0     0
+##  8 Merc …  15.2     8  276.   180  3.07  3.78  18       0     0
+##  9 Cadil…  10.4     8  472    205  2.93  5.25  18.0     0     0
+## 10 Linco…  10.4     8  460    215  3     5.42  17.8     0     0
 ## # ℹ 15 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Using <code>n()</code> gives us access to finding the group sizes using <code>tally()</code> or <code>count()</code>:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="everyday-data-wrangling.html#cb28-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cyl) <span class="sc">%&gt;%</span> <span class="fu">tally</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 2
@@ -369,42 +371,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Sometimes it’s useful to transform numeric columns; this is particularly helpful when performing feature transformations (e.g., logarithmic, absolute value) or creating new columns entirely from preexisting columns.</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="everyday-data-wrangling.html#cb32-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">mpg =</span> mpg<span class="sc">*</span><span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  42       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  42       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  45.6     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  42.8     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  37.4     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  36.2     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  28.6     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 Merc…  48.8     4  147.    62  3.69  3.19  20       1     0     4
-##  9 Merc…  45.6     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 Merc…  38.4     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  42       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  42       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  45.6     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  42.8     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  37.4     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  36.2     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  28.6     8  360    245  3.21  3.57  15.8     0     0
+##  8 Merc …  48.8     4  147.    62  3.69  3.19  20       1     0
+##  9 Merc …  45.6     4  141.    95  3.92  3.15  22.9     1     0
+## 10 Merc …  38.4     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Using <code>across()</code> allows you to specifically select which columns you’d like to apply a given function on. The first part of the <code>across()</code> argument should therefore specify the columns of interest. Here, <code>where()</code> is particularly useful as it returns indices (kind of like <code>grep()</code>) after evaluating a logical expression, such as <code>is.numeric()</code>. The second part of <code>across()</code> takes the function you’d like to apply, while the optional <code>.names</code> argument allows you to create new columns rather than overwrite the old ones.</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="everyday-data-wrangling.html#cb34-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> </span>
 <span id="cb34-2"><a href="everyday-data-wrangling.html#cb34-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="cf">function</span>(x) x<span class="sc">*</span><span class="dv">2</span>, <span class="at">.names =</span> <span class="st">&quot;double_{col}&quot;</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 23
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  9 Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 12 more variables: carb &lt;dbl&gt;, double_mpg &lt;dbl&gt;,
-## #   double_cyl &lt;dbl&gt;, double_disp &lt;dbl&gt;, double_hp &lt;dbl&gt;,
-## #   double_drat &lt;dbl&gt;, double_wt &lt;dbl&gt;, double_qsec &lt;dbl&gt;,
-## #   double_vs &lt;dbl&gt;, double_am &lt;dbl&gt;, double_gear &lt;dbl&gt;,
-## #   double_carb &lt;dbl&gt;</code></pre>
+## # ℹ 13 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;,
+## #   double_mpg &lt;dbl&gt;, double_cyl &lt;dbl&gt;, double_disp &lt;dbl&gt;,
+## #   double_hp &lt;dbl&gt;, double_drat &lt;dbl&gt;, double_wt &lt;dbl&gt;,
+## #   double_qsec &lt;dbl&gt;, double_vs &lt;dbl&gt;, double_am &lt;dbl&gt;,
+## #   double_gear &lt;dbl&gt;, double_carb &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="everyday-data-wrangling.html#cb36-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span></span>
 <span id="cb36-2"><a href="everyday-data-wrangling.html#cb36-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character),</span>
 <span id="cb36-3"><a href="everyday-data-wrangling.html#cb36-3" tabindex="-1"></a>                <span class="cf">function</span>(x) <span class="fu">gsub</span>(<span class="st">&#39;[a-z]$&#39;</span>, <span class="st">&#39;&#39;</span>, x))) <span class="sc">%&gt;%</span></span>
@@ -427,90 +429,90 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>You can overwrite the existing columns completely; also keep in mind that you can pass any function within <code>across()</code> as such:</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="everyday-data-wrangling.html#cb38-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mpg, disp), <span class="cf">function</span>(x) x<span class="sc">*</span><span class="dv">3</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  63       6  480    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  63       6  480    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  68.4     4  324     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  64.2     6  774    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  56.1     8 1080    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  54.3     6  675    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  42.9     8 1080    245  3.21  3.57  15.8     0     0     3
-##  8 Merc…  73.2     4  440.    62  3.69  3.19  20       1     0     4
-##  9 Merc…  68.4     4  422.    95  3.92  3.15  22.9     1     0     4
-## 10 Merc…  57.6     6  503.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  63       6  480    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  63       6  480    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  68.4     4  324     93  3.85  2.32  18.6     1     1
+##  4 Horne…  64.2     6  774    110  3.08  3.22  19.4     1     0
+##  5 Horne…  56.1     8 1080    175  3.15  3.44  17.0     0     0
+##  6 Valia…  54.3     6  675    105  2.76  3.46  20.2     1     0
+##  7 Duste…  42.9     8 1080    245  3.21  3.57  15.8     0     0
+##  8 Merc …  73.2     4  440.    62  3.69  3.19  20       1     0
+##  9 Merc …  68.4     4  422.    95  3.92  3.15  22.9     1     0
+## 10 Merc …  57.6     6  503.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Iterating across the columns using <code>purrr::modify()</code> instead:</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="everyday-data-wrangling.html#cb40-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">modify_if</span>(is.numeric, <span class="sc">~</span> .x<span class="sc">*</span><span class="dv">3</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  63      18  480    330 11.7   7.86  49.4     0     3    12
-##  2 Mazd…  63      18  480    330 11.7   8.62  51.1     0     3    12
-##  3 Dats…  68.4    12  324    279 11.6   6.96  55.8     3     3    12
-##  4 Horn…  64.2    18  774    330  9.24  9.64  58.3     3     0     9
-##  5 Horn…  56.1    24 1080    525  9.45 10.3   51.1     0     0     9
-##  6 Vali…  54.3    18  675    315  8.28 10.4   60.7     3     0     9
-##  7 Dust…  42.9    24 1080    735  9.63 10.7   47.5     0     0     9
-##  8 Merc…  73.2    12  440.   186 11.1   9.57  60       3     0    12
-##  9 Merc…  68.4    12  422.   285 11.8   9.45  68.7     3     0    12
-## 10 Merc…  57.6    18  503.   369 11.8  10.3   54.9     3     0    12
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  63      18  480    330 11.7   7.86  49.4     0     3
+##  2 Mazda…  63      18  480    330 11.7   8.62  51.1     0     3
+##  3 Datsu…  68.4    12  324    279 11.6   6.96  55.8     3     3
+##  4 Horne…  64.2    18  774    330  9.24  9.64  58.3     3     0
+##  5 Horne…  56.1    24 1080    525  9.45 10.3   51.1     0     0
+##  6 Valia…  54.3    18  675    315  8.28 10.4   60.7     3     0
+##  7 Duste…  42.9    24 1080    735  9.63 10.7   47.5     0     0
+##  8 Merc …  73.2    12  440.   186 11.1   9.57  60       3     0
+##  9 Merc …  68.4    12  422.   285 11.8   9.45  68.7     3     0
+## 10 Merc …  57.6    18  503.   369 11.8  10.3   54.9     3     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Mutating columns of characters is also straightforward; this is helpful when working with messy columns that require cleaning.</p>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="everyday-data-wrangling.html#cb42-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">CAR =</span> <span class="fu">gsub</span>(<span class="st">&#39;Merc&#39;</span>, <span class="st">&#39;Mercedes&#39;</span>, CAR))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  9 Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 Merce…  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 Merce…  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 Merce…  19.2     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="everyday-data-wrangling.html#cb44-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">CAR =</span> <span class="fu">gsub</span>(<span class="st">&#39; &#39;</span>, <span class="st">&#39;_&#39;</span>, CAR)) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="fu">across</span>(CAR, tolower))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  9 merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 merc_…  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 merc_…  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 merc_…  19.2     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 </div>
 <div id="joining-and-separating-character-columns" class="section level2 hasAnchor" number="2.4">
 <h2><span class="header-section-number">2.4</span> Joining and separating character columns<a href="everyday-data-wrangling.html#joining-and-separating-character-columns" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For the <code>CAR</code> column comprised of strings, you can separate the individual strings into multiple columns; the <code>extra = 'merge'</code> argument tells the function to separate the string based on the first instance of ” ” and merge the rest:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="everyday-data-wrangling.html#cb46-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">separate</span>(CAR, <span class="fu">c</span>(<span class="st">&#39;Brand&#39;</span>, <span class="st">&#39;Model&#39;</span>), <span class="at">sep =</span> <span class="st">&quot; &quot;</span>, <span class="at">extra =</span> <span class="st">&#39;merge&#39;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 13
-##    Brand Model   mpg   cyl  disp    hp  drat    wt  qsec    vs    am
-##    &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda RX4    21       6  160    110  3.9   2.62  16.5     0     1
-##  2 Mazda RX4 …  21       6  160    110  3.9   2.88  17.0     0     1
-##  3 Dats… 710    22.8     4  108     93  3.85  2.32  18.6     1     1
-##  4 Horn… 4 Dr…  21.4     6  258    110  3.08  3.22  19.4     1     0
-##  5 Horn… Spor…  18.7     8  360    175  3.15  3.44  17.0     0     0
-##  6 Vali… &lt;NA&gt;   18.1     6  225    105  2.76  3.46  20.2     1     0
-##  7 Dust… 360    14.3     8  360    245  3.21  3.57  15.8     0     0
-##  8 Merc  240D   24.4     4  147.    62  3.69  3.19  20       1     0
-##  9 Merc  230    22.8     4  141.    95  3.92  3.15  22.9     1     0
-## 10 Merc  280    19.2     6  168.   123  3.92  3.44  18.3     1     0
+##    Brand  Model   mpg   cyl  disp    hp  drat    wt  qsec    vs
+##    &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda  RX4    21       6  160    110  3.9   2.62  16.5     0
+##  2 Mazda  RX4 …  21       6  160    110  3.9   2.88  17.0     0
+##  3 Datsun 710    22.8     4  108     93  3.85  2.32  18.6     1
+##  4 Hornet 4 Dr…  21.4     6  258    110  3.08  3.22  19.4     1
+##  5 Hornet Spor…  18.7     8  360    175  3.15  3.44  17.0     0
+##  6 Valia… &lt;NA&gt;   18.1     6  225    105  2.76  3.46  20.2     1
+##  7 Duster 360    14.3     8  360    245  3.21  3.57  15.8     0
+##  8 Merc   240D   24.4     4  147.    62  3.69  3.19  20       1
+##  9 Merc   230    22.8     4  141.    95  3.92  3.15  22.9     1
+## 10 Merc   280    19.2     6  168.   123  3.92  3.44  18.3     1
 ## # ℹ 22 more rows
-## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
+## # ℹ 3 more variables: am &lt;dbl&gt;, gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Chaining multiple <code>tidyverse</code> verbs can be done using the pipe <code>%&gt;%</code>; this <code>%&gt;%</code> symbol is part of the <code>magrittr</code> package, which is loaded with <code>tidyverse</code>. Recently as of R version 4.1.0, the native pipe <code>|&gt;</code> was introduced, which behaves in mostly a similar manner as the <code>magrittr</code> pipe (though there are a few important differences). Here, I will stick to the <code>%&gt;%</code> notation.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="everyday-data-wrangling.html#cb48-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">separate</span>(CAR, <span class="fu">c</span>(<span class="st">&#39;Brand&#39;</span>, <span class="st">&#39;Model&#39;</span>), <span class="at">sep =</span> <span class="st">&quot; &quot;</span>, <span class="at">extra =</span> <span class="st">&#39;merge&#39;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb48-2"><a href="everyday-data-wrangling.html#cb48-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Brand) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">mean_mpg =</span> <span class="fu">mean</span>(mpg)) <span class="sc">%&gt;%</span></span>
@@ -565,96 +567,96 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Typically, filtering involves a condition based on a column to select the corresponding rows. Here I am combining <code>stringr::str_detect()</code> with <code>dplyr::filter()</code> since the column I am filtering on is a character vector.</p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="everyday-data-wrangling.html#cb54-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(CAR, <span class="st">&#39;Mazda&#39;</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 12
-##   CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Mazda…    21     6   160   110   3.9  2.62  16.5     0     1     4
-## 2 Mazda…    21     6   160   110   3.9  2.88  17.0     0     1     4
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+##   CAR       mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Mazda …    21     6   160   110   3.9  2.62  16.5     0     1
+## 2 Mazda …    21     6   160   110   3.9  2.88  17.0     0     1
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>This function accepts logical operators and regex as well:</p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="everyday-data-wrangling.html#cb56-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(CAR, <span class="st">&#39;Mazda | Merc&#39;</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 12
-##   CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Mazda…    21     6   160   110   3.9  2.62  16.5     0     1     4
-## 2 Mazda…    21     6   160   110   3.9  2.88  17.0     0     1     4
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+##   CAR       mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Mazda …    21     6   160   110   3.9  2.62  16.5     0     1
+## 2 Mazda …    21     6   160   110   3.9  2.88  17.0     0     1
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Ignoring upper/lower case distinction using <code>regex(..., ignore_case = TRUE)</code>:</p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="everyday-data-wrangling.html#cb58-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(CAR, <span class="fu">regex</span>(<span class="st">&#39;mazda&#39;</span>, <span class="at">ignore_case =</span> <span class="cn">TRUE</span>)))</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 12
-##   CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Mazda…    21     6   160   110   3.9  2.62  16.5     0     1     4
-## 2 Mazda…    21     6   160   110   3.9  2.88  17.0     0     1     4
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+##   CAR       mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Mazda …    21     6   160   110   3.9  2.62  16.5     0     1
+## 2 Mazda …    21     6   160   110   3.9  2.88  17.0     0     1
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Alternatively, using base R using <code>grepl()</code>:</p>
 <div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="everyday-data-wrangling.html#cb60-1" tabindex="-1"></a>mtcars[<span class="fu">grepl</span>(<span class="st">&#39;Mazda&#39;</span>, mtcars<span class="sc">$</span>CAR),] <span class="co"># not run</span></span>
 <span id="cb60-2"><a href="everyday-data-wrangling.html#cb60-2" tabindex="-1"></a>mtcars[<span class="fu">grepl</span>(<span class="st">&#39;Mazda|Merc&#39;</span>, mtcars<span class="sc">$</span>CAR),] <span class="co"># not run</span></span></code></pre></div>
 <p>Using <code>tolower()</code> to make sure we’re on the same page in regards to case:</p>
 <div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="everyday-data-wrangling.html#cb61-1" tabindex="-1"></a>mtcars[<span class="fu">grepl</span>(<span class="fu">tolower</span>(<span class="st">&#39;Mazda&#39;</span>), <span class="fu">tolower</span>(mtcars<span class="sc">$</span>CAR)),]</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 12
-##   CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Mazda…    21     6   160   110   3.9  2.62  16.5     0     1     4
-## 2 Mazda…    21     6   160   110   3.9  2.88  17.0     0     1     4
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+##   CAR       mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Mazda …    21     6   160   110   3.9  2.62  16.5     0     1
+## 2 Mazda …    21     6   160   110   3.9  2.88  17.0     0     1
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Filtering rows based on a numeric column is also trivial:</p>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="everyday-data-wrangling.html#cb63-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">between</span>(mpg, <span class="dv">18</span>, <span class="dv">20</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 5 × 12
-##   CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-## 2 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-## 3 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
-## 4 Ponti…  19.2     8  400    175  3.08  3.84  17.0     0     0     3
-## 5 Ferra…  19.7     6  145    175  3.62  2.77  15.5     0     1     5
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+##   CAR       mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Hornet…  18.7     8  360    175  3.15  3.44  17.0     0     0
+## 2 Valiant  18.1     6  225    105  2.76  3.46  20.2     1     0
+## 3 Merc 2…  19.2     6  168.   123  3.92  3.44  18.3     1     0
+## 4 Pontia…  19.2     8  400    175  3.08  3.84  17.0     0     0
+## 5 Ferrar…  19.7     6  145    175  3.62  2.77  15.5     0     1
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="everyday-data-wrangling.html#cb65-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">8</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 21 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  4 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  5 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  6 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  7 Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
-##  8 Merc…  17.8     6  168.   123  3.92  3.44  18.9     1     0     4
-##  9 Merc…  16.4     8  276.   180  3.07  4.07  17.4     0     0     3
-## 10 Merc…  17.3     8  276.   180  3.07  3.73  17.6     0     0     3
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  4 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  5 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  6 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  7 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0
+##  8 Merc …  17.8     6  168.   123  3.92  3.44  18.9     1     0
+##  9 Merc …  16.4     8  276.   180  3.07  4.07  17.4     0     0
+## 10 Merc …  17.3     8  276.   180  3.07  3.73  17.6     0     0
 ## # ℹ 11 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>A useful function is the negation of <code>%in%</code>, which we can define manually:</p>
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="everyday-data-wrangling.html#cb67-1" tabindex="-1"></a><span class="st">`</span><span class="at">%nin%</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">Negate</span>(<span class="st">`</span><span class="at">%in%</span><span class="st">`</span>)</span>
 <span id="cb67-2"><a href="everyday-data-wrangling.html#cb67-2" tabindex="-1"></a></span>
 <span id="cb67-3"><a href="everyday-data-wrangling.html#cb67-3" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">filter</span>(cyl <span class="sc">%nin%</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">8</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 11 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Dats…  22.8     4 108      93  3.85  2.32  18.6     1     1     4
-##  2 Merc…  24.4     4 147.     62  3.69  3.19  20       1     0     4
-##  3 Merc…  22.8     4 141.     95  3.92  3.15  22.9     1     0     4
-##  4 Fiat…  32.4     4  78.7    66  4.08  2.2   19.5     1     1     4
-##  5 Hond…  30.4     4  75.7    52  4.93  1.62  18.5     1     1     4
-##  6 Toyo…  33.9     4  71.1    65  4.22  1.84  19.9     1     1     4
-##  7 Toyo…  21.5     4 120.     97  3.7   2.46  20.0     1     0     3
-##  8 Fiat…  27.3     4  79      66  4.08  1.94  18.9     1     1     4
-##  9 Pors…  26       4 120.     91  4.43  2.14  16.7     0     1     5
-## 10 Lotu…  30.4     4  95.1   113  3.77  1.51  16.9     1     1     5
-## 11 Volv…  21.4     4 121     109  4.11  2.78  18.6     1     1     4
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Datsu…  22.8     4 108      93  3.85  2.32  18.6     1     1
+##  2 Merc …  24.4     4 147.     62  3.69  3.19  20       1     0
+##  3 Merc …  22.8     4 141.     95  3.92  3.15  22.9     1     0
+##  4 Fiat …  32.4     4  78.7    66  4.08  2.2   19.5     1     1
+##  5 Honda…  30.4     4  75.7    52  4.93  1.62  18.5     1     1
+##  6 Toyot…  33.9     4  71.1    65  4.22  1.84  19.9     1     1
+##  7 Toyot…  21.5     4 120.     97  3.7   2.46  20.0     1     0
+##  8 Fiat …  27.3     4  79      66  4.08  1.94  18.9     1     1
+##  9 Porsc…  26       4 120.     91  4.43  2.14  16.7     0     1
+## 10 Lotus…  30.4     4  95.1   113  3.77  1.51  16.9     1     1
+## 11 Volvo…  21.4     4 121     109  4.11  2.78  18.6     1     1
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>In base R we can use <code>which()</code> instead to subset:</p>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="everyday-data-wrangling.html#cb69-1" tabindex="-1"></a>mtcars[<span class="fu">which</span>(mtcars<span class="sc">$</span>mpg <span class="sc">&gt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> mtcars<span class="sc">$</span>mpg <span class="sc">&lt;</span> <span class="dv">20</span>),] <span class="co"># not run</span></span>
 <span id="cb69-2"><a href="everyday-data-wrangling.html#cb69-2" tabindex="-1"></a>mtcars[<span class="fu">which</span>(mtcars<span class="sc">$</span>cyl <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">8</span>)),] <span class="co"># not run</span></span></code></pre></div>
 <p>Base R function <code>subset()</code> also works:</p>
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="everyday-data-wrangling.html#cb70-1" tabindex="-1"></a><span class="fu">subset</span>(mtcars, cyl <span class="sc">==</span> <span class="dv">6</span> <span class="sc">&amp;</span> vs <span class="sc">==</span> <span class="dv">0</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 12
-##   CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Mazda…  21       6   160   110  3.9   2.62  16.5     0     1     4
-## 2 Mazda…  21       6   160   110  3.9   2.88  17.0     0     1     4
-## 3 Ferra…  19.7     6   145   175  3.62  2.77  15.5     0     1     5
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+##   CAR       mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Mazda …  21       6   160   110  3.9   2.62  16.5     0     1
+## 2 Mazda …  21       6   160   110  3.9   2.88  17.0     0     1
+## 3 Ferrar…  19.7     6   145   175  3.62  2.77  15.5     0     1
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 </div>
 <div id="subsetting-columns-based-on-strings" class="section level2 hasAnchor" number="2.6">
 <h2><span class="header-section-number">2.6</span> Subsetting columns based on strings<a href="everyday-data-wrangling.html#subsetting-columns-based-on-strings" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -723,12 +725,46 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  9  22.8  22.9
 ## 10  19.2  18.3
 ## # ℹ 22 more rows</code></pre>
+<p>We can also define a vector containing the column names and use <code>select()</code> using the helper functions such as <code>any_of()</code> and <code>all_of()</code>.</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="everyday-data-wrangling.html#cb80-1" tabindex="-1"></a>my_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;mpg&#39;</span>, <span class="st">&#39;cyl&#39;</span>, <span class="st">&#39;am&#39;</span>)</span>
+<span id="cb80-2"><a href="everyday-data-wrangling.html#cb80-2" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">any_of</span>(my_cols))</span></code></pre></div>
+<pre><code>## # A tibble: 32 × 3
+##      mpg   cyl    am
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  21       6     1
+##  2  21       6     1
+##  3  22.8     4     1
+##  4  21.4     6     0
+##  5  18.7     8     0
+##  6  18.1     6     0
+##  7  14.3     8     0
+##  8  24.4     4     0
+##  9  22.8     4     0
+## 10  19.2     6     0
+## # ℹ 22 more rows</code></pre>
+<p>Standard slicing and dicing works just as well:</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="everyday-data-wrangling.html#cb82-1" tabindex="-1"></a>mtcars[,my_cols]</span></code></pre></div>
+<pre><code>## # A tibble: 32 × 3
+##      mpg   cyl    am
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  21       6     1
+##  2  21       6     1
+##  3  22.8     4     1
+##  4  21.4     6     0
+##  5  18.7     8     0
+##  6  18.1     6     0
+##  7  14.3     8     0
+##  8  24.4     4     0
+##  9  22.8     4     0
+## 10  19.2     6     0
+## # ℹ 22 more rows</code></pre>
+<p><code>any_of()</code> is particularly useful when the vector of strings contains columns that don’t exist in the data. For example, if <code>my_cols</code> contained elements called <code>banana</code> and <code>apple</code>, running <code>mtcars[,my_cols]</code> will throw an error - you can’t subset columns that don’t exist. Using <code>any_of()</code> safely finds columns that do exist in <code>my_cols</code> and returns them safely.</p>
 </div>
 <div id="long-and-wide-data-formats" class="section level2 hasAnchor" number="2.7">
 <h2><span class="header-section-number">2.7</span> Long and wide data formats<a href="everyday-data-wrangling.html#long-and-wide-data-formats" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Transforming datasets into long/wide formats is a typical task in exploratory data analysis and this can be done using <code>tidyr</code>:</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="everyday-data-wrangling.html#cb80-1" tabindex="-1"></a>mtcars_long <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="at">names_to =</span> <span class="st">&#39;Metric&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Values&#39;</span>)</span>
-<span id="cb80-2"><a href="everyday-data-wrangling.html#cb80-2" tabindex="-1"></a>mtcars_long</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="everyday-data-wrangling.html#cb84-1" tabindex="-1"></a>mtcars_long <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="at">names_to =</span> <span class="st">&#39;Metric&#39;</span>, <span class="at">values_to =</span> <span class="st">&#39;Values&#39;</span>)</span>
+<span id="cb84-2"><a href="everyday-data-wrangling.html#cb84-2" tabindex="-1"></a>mtcars_long</span></code></pre></div>
 <pre><code>## # A tibble: 352 × 3
 ##    CAR       Metric Values
 ##    &lt;chr&gt;     &lt;chr&gt;   &lt;dbl&gt;
@@ -745,28 +781,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## # ℹ 342 more rows</code></pre>
 <p>Having the dataset in this long format allows us to create visualizations such as the boxplot much easier.</p>
 <p>Pivoting the long format back to a wide format as also straightforward with <code>tidyr</code>:</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="everyday-data-wrangling.html#cb82-1" tabindex="-1"></a>mtcars_wide <span class="ot">&lt;-</span> mtcars_long <span class="sc">%&gt;%</span> </span>
-<span id="cb82-2"><a href="everyday-data-wrangling.html#cb82-2" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="st">&#39;Metric&#39;</span>, <span class="at">values_from =</span> <span class="st">&#39;Values&#39;</span>)</span>
-<span id="cb82-3"><a href="everyday-data-wrangling.html#cb82-3" tabindex="-1"></a>mtcars_wide</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="everyday-data-wrangling.html#cb86-1" tabindex="-1"></a>mtcars_wide <span class="ot">&lt;-</span> mtcars_long <span class="sc">%&gt;%</span> </span>
+<span id="cb86-2"><a href="everyday-data-wrangling.html#cb86-2" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="st">&#39;Metric&#39;</span>, <span class="at">values_from =</span> <span class="st">&#39;Values&#39;</span>)</span>
+<span id="cb86-3"><a href="everyday-data-wrangling.html#cb86-3" tabindex="-1"></a>mtcars_wide</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  9 Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Having the data in a wide format may be useful when plotting visualizations such as a heatmap, where row and column annotations correspond to the heatmap perimeter.</p>
 <p>In base R, you can use <code>reshape()</code> with the argument <code>direction =</code> but I don’t find its syntax very intuitive. Alternatively, using <code>data.table</code> gets us the solution much easier:</p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="everyday-data-wrangling.html#cb84-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb84-2"><a href="everyday-data-wrangling.html#cb84-2" tabindex="-1"></a><span class="fu">melt</span>(<span class="fu">setDT</span>(mtcars), <span class="at">id.vars =</span> <span class="fu">c</span>(<span class="st">&#39;CAR&#39;</span>), <span class="at">variable.name =</span> <span class="st">&#39;Metric&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="everyday-data-wrangling.html#cb88-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb88-2"><a href="everyday-data-wrangling.html#cb88-2" tabindex="-1"></a><span class="fu">melt</span>(<span class="fu">setDT</span>(mtcars), <span class="at">id.vars =</span> <span class="fu">c</span>(<span class="st">&#39;CAR&#39;</span>), <span class="at">variable.name =</span> <span class="st">&#39;Metric&#39;</span>)</span></code></pre></div>
 <pre><code>##                    CAR Metric value
 ##   1:         Mazda RX4    mpg  21.0
 ##   2:     Mazda RX4 Wag    mpg  21.0
@@ -784,8 +820,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="trimming-strings" class="section level2 hasAnchor" number="2.8">
 <h2><span class="header-section-number">2.8</span> Trimming strings<a href="everyday-data-wrangling.html#trimming-strings" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Trimming character columns, then re-encoding them as factors:</p>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="everyday-data-wrangling.html#cb86-1" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Species =</span> <span class="fu">strtrim</span>(Species, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb86-2"><a href="everyday-data-wrangling.html#cb86-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Species =</span> <span class="fu">factor</span>(Species, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;set&#39;</span>, <span class="st">&#39;ver&#39;</span>, <span class="st">&#39;vir&#39;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="everyday-data-wrangling.html#cb90-1" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Species =</span> <span class="fu">strtrim</span>(Species, <span class="dv">3</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb90-2"><a href="everyday-data-wrangling.html#cb90-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Species =</span> <span class="fu">factor</span>(Species, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;set&#39;</span>, <span class="st">&#39;ver&#39;</span>, <span class="st">&#39;vir&#39;</span>)))</span></code></pre></div>
 <pre><code>## # A tibble: 150 × 5
 ##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 ##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
@@ -801,7 +837,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 10          4.9         3.1          1.5         0.1 set    
 ## # ℹ 140 more rows</code></pre>
 <p>Sometimes when you’re importing datasets from external and/or untrustworthy sources (e.g., an Excel sheet) it’s worth checking for any whitespaces. In that case you can use <code>stringr::str_trim()</code> to remove all whitespaces prior to data analysis.</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="everyday-data-wrangling.html#cb88-1" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Species =</span> <span class="fu">str_trim</span>(Species))</span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="everyday-data-wrangling.html#cb92-1" tabindex="-1"></a>iris <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Species =</span> <span class="fu">str_trim</span>(Species))</span></code></pre></div>
 <pre><code>## # A tibble: 150 × 5
 ##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 ##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;  
@@ -820,53 +856,53 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="iterating-over-list-of-dataframes" class="section level2 hasAnchor" number="2.9">
 <h2><span class="header-section-number">2.9</span> Iterating over list of dataframes<a href="everyday-data-wrangling.html#iterating-over-list-of-dataframes" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Analogously to base R’s <code>split()</code>, using <code>group_split()</code> allows us to convert the dataset to a list based on a column; the length of this output list would correspond to the unique number of column entries:</p>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="everyday-data-wrangling.html#cb90-1" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(mtcars)</span>
-<span id="cb90-2"><a href="everyday-data-wrangling.html#cb90-2" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(cyl)</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="everyday-data-wrangling.html#cb94-1" tabindex="-1"></a>mtcars <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(mtcars)</span>
+<span id="cb94-2"><a href="everyday-data-wrangling.html#cb94-2" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(cyl)</span></code></pre></div>
 <p>Iteration will be covered in more detail in a future chapter (see Chapter 3), but using base R’s <code>apply</code> family is straightforward. In this case since we’re working with lists, we will use <code>lapply()</code> and pass a function (in this case, <code>rename_with()</code>):</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="everyday-data-wrangling.html#cb91-1" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> <span class="fu">lapply</span>(mtcars_lst, <span class="cf">function</span>(x) </span>
-<span id="cb91-2"><a href="everyday-data-wrangling.html#cb91-2" tabindex="-1"></a>  <span class="fu">rename_with</span>(x, <span class="cf">function</span>(y) <span class="fu">paste0</span>(y, <span class="st">&quot;_&quot;</span>, <span class="fu">as.character</span>(<span class="fu">unique</span>(x<span class="sc">$</span>cyl))), <span class="at">.cols =</span> <span class="sc">-</span><span class="dv">1</span>))</span>
-<span id="cb91-3"><a href="everyday-data-wrangling.html#cb91-3" tabindex="-1"></a>mtcars_lst[[<span class="dv">1</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="everyday-data-wrangling.html#cb95-1" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> <span class="fu">lapply</span>(mtcars_lst, <span class="cf">function</span>(x) </span>
+<span id="cb95-2"><a href="everyday-data-wrangling.html#cb95-2" tabindex="-1"></a>  <span class="fu">rename_with</span>(x, <span class="cf">function</span>(y) <span class="fu">paste0</span>(y, <span class="st">&quot;_&quot;</span>, <span class="fu">as.character</span>(<span class="fu">unique</span>(x<span class="sc">$</span>cyl))), <span class="at">.cols =</span> <span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb95-3"><a href="everyday-data-wrangling.html#cb95-3" tabindex="-1"></a>mtcars_lst[[<span class="dv">1</span>]]</span></code></pre></div>
 <pre><code>## # A tibble: 11 × 12
-##    CAR      mpg_4 cyl_4 disp_4  hp_4 drat_4  wt_4 qsec_4  vs_4  am_4
-##    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Datsun …  22.8     4  108      93   3.85  2.32   18.6     1     1
-##  2 Merc 24…  24.4     4  147.     62   3.69  3.19   20       1     0
-##  3 Merc 230  22.8     4  141.     95   3.92  3.15   22.9     1     0
-##  4 Fiat 128  32.4     4   78.7    66   4.08  2.2    19.5     1     1
-##  5 Honda C…  30.4     4   75.7    52   4.93  1.62   18.5     1     1
-##  6 Toyota …  33.9     4   71.1    65   4.22  1.84   19.9     1     1
-##  7 Toyota …  21.5     4  120.     97   3.7   2.46   20.0     1     0
-##  8 Fiat X1…  27.3     4   79      66   4.08  1.94   18.9     1     1
-##  9 Porsche…  26       4  120.     91   4.43  2.14   16.7     0     1
-## 10 Lotus E…  30.4     4   95.1   113   3.77  1.51   16.9     1     1
-## 11 Volvo 1…  21.4     4  121     109   4.11  2.78   18.6     1     1
-## # ℹ 2 more variables: gear_4 &lt;dbl&gt;, carb_4 &lt;dbl&gt;</code></pre>
+##    CAR       mpg_4 cyl_4 disp_4  hp_4 drat_4  wt_4 qsec_4  vs_4
+##    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1 Datsun 7…  22.8     4  108      93   3.85  2.32   18.6     1
+##  2 Merc 240D  24.4     4  147.     62   3.69  3.19   20       1
+##  3 Merc 230   22.8     4  141.     95   3.92  3.15   22.9     1
+##  4 Fiat 128   32.4     4   78.7    66   4.08  2.2    19.5     1
+##  5 Honda Ci…  30.4     4   75.7    52   4.93  1.62   18.5     1
+##  6 Toyota C…  33.9     4   71.1    65   4.22  1.84   19.9     1
+##  7 Toyota C…  21.5     4  120.     97   3.7   2.46   20.0     1
+##  8 Fiat X1-9  27.3     4   79      66   4.08  1.94   18.9     1
+##  9 Porsche …  26       4  120.     91   4.43  2.14   16.7     0
+## 10 Lotus Eu…  30.4     4   95.1   113   3.77  1.51   16.9     1
+## 11 Volvo 14…  21.4     4  121     109   4.11  2.78   18.6     1
+## # ℹ 3 more variables: am_4 &lt;dbl&gt;, gear_4 &lt;dbl&gt;, carb_4 &lt;dbl&gt;</code></pre>
 <p>A <code>tidyverse</code> alternative to <code>apply()</code> is <code>purrr::map()</code> and its variations:</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="everyday-data-wrangling.html#cb93-1" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(cyl)</span>
-<span id="cb93-2"><a href="everyday-data-wrangling.html#cb93-2" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars_lst <span class="sc">%&gt;%</span> </span>
-<span id="cb93-3"><a href="everyday-data-wrangling.html#cb93-3" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">rename_with</span>(.x, <span class="cf">function</span>(y) <span class="fu">paste0</span>(y, <span class="st">&quot;_&quot;</span>, <span class="fu">as.character</span>(<span class="fu">unique</span>(.x<span class="sc">$</span>cyl))), </span>
-<span id="cb93-4"><a href="everyday-data-wrangling.html#cb93-4" tabindex="-1"></a>                    <span class="at">.cols =</span> <span class="sc">-</span><span class="dv">1</span>))</span>
-<span id="cb93-5"><a href="everyday-data-wrangling.html#cb93-5" tabindex="-1"></a>mtcars_lst[[<span class="dv">1</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="everyday-data-wrangling.html#cb97-1" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(cyl)</span>
+<span id="cb97-2"><a href="everyday-data-wrangling.html#cb97-2" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars_lst <span class="sc">%&gt;%</span> </span>
+<span id="cb97-3"><a href="everyday-data-wrangling.html#cb97-3" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">rename_with</span>(.x, <span class="cf">function</span>(y) <span class="fu">paste0</span>(y, <span class="st">&quot;_&quot;</span>, <span class="fu">as.character</span>(<span class="fu">unique</span>(.x<span class="sc">$</span>cyl))), </span>
+<span id="cb97-4"><a href="everyday-data-wrangling.html#cb97-4" tabindex="-1"></a>                    <span class="at">.cols =</span> <span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb97-5"><a href="everyday-data-wrangling.html#cb97-5" tabindex="-1"></a>mtcars_lst[[<span class="dv">1</span>]]</span></code></pre></div>
 <pre><code>## # A tibble: 11 × 12
-##    CAR      mpg_4 cyl_4 disp_4  hp_4 drat_4  wt_4 qsec_4  vs_4  am_4
-##    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Datsun …  22.8     4  108      93   3.85  2.32   18.6     1     1
-##  2 Merc 24…  24.4     4  147.     62   3.69  3.19   20       1     0
-##  3 Merc 230  22.8     4  141.     95   3.92  3.15   22.9     1     0
-##  4 Fiat 128  32.4     4   78.7    66   4.08  2.2    19.5     1     1
-##  5 Honda C…  30.4     4   75.7    52   4.93  1.62   18.5     1     1
-##  6 Toyota …  33.9     4   71.1    65   4.22  1.84   19.9     1     1
-##  7 Toyota …  21.5     4  120.     97   3.7   2.46   20.0     1     0
-##  8 Fiat X1…  27.3     4   79      66   4.08  1.94   18.9     1     1
-##  9 Porsche…  26       4  120.     91   4.43  2.14   16.7     0     1
-## 10 Lotus E…  30.4     4   95.1   113   3.77  1.51   16.9     1     1
-## 11 Volvo 1…  21.4     4  121     109   4.11  2.78   18.6     1     1
-## # ℹ 2 more variables: gear_4 &lt;dbl&gt;, carb_4 &lt;dbl&gt;</code></pre>
+##    CAR       mpg_4 cyl_4 disp_4  hp_4 drat_4  wt_4 qsec_4  vs_4
+##    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+##  1 Datsun 7…  22.8     4  108      93   3.85  2.32   18.6     1
+##  2 Merc 240D  24.4     4  147.     62   3.69  3.19   20       1
+##  3 Merc 230   22.8     4  141.     95   3.92  3.15   22.9     1
+##  4 Fiat 128   32.4     4   78.7    66   4.08  2.2    19.5     1
+##  5 Honda Ci…  30.4     4   75.7    52   4.93  1.62   18.5     1
+##  6 Toyota C…  33.9     4   71.1    65   4.22  1.84   19.9     1
+##  7 Toyota C…  21.5     4  120.     97   3.7   2.46   20.0     1
+##  8 Fiat X1-9  27.3     4   79      66   4.08  1.94   18.9     1
+##  9 Porsche …  26       4  120.     91   4.43  2.14   16.7     0
+## 10 Lotus Eu…  30.4     4   95.1   113   3.77  1.51   16.9     1
+## 11 Volvo 14…  21.4     4  121     109   4.11  2.78   18.6     1
+## # ℹ 3 more variables: am_4 &lt;dbl&gt;, gear_4 &lt;dbl&gt;, carb_4 &lt;dbl&gt;</code></pre>
 <p>Fitting a linear model is easy using iterations; in this case we fit <code>lm()</code> on the variables <code>mpg</code> and <code>gear</code> to identify their relationship:</p>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="everyday-data-wrangling.html#cb95-1" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(cyl)</span>
-<span id="cb95-2"><a href="everyday-data-wrangling.html#cb95-2" tabindex="-1"></a>mtcars_lst <span class="sc">%&gt;%</span> </span>
-<span id="cb95-3"><a href="everyday-data-wrangling.html#cb95-3" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
-<span id="cb95-4"><a href="everyday-data-wrangling.html#cb95-4" tabindex="-1"></a>  <span class="fu">map</span>(coef)</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="everyday-data-wrangling.html#cb99-1" tabindex="-1"></a>mtcars_lst <span class="ot">&lt;-</span> mtcars <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(cyl)</span>
+<span id="cb99-2"><a href="everyday-data-wrangling.html#cb99-2" tabindex="-1"></a>mtcars_lst <span class="sc">%&gt;%</span> </span>
+<span id="cb99-3"><a href="everyday-data-wrangling.html#cb99-3" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
+<span id="cb99-4"><a href="everyday-data-wrangling.html#cb99-4" tabindex="-1"></a>  <span class="fu">map</span>(coef)</span></code></pre></div>
 <pre><code>## [[1]]
 ## (Intercept)        gear 
 ##    15.08125     2.83125 
@@ -879,11 +915,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## (Intercept)        gear 
 ##      14.525       0.175</code></pre>
 <p>Using <code>broom::tidy()</code> to clean up modelling result and output the model estimates:</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="everyday-data-wrangling.html#cb97-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb97-2"><a href="everyday-data-wrangling.html#cb97-2" tabindex="-1"></a>mtcars_lst <span class="sc">%&gt;%</span></span>
-<span id="cb97-3"><a href="everyday-data-wrangling.html#cb97-3" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
-<span id="cb97-4"><a href="everyday-data-wrangling.html#cb97-4" tabindex="-1"></a>  <span class="fu">map</span>(tidy) <span class="sc">%&gt;%</span></span>
-<span id="cb97-5"><a href="everyday-data-wrangling.html#cb97-5" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="everyday-data-wrangling.html#cb101-1" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb101-2"><a href="everyday-data-wrangling.html#cb101-2" tabindex="-1"></a>mtcars_lst <span class="sc">%&gt;%</span></span>
+<span id="cb101-3"><a href="everyday-data-wrangling.html#cb101-3" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> .x)) <span class="sc">%&gt;%</span></span>
+<span id="cb101-4"><a href="everyday-data-wrangling.html#cb101-4" tabindex="-1"></a>  <span class="fu">map</span>(tidy) <span class="sc">%&gt;%</span></span>
+<span id="cb101-5"><a href="everyday-data-wrangling.html#cb101-5" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 6 × 5
 ##   term        estimate std.error statistic p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
@@ -894,194 +930,199 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 5 (Intercept)  14.5        3.41     4.25   0.00112
 ## 6 gear          0.175      1.02     0.172  0.866</code></pre>
 <p>Using base R and the <code>apply()</code> family instead:</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="everyday-data-wrangling.html#cb99-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">lapply</span>(mtcars_lst, <span class="cf">function</span>(x) <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> x))</span>
-<span id="cb99-2"><a href="everyday-data-wrangling.html#cb99-2" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> <span class="fu">lapply</span>(models, coef)</span>
-<span id="cb99-3"><a href="everyday-data-wrangling.html#cb99-3" tabindex="-1"></a>coefs[[<span class="dv">1</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="everyday-data-wrangling.html#cb103-1" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">lapply</span>(mtcars_lst, <span class="cf">function</span>(x) <span class="fu">lm</span>(mpg <span class="sc">~</span> gear, <span class="at">data =</span> x))</span>
+<span id="cb103-2"><a href="everyday-data-wrangling.html#cb103-2" tabindex="-1"></a>coefs <span class="ot">&lt;-</span> <span class="fu">lapply</span>(models, coef)</span>
+<span id="cb103-3"><a href="everyday-data-wrangling.html#cb103-3" tabindex="-1"></a>coefs[[<span class="dv">1</span>]]</span></code></pre></div>
 <pre><code>## (Intercept)        gear 
 ##    15.08125     2.83125</code></pre>
 </div>
 <div id="rowwise-operations" class="section level2 hasAnchor" number="2.10">
 <h2><span class="header-section-number">2.10</span> Rowwise operations<a href="everyday-data-wrangling.html#rowwise-operations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="everyday-data-wrangling.html#cb101-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">name =</span> <span class="fu">c</span>(<span class="st">&#39;Brian&#39;</span>, <span class="st">&#39;Connor&#39;</span>),</span>
-<span id="cb101-2"><a href="everyday-data-wrangling.html#cb101-2" tabindex="-1"></a>             <span class="at">coffee =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">2</span>),</span>
-<span id="cb101-3"><a href="everyday-data-wrangling.html#cb101-3" tabindex="-1"></a>             <span class="at">wine =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">2</span>),</span>
-<span id="cb101-4"><a href="everyday-data-wrangling.html#cb101-4" tabindex="-1"></a>             <span class="at">juice =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">2</span>))</span>
-<span id="cb101-5"><a href="everyday-data-wrangling.html#cb101-5" tabindex="-1"></a>df</span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="everyday-data-wrangling.html#cb105-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">name =</span> <span class="fu">c</span>(<span class="st">&#39;Brian&#39;</span>, <span class="st">&#39;Connor&#39;</span>),</span>
+<span id="cb105-2"><a href="everyday-data-wrangling.html#cb105-2" tabindex="-1"></a>             <span class="at">coffee =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">2</span>),</span>
+<span id="cb105-3"><a href="everyday-data-wrangling.html#cb105-3" tabindex="-1"></a>             <span class="at">wine =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">2</span>),</span>
+<span id="cb105-4"><a href="everyday-data-wrangling.html#cb105-4" tabindex="-1"></a>             <span class="at">juice =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">2</span>))</span>
+<span id="cb105-5"><a href="everyday-data-wrangling.html#cb105-5" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 4
 ##   name   coffee  wine juice
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt;
-## 1 Brian      10     1     1
-## 2 Connor      2     4     3</code></pre>
+## 1 Brian       3     2     3
+## 2 Connor      9     4     2</code></pre>
 <p>Sometimes it’s useful to run calculations in a row-wise fashion; for example using <code>mutate()</code> with the helper function <code>c_across()</code>:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="everyday-data-wrangling.html#cb103-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)),</span>
-<span id="cb103-2"><a href="everyday-data-wrangling.html#cb103-2" tabindex="-1"></a>                            <span class="at">avg =</span> <span class="fu">mean</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)))</span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="everyday-data-wrangling.html#cb107-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)),</span>
+<span id="cb107-2"><a href="everyday-data-wrangling.html#cb107-2" tabindex="-1"></a>                            <span class="at">avg =</span> <span class="fu">mean</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice)))</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 6
 ## # Rowwise: 
 ##   name   coffee  wine juice total   avg
 ##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
-## 1 Brian      10     1     1    12     4
-## 2 Connor      2     4     3     9     3</code></pre>
+## 1 Brian       3     2     3     8  2.67
+## 2 Connor      9     4     2    15  5</code></pre>
 <p>Calculating the proportions using a combination of row-wise and column-wise operations with <code>c_across()</code> and <code>across()</code>:</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="everyday-data-wrangling.html#cb105-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice))) <span class="sc">%&gt;%</span></span>
-<span id="cb105-2"><a href="everyday-data-wrangling.html#cb105-2" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb105-3"><a href="everyday-data-wrangling.html#cb105-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(coffee<span class="sc">:</span>juice, <span class="cf">function</span>(x) x<span class="sc">/</span>total,</span>
-<span id="cb105-4"><a href="everyday-data-wrangling.html#cb105-4" tabindex="-1"></a>                <span class="at">.names =</span> <span class="st">&quot;{col}_prop.&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="everyday-data-wrangling.html#cb109-1" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(coffee<span class="sc">:</span>juice))) <span class="sc">%&gt;%</span></span>
+<span id="cb109-2"><a href="everyday-data-wrangling.html#cb109-2" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb109-3"><a href="everyday-data-wrangling.html#cb109-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(coffee<span class="sc">:</span>juice, <span class="cf">function</span>(x) x<span class="sc">/</span>total,</span>
+<span id="cb109-4"><a href="everyday-data-wrangling.html#cb109-4" tabindex="-1"></a>                <span class="at">.names =</span> <span class="st">&quot;{col}_prop.&quot;</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 8
-##   name  coffee  wine juice total coffee_prop. wine_prop. juice_prop.
-##   &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
-## 1 Brian     10     1     1    12        0.833     0.0833      0.0833
-## 2 Conn…      2     4     3     9        0.222     0.444       0.333</code></pre>
+##   name   coffee  wine juice total coffee_prop. wine_prop.
+##   &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Brian       3     2     3     8        0.375      0.25 
+## 2 Connor      9     4     2    15        0.6        0.267
+## # ℹ 1 more variable: juice_prop. &lt;dbl&gt;</code></pre>
 </div>
 <div id="conditional-transformation" class="section level2 hasAnchor" number="2.11">
 <h2><span class="header-section-number">2.11</span> Conditional transformation<a href="everyday-data-wrangling.html#conditional-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Conditional transformations are useful when creating categories based on a series of logical statements; this is done using <code>case_when()</code> to define the conditions:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="everyday-data-wrangling.html#cb107-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">mileage_class =</span> </span>
-<span id="cb107-2"><a href="everyday-data-wrangling.html#cb107-2" tabindex="-1"></a>  <span class="fu">case_when</span>(mpg <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&#39;High&#39;</span>,</span>
-<span id="cb107-3"><a href="everyday-data-wrangling.html#cb107-3" tabindex="-1"></a>            mpg <span class="sc">&lt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&#39;Low&#39;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb107-4"><a href="everyday-data-wrangling.html#cb107-4" tabindex="-1"></a>  <span class="fu">relocate</span>(mileage_class, <span class="at">.after =</span> mpg)</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="everyday-data-wrangling.html#cb111-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">mileage_class =</span> </span>
+<span id="cb111-2"><a href="everyday-data-wrangling.html#cb111-2" tabindex="-1"></a>  <span class="fu">case_when</span>(mpg <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&#39;High&#39;</span>,</span>
+<span id="cb111-3"><a href="everyday-data-wrangling.html#cb111-3" tabindex="-1"></a>            mpg <span class="sc">&lt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&#39;Low&#39;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb111-4"><a href="everyday-data-wrangling.html#cb111-4" tabindex="-1"></a>  <span class="fu">relocate</span>(mileage_class, <span class="at">.after =</span> mpg)</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 13
-##    CAR         mpg mileage_class   cyl  disp    hp  drat    wt  qsec
-##    &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda RX4  21   High              6  160    110  3.9   2.62  16.5
-##  2 Mazda RX…  21   High              6  160    110  3.9   2.88  17.0
-##  3 Datsun 7…  22.8 High              4  108     93  3.85  2.32  18.6
-##  4 Hornet 4…  21.4 High              6  258    110  3.08  3.22  19.4
-##  5 Hornet S…  18.7 Low               8  360    175  3.15  3.44  17.0
-##  6 Valiant    18.1 Low               6  225    105  2.76  3.46  20.2
-##  7 Duster 3…  14.3 Low               8  360    245  3.21  3.57  15.8
-##  8 Merc 240D  24.4 High              4  147.    62  3.69  3.19  20  
-##  9 Merc 230   22.8 High              4  141.    95  3.92  3.15  22.9
-## 10 Merc 280   19.2 Low               6  168.   123  3.92  3.44  18.3
+##    CAR          mpg mileage_class   cyl  disp    hp  drat    wt
+##    &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda RX4   21   High              6  160    110  3.9   2.62
+##  2 Mazda RX4…  21   High              6  160    110  3.9   2.88
+##  3 Datsun 710  22.8 High              4  108     93  3.85  2.32
+##  4 Hornet 4 …  21.4 High              6  258    110  3.08  3.22
+##  5 Hornet Sp…  18.7 Low               8  360    175  3.15  3.44
+##  6 Valiant     18.1 Low               6  225    105  2.76  3.46
+##  7 Duster 360  14.3 Low               8  360    245  3.21  3.57
+##  8 Merc 240D   24.4 High              4  147.    62  3.69  3.19
+##  9 Merc 230    22.8 High              4  141.    95  3.92  3.15
+## 10 Merc 280    19.2 Low               6  168.   123  3.92  3.44
 ## # ℹ 22 more rows
-## # ℹ 4 more variables: vs &lt;dbl&gt;, am &lt;dbl&gt;, gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
+## # ℹ 5 more variables: qsec &lt;dbl&gt;, vs &lt;dbl&gt;, am &lt;dbl&gt;,
+## #   gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>In cases where we’re working with character columns, it’s useful to use <code>grepl</code> to match specific strings. After all, formula within <code>case_when()</code> needs to evaluate to a boolean on the left-hand side (e.g., <code>mpg &gt; 20</code>). Additionally, in cases where the condition is not specified or met, you can use <code>TRUE ~</code> within <code>case_when()</code> as such:</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="everyday-data-wrangling.html#cb109-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">CAR =</span> <span class="fu">case_when</span>(<span class="fu">grepl</span>(<span class="st">&#39;Merc&#39;</span>, CAR) <span class="sc">~</span> <span class="fu">toupper</span>(CAR), <span class="cn">TRUE</span> <span class="sc">~</span> CAR))</span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="everyday-data-wrangling.html#cb113-1" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">CAR =</span> <span class="fu">case_when</span>(<span class="fu">grepl</span>(<span class="st">&#39;Merc&#39;</span>, CAR) <span class="sc">~</span> <span class="fu">toupper</span>(CAR), <span class="cn">TRUE</span> <span class="sc">~</span> CAR))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 12
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 MERC…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  9 MERC…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 MERC…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 MERC …  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 MERC …  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 MERC …  19.2     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 1 more variable: carb &lt;dbl&gt;</code></pre>
+## # ℹ 2 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 <p>Conditional mutate using base R involves using <code>ifelse()</code>:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="everyday-data-wrangling.html#cb111-1" tabindex="-1"></a>mtcars<span class="sc">$</span>mileage_class <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
-<span id="cb111-2"><a href="everyday-data-wrangling.html#cb111-2" tabindex="-1"></a>  mtcars<span class="sc">$</span>mpg <span class="sc">&gt;</span> <span class="dv">20</span>, <span class="st">&#39;High&#39;</span>, <span class="st">&#39;Low&#39;</span></span>
-<span id="cb111-3"><a href="everyday-data-wrangling.html#cb111-3" tabindex="-1"></a>)</span>
-<span id="cb111-4"><a href="everyday-data-wrangling.html#cb111-4" tabindex="-1"></a><span class="fu">subset</span>(mtcars, <span class="at">select =</span> <span class="fu">c</span>(CAR, mpg, mileage_class, cyl<span class="sc">:</span>carb))</span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="everyday-data-wrangling.html#cb115-1" tabindex="-1"></a>mtcars<span class="sc">$</span>mileage_class <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb115-2"><a href="everyday-data-wrangling.html#cb115-2" tabindex="-1"></a>  mtcars<span class="sc">$</span>mpg <span class="sc">&gt;</span> <span class="dv">20</span>, <span class="st">&#39;High&#39;</span>, <span class="st">&#39;Low&#39;</span></span>
+<span id="cb115-3"><a href="everyday-data-wrangling.html#cb115-3" tabindex="-1"></a>)</span>
+<span id="cb115-4"><a href="everyday-data-wrangling.html#cb115-4" tabindex="-1"></a><span class="fu">subset</span>(mtcars, <span class="at">select =</span> <span class="fu">c</span>(CAR, mpg, mileage_class, cyl<span class="sc">:</span>carb))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 13
-##    CAR         mpg mileage_class   cyl  disp    hp  drat    wt  qsec
-##    &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda RX4  21   High              6  160    110  3.9   2.62  16.5
-##  2 Mazda RX…  21   High              6  160    110  3.9   2.88  17.0
-##  3 Datsun 7…  22.8 High              4  108     93  3.85  2.32  18.6
-##  4 Hornet 4…  21.4 High              6  258    110  3.08  3.22  19.4
-##  5 Hornet S…  18.7 Low               8  360    175  3.15  3.44  17.0
-##  6 Valiant    18.1 Low               6  225    105  2.76  3.46  20.2
-##  7 Duster 3…  14.3 Low               8  360    245  3.21  3.57  15.8
-##  8 Merc 240D  24.4 High              4  147.    62  3.69  3.19  20  
-##  9 Merc 230   22.8 High              4  141.    95  3.92  3.15  22.9
-## 10 Merc 280   19.2 Low               6  168.   123  3.92  3.44  18.3
+##    CAR          mpg mileage_class   cyl  disp    hp  drat    wt
+##    &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda RX4   21   High              6  160    110  3.9   2.62
+##  2 Mazda RX4…  21   High              6  160    110  3.9   2.88
+##  3 Datsun 710  22.8 High              4  108     93  3.85  2.32
+##  4 Hornet 4 …  21.4 High              6  258    110  3.08  3.22
+##  5 Hornet Sp…  18.7 Low               8  360    175  3.15  3.44
+##  6 Valiant     18.1 Low               6  225    105  2.76  3.46
+##  7 Duster 360  14.3 Low               8  360    245  3.21  3.57
+##  8 Merc 240D   24.4 High              4  147.    62  3.69  3.19
+##  9 Merc 230    22.8 High              4  141.    95  3.92  3.15
+## 10 Merc 280    19.2 Low               6  168.   123  3.92  3.44
 ## # ℹ 22 more rows
-## # ℹ 4 more variables: vs &lt;dbl&gt;, am &lt;dbl&gt;, gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
+## # ℹ 5 more variables: qsec &lt;dbl&gt;, vs &lt;dbl&gt;, am &lt;dbl&gt;,
+## #   gear &lt;dbl&gt;, carb &lt;dbl&gt;</code></pre>
 </div>
 <div id="missing-values" class="section level2 hasAnchor" number="2.12">
 <h2><span class="header-section-number">2.12</span> Missing values<a href="everyday-data-wrangling.html#missing-values" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Handling missing values is tedious but often required when working with dodgy data.</p>
 <p>First, for the sake of our exercise we insert NAs randomly in the <code>mtcars</code> dataset:</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="everyday-data-wrangling.html#cb113-1" tabindex="-1"></a>mtcars_NA <span class="ot">&lt;-</span> <span class="fu">map_df</span>(mtcars, <span class="cf">function</span>(x) </span>
-<span id="cb113-2"><a href="everyday-data-wrangling.html#cb113-2" tabindex="-1"></a>  {x[<span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">NA</span>), <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.01</span>), <span class="at">size =</span> <span class="fu">length</span>(x), <span class="at">replace =</span> <span class="cn">TRUE</span>)]})</span>
-<span id="cb113-3"><a href="everyday-data-wrangling.html#cb113-3" tabindex="-1"></a>mtcars_NA</span></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="everyday-data-wrangling.html#cb117-1" tabindex="-1"></a>mtcars_NA <span class="ot">&lt;-</span> <span class="fu">map_df</span>(mtcars, <span class="cf">function</span>(x) </span>
+<span id="cb117-2"><a href="everyday-data-wrangling.html#cb117-2" tabindex="-1"></a>  {x[<span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">NA</span>), <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.95</span>, <span class="fl">0.01</span>), <span class="at">size =</span> <span class="fu">length</span>(x), <span class="at">replace =</span> <span class="cn">TRUE</span>)]})</span>
+<span id="cb117-3"><a href="everyday-data-wrangling.html#cb117-3" tabindex="-1"></a>mtcars_NA</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 13
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Horn…  18.7     8  360    175  3.15  3.44  17.0     0     0     3
-##  6 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  7 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  8 Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  9 Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-## 10 Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0
 ## # ℹ 22 more rows
-## # ℹ 2 more variables: carb &lt;dbl&gt;, mileage_class &lt;chr&gt;</code></pre>
+## # ℹ 3 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;,
+## #   mileage_class &lt;chr&gt;</code></pre>
 <p>Remove rows where any NA occurs:</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="everyday-data-wrangling.html#cb115-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span></code></pre></div>
-<pre><code>## # A tibble: 27 × 13
-##    CAR     mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear
-##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazd…  21       6  160    110  3.9   2.62  16.5     0     1     4
-##  2 Mazd…  21       6  160    110  3.9   2.88  17.0     0     1     4
-##  3 Dats…  22.8     4  108     93  3.85  2.32  18.6     1     1     4
-##  4 Horn…  21.4     6  258    110  3.08  3.22  19.4     1     0     3
-##  5 Vali…  18.1     6  225    105  2.76  3.46  20.2     1     0     3
-##  6 Dust…  14.3     8  360    245  3.21  3.57  15.8     0     0     3
-##  7 Merc…  24.4     4  147.    62  3.69  3.19  20       1     0     4
-##  8 Merc…  22.8     4  141.    95  3.92  3.15  22.9     1     0     4
-##  9 Merc…  19.2     6  168.   123  3.92  3.44  18.3     1     0     4
-## 10 Merc…  17.8     6  168.   123  3.92  3.44  18.9     1     0     4
-## # ℹ 17 more rows
-## # ℹ 2 more variables: carb &lt;dbl&gt;, mileage_class &lt;chr&gt;</code></pre>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="everyday-data-wrangling.html#cb119-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">na.omit</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 26 × 13
+##    CAR      mpg   cyl  disp    hp  drat    wt  qsec    vs    am
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Mazda…  21       6  160    110  3.9   2.62  16.5     0     1
+##  2 Mazda…  21       6  160    110  3.9   2.88  17.0     0     1
+##  3 Datsu…  22.8     4  108     93  3.85  2.32  18.6     1     1
+##  4 Horne…  21.4     6  258    110  3.08  3.22  19.4     1     0
+##  5 Horne…  18.7     8  360    175  3.15  3.44  17.0     0     0
+##  6 Valia…  18.1     6  225    105  2.76  3.46  20.2     1     0
+##  7 Duste…  14.3     8  360    245  3.21  3.57  15.8     0     0
+##  8 Merc …  24.4     4  147.    62  3.69  3.19  20       1     0
+##  9 Merc …  22.8     4  141.    95  3.92  3.15  22.9     1     0
+## 10 Merc …  19.2     6  168.   123  3.92  3.44  18.3     1     0
+## # ℹ 16 more rows
+## # ℹ 3 more variables: gear &lt;dbl&gt;, carb &lt;dbl&gt;,
+## #   mileage_class &lt;chr&gt;</code></pre>
 <p>Identify columns with NAs and the number of occurrences:</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="everyday-data-wrangling.html#cb117-1" tabindex="-1"></a><span class="fu">vapply</span>(mtcars_NA, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="everyday-data-wrangling.html#cb121-1" tabindex="-1"></a><span class="fu">vapply</span>(mtcars_NA, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)), <span class="fu">double</span>(<span class="dv">1</span>))</span></code></pre></div>
 <pre><code>##           CAR           mpg           cyl          disp 
-##             0             1             0             0 
+##             1             0             0             0 
 ##            hp          drat            wt          qsec 
-##             0             0             0             1 
+##             0             0             1             1 
 ##            vs            am          gear          carb 
-##             1             0             0             1 
+##             0             1             0             0 
 ## mileage_class 
-##             1</code></pre>
+##             3</code></pre>
 <p>Remove columns with more than one missing value:</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="everyday-data-wrangling.html#cb119-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">where</span>(<span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)) <span class="sc">&lt;</span> <span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="everyday-data-wrangling.html#cb123-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">where</span>(<span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)) <span class="sc">&lt;</span> <span class="dv">1</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 32 × 8
-##    CAR                 cyl  disp    hp  drat    wt    am  gear
-##    &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Mazda RX4             6  160    110  3.9   2.62     1     4
-##  2 Mazda RX4 Wag         6  160    110  3.9   2.88     1     4
-##  3 Datsun 710            4  108     93  3.85  2.32     1     4
-##  4 Hornet 4 Drive        6  258    110  3.08  3.22     0     3
-##  5 Hornet Sportabout     8  360    175  3.15  3.44     0     3
-##  6 Valiant               6  225    105  2.76  3.46     0     3
-##  7 Duster 360            8  360    245  3.21  3.57     0     3
-##  8 Merc 240D             4  147.    62  3.69  3.19     0     4
-##  9 Merc 230              4  141.    95  3.92  3.15     0     4
-## 10 Merc 280              6  168.   123  3.92  3.44     0     4
+##      mpg   cyl  disp    hp  drat    vs  gear  carb
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  21       6  160    110  3.9      0     4     4
+##  2  21       6  160    110  3.9      0     4     4
+##  3  22.8     4  108     93  3.85     1     4     1
+##  4  21.4     6  258    110  3.08     1     3     1
+##  5  18.7     8  360    175  3.15     0     3     2
+##  6  18.1     6  225    105  2.76     1     3     1
+##  7  14.3     8  360    245  3.21     0     3     4
+##  8  24.4     4  147.    62  3.69     1     4     2
+##  9  22.8     4  141.    95  3.92     1     4     2
+## 10  19.2     6  168.   123  3.92     1     4     4
 ## # ℹ 22 more rows</code></pre>
 <p>Replace missing values with zero using <code>tidyr::replace_na()</code>:</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="everyday-data-wrangling.html#cb121-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">map_dfc</span>(<span class="sc">~</span> <span class="fu">replace_na</span>(.x, <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="everyday-data-wrangling.html#cb125-1" tabindex="-1"></a>mtcars_NA <span class="sc">%&gt;%</span> <span class="fu">map_dfc</span>(<span class="sc">~</span> <span class="fu">replace_na</span>(.x, <span class="dv">0</span>))</span></code></pre></div>
 <p>Base R and using <code>is.na()</code> instead:</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="everyday-data-wrangling.html#cb122-1" tabindex="-1"></a>mtcars_NA[<span class="fu">is.na</span>(mtcars_NA)] <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># not run</span></span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="everyday-data-wrangling.html#cb126-1" tabindex="-1"></a>mtcars_NA[<span class="fu">is.na</span>(mtcars_NA)] <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># not run</span></span></code></pre></div>
 </div>
 <div id="joining-dataframes" class="section level2 hasAnchor" number="2.13">
 <h2><span class="header-section-number">2.13</span> Joining dataframes<a href="everyday-data-wrangling.html#joining-dataframes" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Mutating joins in <code>tidyverse</code> are analogous to the inner and outer joins in SQL syntax:</p>
-<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="everyday-data-wrangling.html#cb123-1" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb123-2"><a href="everyday-data-wrangling.html#cb123-2" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&#39;Brian&#39;</span>, <span class="st">&#39;Connor&#39;</span>, <span class="st">&#39;Jon&#39;</span>),</span>
-<span id="cb123-3"><a href="everyday-data-wrangling.html#cb123-3" tabindex="-1"></a>  <span class="at">city =</span> <span class="fu">c</span>(<span class="st">&#39;Tokyo&#39;</span>, <span class="st">&#39;London&#39;</span>, <span class="st">&#39;Milan&#39;</span>),</span>
-<span id="cb123-4"><a href="everyday-data-wrangling.html#cb123-4" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">25</span>, <span class="dv">21</span>)</span>
-<span id="cb123-5"><a href="everyday-data-wrangling.html#cb123-5" tabindex="-1"></a>)</span>
-<span id="cb123-6"><a href="everyday-data-wrangling.html#cb123-6" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb123-7"><a href="everyday-data-wrangling.html#cb123-7" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&#39;Brian&#39;</span>, <span class="st">&#39;Connor&#39;</span>),</span>
-<span id="cb123-8"><a href="everyday-data-wrangling.html#cb123-8" tabindex="-1"></a>  <span class="at">hair =</span> <span class="fu">c</span>(<span class="st">&#39;black&#39;</span>, <span class="st">&#39;brown&#39;</span>),</span>
-<span id="cb123-9"><a href="everyday-data-wrangling.html#cb123-9" tabindex="-1"></a>  <span class="at">eyes =</span> <span class="fu">c</span>(<span class="st">&#39;dark&#39;</span>, <span class="st">&#39;hazel&#39;</span>)</span>
-<span id="cb123-10"><a href="everyday-data-wrangling.html#cb123-10" tabindex="-1"></a>)</span></code></pre></div>
-<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="everyday-data-wrangling.html#cb124-1" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="everyday-data-wrangling.html#cb127-1" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb127-2"><a href="everyday-data-wrangling.html#cb127-2" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&#39;Brian&#39;</span>, <span class="st">&#39;Connor&#39;</span>, <span class="st">&#39;Jon&#39;</span>),</span>
+<span id="cb127-3"><a href="everyday-data-wrangling.html#cb127-3" tabindex="-1"></a>  <span class="at">city =</span> <span class="fu">c</span>(<span class="st">&#39;Tokyo&#39;</span>, <span class="st">&#39;London&#39;</span>, <span class="st">&#39;Milan&#39;</span>),</span>
+<span id="cb127-4"><a href="everyday-data-wrangling.html#cb127-4" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">25</span>, <span class="dv">21</span>)</span>
+<span id="cb127-5"><a href="everyday-data-wrangling.html#cb127-5" tabindex="-1"></a>)</span>
+<span id="cb127-6"><a href="everyday-data-wrangling.html#cb127-6" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb127-7"><a href="everyday-data-wrangling.html#cb127-7" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">&#39;Brian&#39;</span>, <span class="st">&#39;Connor&#39;</span>),</span>
+<span id="cb127-8"><a href="everyday-data-wrangling.html#cb127-8" tabindex="-1"></a>  <span class="at">hair =</span> <span class="fu">c</span>(<span class="st">&#39;black&#39;</span>, <span class="st">&#39;brown&#39;</span>),</span>
+<span id="cb127-9"><a href="everyday-data-wrangling.html#cb127-9" tabindex="-1"></a>  <span class="at">eyes =</span> <span class="fu">c</span>(<span class="st">&#39;dark&#39;</span>, <span class="st">&#39;hazel&#39;</span>)</span>
+<span id="cb127-10"><a href="everyday-data-wrangling.html#cb127-10" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="everyday-data-wrangling.html#cb128-1" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 5
 ##   name   city     age hair  eyes 
 ##   &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;
 ## 1 Brian  Tokyo     28 black dark 
 ## 2 Connor London    25 brown hazel</code></pre>
-<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="everyday-data-wrangling.html#cb126-1" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="everyday-data-wrangling.html#cb130-1" tabindex="-1"></a>df1 <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 3 × 5
 ##   name   city     age hair  eyes 
 ##   &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;
@@ -1090,11 +1131,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 3 Jon    Milan     21 &lt;NA&gt;  &lt;NA&gt;</code></pre>
 <p>For a great visualization of the different join functions in <code>tidyverse</code>, check out the chapter on relational data in Hadley’s book <em>R for Data Science</em> <a href="https://r4ds.had.co.nz/relational-data.html">here</a>.</p>
 <p>Base R uses <code>merge()</code> with the argument <code>all.x =</code> and <code>all_y =</code>:</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="everyday-data-wrangling.html#cb128-1" tabindex="-1"></a><span class="fu">merge</span>(df1, df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="everyday-data-wrangling.html#cb132-1" tabindex="-1"></a><span class="fu">merge</span>(df1, df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>)</span></code></pre></div>
 <pre><code>##     name   city age  hair  eyes
 ## 1  Brian  Tokyo  28 black  dark
 ## 2 Connor London  25 brown hazel</code></pre>
-<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="everyday-data-wrangling.html#cb130-1" tabindex="-1"></a><span class="fu">merge</span>(df1, df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="everyday-data-wrangling.html#cb134-1" tabindex="-1"></a><span class="fu">merge</span>(df1, df2, <span class="at">by =</span> <span class="st">&#39;name&#39;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>##     name   city age  hair  eyes
 ## 1  Brian  Tokyo  28 black  dark
 ## 2 Connor London  25 brown hazel
